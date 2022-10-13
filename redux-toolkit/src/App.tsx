@@ -2,11 +2,11 @@ import React, { useEffect } from "react";
 import CartContainer from "./components/CartContainer";
 import Modal from "./components/Modal";
 import Navbar from "./components/Navbar";
-import { calculateTotals } from "./features/cart/cartSlice";
+import { calculateTotals, getCartItems } from "./features/cart/cartSlice";
 import { useAppDispatch, useAppSelector } from "./hooks";
 
 function App() {
-  const { cartItems } = useAppSelector((state) => state.cart);
+  const { cartItems, isLoading } = useAppSelector((state) => state.cart);
   const { isOpen } = useAppSelector((state) => state.modal);
 
   const dispatch = useAppDispatch();
@@ -14,6 +14,19 @@ function App() {
   useEffect(() => {
     dispatch(calculateTotals());
   }, [dispatch, cartItems]);
+
+  useEffect(() => {
+    dispatch(getCartItems());
+  }, [dispatch]);
+
+  if (isLoading) {
+    return (
+      <div className='loading'>
+        <h1>Loading...</h1>
+      </div>
+    );
+  }
+
 
   return (
     <>

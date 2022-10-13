@@ -1,14 +1,11 @@
 import React from "react";
 import CartItem from "./CartItem";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { clearCart } from "../features/cart/cartSlice";
 import { CartItemType } from "../types/CartItemType";
 import { openModal } from "../features/modal/modalSlice";
 
 const CartContainer = () => {
-  const { cartItems, total, amount } = useAppSelector(
-    (state) => state.cart
-  );
+  const { cartItems, total, amount } = useAppSelector((state) => state.cart);
 
   const dispatch = useAppDispatch();
 
@@ -31,10 +28,9 @@ const CartContainer = () => {
       </header>
       {/* cart items */}
       <div>
-        {cartItems &&
-          cartItems.map((item: CartItemType) => {
-            return <CartItem key={item.id} {...item} />;
-          })}
+        {cartItems.map((item: CartItemType) => {
+          return <CartItem key={item.id} {...item} />;
+        })}
       </div>
       {/* cart footer */}
       <footer>
