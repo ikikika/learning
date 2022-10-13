@@ -1,9 +1,9 @@
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../hooks";
 import { CartIcon } from "../icons";
 import { RootState } from "../redux/store";
 
 const Navbar = () => {
-  const { amount } = useSelector((state: RootState) => state.cart);
+  const { amount } = useAppSelector((state: RootState) => state.cart);
 
   return (
     <nav>

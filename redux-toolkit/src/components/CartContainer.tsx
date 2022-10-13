@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import CartItem from './CartItem';
-import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import { calculateTotals } from '../features/cart/cartSlice';
 
 const CartContainer = () => {
-  const { cartItems, total, amount } = useSelector((state: RootState) => state.cart);
+  const { cartItems, total, amount } = useAppSelector((state: RootState) => state.cart);
+
+const dispatch = useAppDispatch();
+
+    useEffect(()=>{
+        dispatch(calculateTotals());
+    }, [dispatch]);
 
   if (amount < 1) {
     return (
