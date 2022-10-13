@@ -1,20 +1,15 @@
-import React, { useEffect } from "react";
+import React from "react";
 import CartItem from "./CartItem";
-import { RootState } from "../redux/store";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { calculateTotals, clearCart } from "../features/cart/cartSlice";
+import { clearCart } from "../features/cart/cartSlice";
 import { CartItemType } from "../types/CartItemType";
 
 const CartContainer = () => {
   const { cartItems, total, amount } = useAppSelector(
-    (state: RootState) => state.cart
+    (state) => state.cart
   );
 
   const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    dispatch(calculateTotals());
-  }, [dispatch]);
 
   if (amount < 1) {
     return (
@@ -45,7 +40,7 @@ const CartContainer = () => {
         <hr />
         <div className="cart-total">
           <h4>
-            total <span>${total}</span>
+            total <span>${total.toFixed(2)}</span>
           </h4>
         </div>
         <button
