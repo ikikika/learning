@@ -1,50 +1,61 @@
-import React, { useEffect } from 'react';
-import CartItem from './CartItem';
-import { RootState } from '../redux/store';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { calculateTotals } from '../features/cart/cartSlice';
+import React, { useEffect } from "react";
+import CartItem from "./CartItem";
+import { RootState } from "../redux/store";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { calculateTotals, clearCart } from "../features/cart/cartSlice";
+import { CartItemType } from "../types/CartItemType";
 
 const CartContainer = () => {
-  const { cartItems, total, amount } = useAppSelector((state: RootState) => state.cart);
+  const { cartItems, total, amount } = useAppSelector(
+    (state: RootState) => state.cart
+  );
 
-const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
-    useEffect(()=>{
-        dispatch(calculateTotals());
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(calculateTotals());
+  }, [dispatch]);
 
   if (amount < 1) {
     return (
-      <section className='cart'>
+      <section className="cart">
         {/* cart header */}
         <header>
           <h2>your bag</h2>
-          <h4 className='empty-cart'>is currently empty</h4>
+          <h4 className="empty-cart">is currently empty</h4>
         </header>
       </section>
     );
   }
   return (
-    <section className='cart'>
+    <section className="cart">
       {/* cart header */}
       <header>
         <h2>your bag</h2>
       </header>
       {/* cart items */}
       <div>
-        {cartItems.map((item) => {
-          return <CartItem key={item.id} {...item} />;
-        })}
+        {cartItems &&
+          cartItems.map((item: CartItemType) => {
+            return <CartItem key={item.id} {...item} />;
+          })}
       </div>
       {/* cart footer */}
       <footer>
         <hr />
-        <div className='cart-total'>
+        <div className="cart-total">
           <h4>
             total <span>${total}</span>
           </h4>
         </div>
-        <button className='btn clear-btn'>clear cart</button>
+        <button
+          className="btn clear-btn"
+          onClick={() => {
+            dispatch(clearCart());
+          }}
+        >
+          clear cart
+        </button>
       </footer>
     </section>
   );
