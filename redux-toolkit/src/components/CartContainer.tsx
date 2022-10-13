@@ -3,6 +3,7 @@ import CartItem from "./CartItem";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { clearCart } from "../features/cart/cartSlice";
 import { CartItemType } from "../types/CartItemType";
+import { openModal } from "../features/modal/modalSlice";
 
 const CartContainer = () => {
   const { cartItems, total, amount } = useAppSelector(
@@ -46,7 +47,7 @@ const CartContainer = () => {
         <button
           className="btn clear-btn"
           onClick={() => {
-            dispatch(clearCart());
+            dispatch(openModal());
           }}
         >
           clear cart
