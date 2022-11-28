@@ -40,3 +40,15 @@
   - `PlaceholderText`
   - `LabelText`
   - `DisplayValue`
+
+## Mock service worker
+
+- Create handler
+  - https://mswjs.io/docs/getting-started/mocks/rest-api
+  - mimic response from server
+  - `rest.get('url', (req, res, ctx) => {})`
+  - `req`, an information about a matching request;
+  - `res`, a functional utility to create the mocked response;
+  - `ctx`, a group of functions that help to set a status code, headers, body, etc. of the mocked response.
+- Create mock server
+  - https://mswjs.io/docs/getting-started/integrate/node
