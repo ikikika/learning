@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import OrderEntry from "../OrderEntry";
 import { rest } from "msw";
 import { server } from "../../../mocks/server";
@@ -16,8 +16,9 @@ test("handles error for scoops and toppings routes", async () => {
 
   render(<OrderEntry />);
 
-  const alerts = await screen.findAllByRole("alert", {
-    name: "An unexpected error occured. Please try again later.",
+  // use waitFor if we have more than 1 server call to ensure that all server calls are completed
+  await waitFor(async () => {
+    const alerts = await screen.findAllByRole("alert");
+    expect(alerts).toHaveLength(2);
   });
-  expect(alerts).toHaveLength(2);
 });
