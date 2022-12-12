@@ -53,3 +53,11 @@
 - Create mock server
   - https://mswjs.io/docs/getting-started/integrate/node
 - Update `./src/setupTests.js` to listen for request during testing and reset handlers after any tests
+
+## Context file
+
+- make context with `createContext`
+- make custom hook with `useContext`
+- make context provider with internal state via `useState`
+  - provider value state getters and setters
+- export custom hook and provider
