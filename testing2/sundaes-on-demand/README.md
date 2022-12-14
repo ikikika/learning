@@ -61,3 +61,7 @@
 - make context provider with internal state via `useState`
   - provider value state getters and setters
 - export custom hook and provider
+
+## Custom render
+
+https://testing-library.com/docs/react-testing-library/setup/#custom-render
