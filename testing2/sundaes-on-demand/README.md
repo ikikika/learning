@@ -64,4 +64,14 @@
 
 ## Custom render
 
-https://testing-library.com/docs/react-testing-library/setup/#custom-render
+- create custom wrapper to wrap provider by default
+- https://testing-library.com/docs/react-testing-library/setup/#custom-render
+
+## Jest mocks as props
+
+- Example, when we add a component as a prop
+  - typescript will require the component type to be a function
+  - certain tests may error if component not defined in test
+- `jest.fn`
+  - does not do anything
+  - placeholder to avoid errors
