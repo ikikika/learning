@@ -73,5 +73,23 @@
   - typescript will require the component type to be a function
   - certain tests may error if component not defined in test
 - `jest.fn`
+
   - does not do anything
   - placeholder to avoid errors
+
+  ## Questions to ask when writing new tests
+
+  - What to render?
+    - what's the smallest component that encompasses tests?
+  - Do we need to pass any props?
+  - Do we need to wrap in provider?
+    - Does the provider get used?
+    - Is it already wrapped within the component?
+  - What should the tests go?
+    - Which file? New file needed?
+  - What to test?
+    - What's the behaviour that needs testing?
+  - How to test?
+    - What queries and events?
+  - Do we need to `await`?
+    - Is there anything async going on?
