@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
+
 import TodoList from "./components/TodoList";
 import NewTodo from "./components/NewTodo";
+import { Todo } from './todo.model';
 
-function App() {
-  const todos = [{ id: "t1", text: "Finish the course" }];
+const App: React.FC = () => {
+  const [todos, setTodos] = useState<Todo[]>([]);
 
   const todoAddHandler = (text: string) => {
-    console.log(text);
+    // using prevState here guarantees that we get all objects in our previous state
+    setTodos(prevTodos => [
+      ...prevTodos,
+      { id: Math.random().toString(), text: text }
+    ]);
   };
 
   return (
@@ -15,6 +21,6 @@ function App() {
       <TodoList items={todos} />
     </div>
   );
-}
+};
 
 export default App;
