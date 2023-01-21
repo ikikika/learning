@@ -1,8 +1,12 @@
 import express, { Request, Response, NextFunction } from 'express';
+import { json } from 'body-parser';
 
 import todoRoutes from './routes/todos';
 
 const app = express();
+
+// register and execute as middleware
+app.use(json());
 
 app.use('/todos', todoRoutes);
 

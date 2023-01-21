@@ -1,9 +1,11 @@
 import { Router } from 'express';
 
+import { createTodo } from '../controllers/todos';
+
 const router = Router();
 
 // add todos
-router.post('/');
+router.post('/', createTodo);
 
 // get all todos
 router.get('/');
