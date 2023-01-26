@@ -1,10 +1,16 @@
-import 'reflect-metadata';
-import { Methods } from './Methods';
-import { MetadataKeys } from './MetadataKeys';
+import "reflect-metadata";
+import { Methods } from "./Methods";
+import { MetadataKeys } from "./MetadataKeys";
+import { RequestHandler } from "express";
+
+// this ensures that the values passed into the function following the decorator takes in a request and response, eke request handler
+interface RouteHandlerDescriptor extends PropertyDescriptor {
+  value?: RequestHandler;
+}
 
 function routeBinder(method: string) {
-  return function(path: string) {
-    return function(target: any, key: string, desc: PropertyDescriptor) {
+  return function (path: string) {
+    return function (target: any, key: string, desc: RouteHandlerDescriptor) {
       Reflect.defineMetadata(MetadataKeys.path, path, target, key);
       Reflect.defineMetadata(MetadataKeys.method, method, target, key);
     };
