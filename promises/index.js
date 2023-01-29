@@ -25,6 +25,7 @@ function startGame(inputNumber) {
   });
 }
 
+/*
 startGame(arg)
   .then((res) => {
     // once promise is in resolved state, this callback will be called
@@ -43,3 +44,23 @@ startGame(arg)
   });
 
 // node index.js 2
+*/
+
+const log1 = () => {
+  console.log(
+    "Without await, this will log first. but with await, this will need to wait for the above function to finish"
+  );
+};
+const handler = async (inputNo) => {
+  // use try catch to catch errors
+  try {
+    const data = await startGame(inputNo);
+    console.log(data);
+    log1();
+  } catch (err) {
+    // this will show the err message passed into reject
+    console.log(err);
+  }
+};
+
+handler(arg);
