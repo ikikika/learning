@@ -9,25 +9,37 @@ const arg = process.argv[2];
 function startGame(inputNumber) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (inputNumber > 5) {
+      if (!isNaN(parseFloat(inputNumber))) {
         // function ends here if developer wants to indicate successful execution
-        resolve();
+        const message = "Is a number";
+
+        // any argument passed into resolve will become result in .then
+        // eg. we can pass in data obtained from api
+        resolve(message);
       } else {
         // function ends here if developer wants to indicate error execution
-        reject();
+        const message = "Not a number";
+        reject(message);
       }
     }, 2000);
   });
 }
 
 startGame(arg)
-  .then(() => {
+  .then((res) => {
     // once promise is in resolved state, this callback will be called
-    console.log("More than 5");
+    // res is the argument passed into resolve
+    console.log(res);
+
+    // this return statement will pass whatever data to the next .then in the chain
+    return "pass on this message to the next .then in the chain";
   })
-  .catch(() => {
+  .then((res) => {
+    console.log(res);
+  })
+  .catch((err) => {
     // once promise is in rejected state, this callback will be called
-    console.log("Less than 5");
+    console.log(err);
   });
 
 // node index.js 2
