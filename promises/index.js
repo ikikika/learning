@@ -4,7 +4,7 @@
 // promise has 3 states, unresolved, resolved, rejected
 // it is up to hte developer to define which state the promise is in
 
-const arg = process.argv[2];
+// const arg = process.argv[2];
 
 function startGame(inputNumber) {
   return new Promise((resolve, reject) => {
@@ -51,11 +51,17 @@ const log1 = () => {
     "Without await, this will log first. but with await, this will need to wait for the above function to finish"
   );
 };
-const handler = async (inputNo) => {
+const handler = async () => {
   // use try catch to catch errors
   try {
-    const data = await startGame(inputNo);
-    console.log(data);
+    const data1 = startGame(1);
+    const data2 = startGame(2);
+    const data3 = startGame(3);
+
+    // to call multiple promises simultaneously, do it like this, instead of awaiting for every promise execution
+    const all = await Promise.all([data1, data2, data3]);
+
+    console.log(all); // [ 'Is a number', 'Is a number', 'Is a number' ]
     log1();
   } catch (err) {
     // this will show the err message passed into reject
@@ -69,12 +75,14 @@ const handler = async (inputNo) => {
 // console.log("end");
 
 // this is how to run the 3 functions sequentially
-(async () => {
-  try {
-    console.log("start");
-    await handler(arg);
-    console.log("end");
-  } catch (err) {
-    console.log(err);
-  }
-})();
+// (async () => {
+//   try {
+//     console.log("start");
+//     await handler(arg);
+//     console.log("end");
+//   } catch (err) {
+//     console.log(err);
+//   }
+// })();
+
+handler();
