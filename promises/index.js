@@ -63,4 +63,18 @@ const handler = async (inputNo) => {
   }
 };
 
-handler(arg);
+// this wont run sequentially, as handler is a promise. it will log start, end, and then the handler function
+// console.log("start");
+// handler(arg);
+// console.log("end");
+
+// this is how to run the 3 functions sequentially
+(async () => {
+  try {
+    console.log("start");
+    await handler(arg);
+    console.log("end");
+  } catch (err) {
+    console.log(err);
+  }
+})();
