@@ -79,3 +79,19 @@ export const updateTour: RequestHandler = async (req, res, next) => {
     });
   }
 };
+
+export const deleteTour: RequestHandler = async (req, res, next) => {
+  try {
+    const tour = await Tour.findByIdAndDelete(req.params.id);
+
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: err,
+    });
+  }
+};
