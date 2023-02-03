@@ -36,3 +36,21 @@ export const getAllTours: RequestHandler = async (req, res, next) => {
     });
   }
 };
+
+export const getTour: RequestHandler = async (req, res, next) => {
+  try {
+    const tour = await Tour.findById(req.params.id);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        tour,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: err,
+    });
+  }
+};
