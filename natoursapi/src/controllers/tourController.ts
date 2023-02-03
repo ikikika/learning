@@ -54,3 +54,28 @@ export const getTour: RequestHandler = async (req, res, next) => {
     });
   }
 };
+
+export const updateTour: RequestHandler = async (req, res, next) => {
+  try {
+    const tour = await Tour.findByIdAndUpdate(
+      req.params.id, // id of document to be updated
+      req.body, // data to update document
+      {
+        new: true, // return the updated document
+        runValidators: true,
+      }
+    );
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        tour,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: err,
+    });
+  }
+};
