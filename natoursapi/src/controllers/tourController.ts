@@ -2,19 +2,18 @@ import { RequestHandler } from "express";
 
 import Tour from "../models/tourModel";
 
-export const createTour: RequestHandler = (req, res, next) => {
-  const testTour = new Tour({
-    name: "Forest Hike 3",
-    rating: 4.2,
-    price: 497,
-  });
+export const createTour: RequestHandler = async (req, res, next) => {
+  try {
+    const newTour = await Tour.create(req.body);
 
-  testTour
-    .save()
-    .then((data) => {
-      res.status(201).json({ message: "Tour created.", createdTour: data });
-    })
-    .catch((err) => {
-      throw new Error(err);
+    res.status(201).json({
+      status: "success",
+      data: { tour: newTour },
     });
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: err,
+    });
+  }
 };
