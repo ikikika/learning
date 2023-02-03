@@ -1,9 +1,9 @@
 import { Router } from "express";
 
-import { createTour } from "../controllers/tourController";
+import { createTour, getAllTours } from "../controllers/tourController";
 
 const router = Router();
 
-router.post("/", createTour);
+router.get("/", getAllTours).post("/", createTour);
 
 export default router;

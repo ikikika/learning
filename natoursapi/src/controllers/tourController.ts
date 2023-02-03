@@ -17,3 +17,22 @@ export const createTour: RequestHandler = async (req, res, next) => {
     });
   }
 };
+
+export const getAllTours: RequestHandler = async (req, res, next) => {
+  try {
+    const tours = await Tour.find();
+
+    res.status(200).json({
+      status: "success",
+      results: tours.length,
+      data: {
+        tours,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: err,
+    });
+  }
+};
