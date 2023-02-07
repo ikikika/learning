@@ -1,7 +1,7 @@
 const fs = require("fs");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const Tour = require("../dist/models/tourModel.js");
+const Tour = require("./TourModel");
 
 dotenv.config();
 
@@ -20,7 +20,7 @@ const tours = JSON.parse(
 // IMPORT DATA INTO DB
 const importData = async () => {
   try {
-    await Tour.default.create(tours);
+    await Tour.create(tours);
     console.log("Data successfully loaded!");
   } catch (err) {
     console.log(err);
@@ -31,7 +31,7 @@ const importData = async () => {
 // DELETE ALL DATA FROM DB
 const deleteData = async () => {
   try {
-    await Tour.default.deleteMany();
+    await Tour.deleteMany();
     console.log("Data successfully deleted!");
   } catch (err) {
     console.log(err);
