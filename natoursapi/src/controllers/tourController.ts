@@ -20,8 +20,20 @@ export const createTour: RequestHandler = async (req, res, next) => {
 
 export const getAllTours: RequestHandler = async (req, res, next) => {
   try {
-    const tours = await Tour.find();
+    // BUILD QUERY
+    // req.query will get parameters from the url, eg ...&sort=1&difficulty=2
+    // destructuring, create a new object with all the key value pairs in req.query
+    const queryObj = { ...req.query };
+    const excludedFields = ["page", "sort", "limit", "fields"];
+    // remove those fields from queryObj
+    excludedFields.forEach((el) => delete queryObj[el]);
 
+    const query = Tour.find(queryObj);
+
+    // EXECUTE QUERY
+    const tours = await query;
+
+    // SEND RESPONSE
     res.status(200).json({
       status: "success",
       results: tours.length,
