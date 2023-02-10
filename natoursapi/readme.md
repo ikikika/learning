@@ -1,11 +1,13 @@
-## Filtering
+## Better API
+
+### Filtering
 
 1. mongoose has built in filtering functions
 1. passed in as query parameters
    eg. `?&difficulty=easy&duration=2`
    interpreted by mongoose as `{ difficulty: 'easy', duration: '2' }`
 
-## ADvanced filtering
+### Advanced filtering
 
 1. its also possible to set a query range
    eg. `?difficulty=easy&duration[gte]=2`
@@ -25,3 +27,8 @@
 - end with `g` to denote that each string might occur more than once `/\b(gte|gt|lte|lt)\b/g`
 
 1. should be documented if api is live
+
+### Sorting
+
+- `?sort=price` for ascending
+- `?sort=-price` for descending

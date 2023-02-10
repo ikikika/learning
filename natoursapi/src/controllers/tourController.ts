@@ -21,6 +21,7 @@ export const createTour: RequestHandler = async (req, res, next) => {
 export const getAllTours: RequestHandler = async (req, res, next) => {
   try {
     // BUILD QUERY
+    // 1A. BASIC FILTERING
     // req.query will get parameters from the url, eg ...&sort=1&difficulty=2
     // mongoose has built-in filtering function
     // destructuring, create a new object with all the key value pairs in req.query
@@ -30,11 +31,16 @@ export const getAllTours: RequestHandler = async (req, res, next) => {
     // remove those fields from queryObj
     excludedFields.forEach((el) => delete queryObj[el]);
 
-    // advanced filtering
+    // 1B. ADVANCED FILTERING
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
-    const query = Tour.find(JSON.parse(queryStr));
+    let query = Tour.find(JSON.parse(queryStr));
+
+    // 2.SORTING
+    if (req.query.sort) {
+      query = query.sort(req.query.sort);
+    }
 
     // EXECUTE QUERY
     const tours = await query;
