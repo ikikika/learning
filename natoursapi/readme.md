@@ -43,3 +43,5 @@
 - `?fields=name,duration,difficulty,price`
 - use `-` to exclude, eg `?fields=-name,-duration` will return results without `name` and `duration`
 - replace comma with space to be passed into query
+
+- `select: false` can be set from schema to permanently remove from all queries
