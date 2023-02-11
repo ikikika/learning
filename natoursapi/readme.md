@@ -1,47 +1,52 @@
 ## Better API
 
-### Filtering
+### 1A. Filtering
 
 1. mongoose has built in filtering functions
 1. passed in as query parameters
    eg. `?&difficulty=easy&duration=2`
    interpreted by mongoose as `{ difficulty: 'easy', duration: '2' }`
 
-### Advanced filtering
+### 1B. Advanced filtering
 
-1. its also possible to set a query range
-   eg. `?difficulty=easy&duration[gte]=2`
-   interpreted by mongoose as `{ difficulty: 'easy', duration: { gte: '5' } }`
-   add `$` to `gte` to make it an operator
+- its also possible to set a query range
+  eg. `?difficulty=easy&duration[gte]=2`
+  interpreted by mongoose as `{ difficulty: 'easy', duration: { gte: '5' } }`
+  add `$` to `gte` to make it an operator
 
-   - `gte`: greater than or equal
-   - `gt`: greater than
-   - `lte`: less than or equal
-   - `lt`: less than
+  - `gte`: greater than or equal
+  - `gt`: greater than
+  - `lte`: less than or equal
+  - `lt`: less than
 
-1. regex: `/\b(gte|gt|lte|lt)\b/g`
+- regex: `/\b(gte|gt|lte|lt)\b/g`
 
-- start with `//`
-- put in strings to identify `/(get|gt|lte|lt)/`
-- enclose with `\b` to denote we only want to match exactly those strings and not if they are part of anotehr word `/\b(get|gt|lte|lt)\b/`
-- end with `g` to denote that each string might occur more than once `/\b(gte|gt|lte|lt)\b/g`
+  - start with `//`
+  - put in strings to identify `/(get|gt|lte|lt)/`
+  - enclose with `\b` to denote we only want to match exactly those strings and not if they are part of anotehr word `/\b(get|gt|lte|lt)\b/`
+  - end with `g` to denote that each string might occur more than once `/\b(gte|gt|lte|lt)\b/g`
 
-1. should be documented if api is live
+- should be documented if api is live
 
-### Sorting
+### 2A. Sorting
 
 - `?sort=price` for ascending
 - `?sort=-price` for descending
 
-### Sorting by multiple keys
+### 2B. Sorting by multiple keys
 
 - `?sort=price,ratings`
 - must be formatted to `price ratings` to be passed into query
 
-### Limiting fields
+### 3. Limiting fields
 
 - `?fields=name,duration,difficulty,price`
 - use `-` to exclude, eg `?fields=-name,-duration` will return results without `name` and `duration`
 - replace comma with space to be passed into query
 
 - `select: false` can be set from schema to permanently remove from all queries
+
+### 4. Pagination
+
+- `?page=2limit=10`
+- need to calculate how many results to skip and how many results to display
