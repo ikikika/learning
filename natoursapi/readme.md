@@ -33,7 +33,13 @@
 - `?sort=price` for ascending
 - `?sort=-price` for descending
 
-### SOrting by multiple keys
+### Sorting by multiple keys
 
 - `?sort=price,ratings`
 - must be formatted to `price ratings` to be passed into query
+
+### Limiting fields
+
+- `?fields=name,duration,difficulty,price`
+- use `-` to exclude, eg `?fields=-name,-duration` will return results without `name` and `duration`
+- replace comma with space to be passed into query
