@@ -6,9 +6,12 @@ import {
   getAllTours,
   getTour,
   updateTour,
+  aliasTopTours,
 } from "../controllers/tourController";
 
 const router = Router();
+
+router.route("/top-5-cheapest").get(aliasTopTours, getAllTours);
 
 router.route("/").get(getAllTours).post(createTour);
 

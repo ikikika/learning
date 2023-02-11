@@ -50,3 +50,8 @@
 
 - `?page=2limit=10`
 - need to calculate how many results to skip and how many results to display
+
+### 5. Alias
+
+- use middleware to replace some certain queries for better user experience
+- eg `/top-5-cheapest` can be used to replace `?limit=5&sort=-ratingAverage,price`
