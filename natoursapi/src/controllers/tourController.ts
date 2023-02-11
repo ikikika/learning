@@ -38,8 +38,12 @@ export const getAllTours: RequestHandler = async (req, res, next) => {
     let query = Tour.find(JSON.parse(queryStr));
 
     // 2.SORTING
-    if (req.query.sort) {
-      query = query.sort(req.query.sort);
+    if (req.query.sort && typeof req.query.sort === "string") {
+      const sortBy = req.query.sort.split(",").join(" ");
+      console.log(req.query.sort);
+      query = query.sort(sortBy);
+    } else {
+      query.sort("-createdAt");
     }
 
     // EXECUTE QUERY

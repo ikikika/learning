@@ -32,3 +32,8 @@
 
 - `?sort=price` for ascending
 - `?sort=-price` for descending
+
+### SOrting by multiple keys
+
+- `?sort=price,ratings`
+- must be formatted to `price ratings` to be passed into query
