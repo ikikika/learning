@@ -66,3 +66,13 @@
 
 - `$unwind`: deconstruct an array field from the input document and then output one document for each element of the array
   eg, if we want to break down data into months and see which month has the highest/lowest count
+
+## Virtual Properties
+
+- fields that we can define on our schema but will not be saved into the database
+- make a lot of sense for fields that can be derived from one another.
+  eg, a conversion from miles to kilometers.
+- must use regular function because we need `this` keyword
+- cannot use virtual properties in a query because they are not part of the database
+- we can do this in controller but thats not good practie as we want to keep business logic separate from application logic
+- fat models: as much business logic as we can offload to them, thin coltrollers: as little business logic as possible
