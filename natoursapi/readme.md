@@ -63,3 +63,6 @@
 - https://www.mongodb.com/docs/manual/aggregation/
 - https://www.mongodb.com/docs/manual/reference/operator/query/
 - https://www.mongodb.com/docs/manual/reference/operator/aggregation-pipeline/
+
+- `$unwind`: deconstruct an array field from the input document and then output one document for each element of the array
+  eg, if we want to break down data into months and see which month has the highest/lowest count
