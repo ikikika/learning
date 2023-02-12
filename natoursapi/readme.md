@@ -55,3 +55,11 @@
 
 - use middleware to replace some certain queries for better user experience
 - eg `/top-5-cheapest` can be used to replace `?limit=5&sort=-ratingAverage,price`
+
+## Aggregation
+
+- Define a pipeline that all documents from a certain collection go through where they are processed step by step to transform them into aggregated results
+- Eg, aggregation pipelines can be used to calculate averages, maximum, minimum values, distances, etc.
+- https://www.mongodb.com/docs/manual/aggregation/
+- https://www.mongodb.com/docs/manual/reference/operator/query/
+- https://www.mongodb.com/docs/manual/reference/operator/aggregation-pipeline/
