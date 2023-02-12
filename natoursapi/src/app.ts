@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import * as dotenv from "dotenv";
-import mongoose from "mongoose";
+import { connect } from "mongoose";
 import { json } from "body-parser";
 import tourRoutes from "./routes/tourRoutes";
 
@@ -13,7 +13,7 @@ const DB = process.env.DATABASE!.replace(
   process.env.DATABASE_PASSWORD!
 );
 
-mongoose.connect(DB, {}).then(() => console.log("DB connection successful"));
+connect(DB, {}).then(() => console.log("DB connection successful"));
 
 // register and execute as middleware
 app.use(json());

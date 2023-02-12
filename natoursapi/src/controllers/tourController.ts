@@ -1,6 +1,7 @@
-import { RequestHandler } from "express";
+import { Request, RequestHandler } from "express";
 
 import Tour from "../models/tourModel";
+import { Query } from "mongoose";
 
 export const aliasTopTours: RequestHandler = (req, res, next) => {
   req.query.limit = "5";
@@ -25,8 +26,33 @@ export const createTour: RequestHandler = async (req, res, next) => {
   }
 };
 
+class APIFeatures {
+  query: Query<any, any>;
+  queryString: Record<string, any>;
+  constructor(query: Query<any, any>, queryString: object) {
+    this.query = query;
+    this.queryString = queryString;
+  }
+
+  filter() {
+    const queryObj = { ...this.queryString };
+    const excludedFields = ["page", "sort", "limit", "fields"];
+
+    excludedFields.forEach((el) => queryObj[el]);
+
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+
+    // rplace: // let query = Tour.find(JSON.parse(queryStr));
+    this.query.find(JSON.parse(queryStr));
+
+    return this;
+  }
+}
+
 export const getAllTours: RequestHandler = async (req, res, next) => {
   try {
+    /*
     // BUILD QUERY
     // 1A. BASIC FILTERING
     // req.query will get parameters from the url, eg ...&sort=1&difficulty=2
@@ -35,7 +61,7 @@ export const getAllTours: RequestHandler = async (req, res, next) => {
     // basic filtering
     const queryObj = { ...req.query };
     const excludedFields = ["page", "sort", "limit", "fields"];
-    // remove those fields from queryObj
+    // // remove those fields from queryObj
     excludedFields.forEach((el) => delete queryObj[el]);
 
     // 1B. ADVANCED FILTERING
@@ -47,7 +73,6 @@ export const getAllTours: RequestHandler = async (req, res, next) => {
     // 2.SORTING
     if (req.query.sort && typeof req.query.sort === "string") {
       const sortBy = req.query.sort.split(",").join(" ");
-      console.log(req.query.sort);
       query = query.sort(sortBy);
     } else {
       query.sort("-createdAt");
@@ -73,9 +98,10 @@ export const getAllTours: RequestHandler = async (req, res, next) => {
         throw new Error("This page does not exist");
       }
     }
-
+    */
     // EXECUTE QUERY
-    const tours = await query;
+    const features = new APIFeatures(Tour.find(), req.query).filter();
+    const tours = await features.query;
 
     // SEND RESPONSE
     res.status(200).json({
