@@ -76,3 +76,18 @@
 - cannot use virtual properties in a query because they are not part of the database
 - we can do this in controller but thats not good practie as we want to keep business logic separate from application logic
 - fat models: as much business logic as we can offload to them, thin coltrollers: as little business logic as possible
+
+## Middleware
+
+- we can use Mongoose middleware to make something happen between two events.
+- for eg, each time a new document is saved to the database, we can run a function between the save command is issued and the actual saving of the document, or also after the actual saving.
+- also called pre and post hooks
+- 4 types: document, query, aggregate, and model middleware.
+
+### Document Middleware
+
+- middleware that can act on the currently processed document.
+- define a middleware on the schema,
+- `.pre` ONLY runs before `.save()` and `.create()`. not `insert`, etc
+- end with `next()` to move on to the next middleware function
+- `post` middleware do not have access toi `this`, but have access to `doc`, which is the saved document

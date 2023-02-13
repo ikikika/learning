@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import slugify from "slugify";
 
 const tourSchema = new Schema(
   {
@@ -75,6 +76,24 @@ const tourSchema = new Schema(
 tourSchema.virtual("durationWeeks").get(function () {
   return this.duration / 7;
 });
+
+// DOCUMENT MIDDLEWARE: runs before .save() and .create()
+// this is also called a pre-save hook
+tourSchema.pre("save", function (next) {
+  // in this example, we are using the name and slugify function to generate a slug for the document just before saving to database
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+// tourSchema.pre('save', function(next) {
+//   console.log('Will save document...');
+//   next();
+// });
+
+// tourSchema.post('save', function(doc, next) {
+//   console.log(doc);
+//   next();
+// });ß
 
 const Tour = model("Tour", tourSchema);
 
