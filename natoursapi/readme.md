@@ -91,3 +91,8 @@
 - `.pre` ONLY runs before `.save()` and `.create()`. not `insert`, etc
 - end with `next()` to move on to the next middleware function
 - `post` middleware do not have access toi `this`, but have access to `doc`, which is the saved document
+
+### Query Middlware
+
+- pre-find hook, a middleware that is gonna run before any find query is executed.
+- can be used to find out how long a query took to run

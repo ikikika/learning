@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Query, Schema, model } from "mongoose";
 import slugify from "slugify";
 
 const tourSchema = new Schema(
@@ -65,6 +65,10 @@ const tourSchema = new Schema(
       select: false, // exclude from results
     },
     startDates: [Date],
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -93,7 +97,27 @@ tourSchema.pre("save", function (next) {
 // tourSchema.post('save', function(doc, next) {
 //   console.log(doc);
 //   next();
-// });ß
+// });
+
+interface thisProp extends Query<any, any, {}, any> {
+  start: number;
+}
+
+// QUERY MIDDLEWARE
+// tourSchema.pre('find', function(next) {
+tourSchema.pre(/^find/, function (this: thisProp, next) {
+  // this will affect ALL find queries, outputting only the tours that satisfy this condition
+  this.find({ secretTour: { $ne: true } });
+
+  // used to find how long a query took to run
+  this.start = Date.now();
+  next();
+});
+
+tourSchema.post(/^find/, function (this: thisProp, docs, next) {
+  console.log(`Query took ${Date.now() - this.start} milliseconds!`);
+  next();
+});
 
 const Tour = model("Tour", tourSchema);
 
