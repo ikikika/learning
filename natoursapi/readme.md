@@ -96,3 +96,8 @@
 
 - pre-find hook, a middleware that is gonna run before any find query is executed.
 - can be used to find out how long a query took to run
+
+### Aggregation Middleware
+
+- allows us to add hooks before or after an aggregation happens
+- eg, we dont want to count secret tours in our aggregation stats

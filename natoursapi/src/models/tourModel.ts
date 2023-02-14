@@ -119,6 +119,17 @@ tourSchema.post(/^find/, function (this: thisProp, docs, next) {
   next();
 });
 
+// AGGREGATION MIDDLEWARE
+tourSchema.pre("aggregate", function (next) {
+  // this will apply to all aggregation pipelines
+  // this.pipeline is just an array
+  // to add a stage to the start of the array, use unshift
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+
+  console.log(this.pipeline());
+  next();
+});
+
 const Tour = model("Tour", tourSchema);
 
 export default Tour;
