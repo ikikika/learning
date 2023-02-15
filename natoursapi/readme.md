@@ -105,3 +105,7 @@
 ## Validation
 
 - Model is good place to do validation: fat model, thin controller
+- built in validators
+- custom validators
+  - validator function `this` keyword in model only works when creating new document, not when updating existing document
+- also can use package like `validator` by chriso

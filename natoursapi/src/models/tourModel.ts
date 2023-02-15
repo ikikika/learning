@@ -1,5 +1,10 @@
 import { Query, Schema, model } from "mongoose";
 import slugify from "slugify";
+// import validator from "validator";
+
+interface PriceDiscountProps extends Function {
+  price: number;
+}
 
 const tourSchema = new Schema(
   {
@@ -10,6 +15,7 @@ const tourSchema = new Schema(
       trim: true, // only for strings
       maxlength: [40, "A tour name must have less or equal then 40 characters"], // validator, for strings
       minlength: [10, "A tour name must have more or equal then 10 characters"], // validator
+      // validate: [validator.isAlpha, "Tour name must only contain characters"],
     },
     slug: String,
     duration: {
@@ -44,6 +50,16 @@ const tourSchema = new Schema(
     },
     priceDiscount: {
       type: Number,
+      validate: {
+        // custom validator
+        validator: function (this: PriceDiscountProps, val: number) {
+          // `this` only points to current doc on NEW document creation. not going to work on update
+          // in this situation, we only need `this` because we are comparing with another key
+          return val < this.price;
+        },
+        // {VALUE} is native to mongoose, have access to input value
+        message: "Discount price ({VALUE}) should be below regular price",
+      },
     },
     summary: {
       type: String,
