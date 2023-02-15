@@ -76,7 +76,7 @@ export const updateTour: RequestHandler = async (req, res, next) => {
       req.body, // data to update document
       {
         new: true, // return the updated document
-        runValidators: true,
+        runValidators: true, // if set to false, mongoose will not check. not a good practice to set to false.
       }
     );
 
@@ -111,7 +111,7 @@ export const deleteTour: RequestHandler = async (req, res, next) => {
 };
 
 // Aggregation
-export const getTourStats = async (req, res) => {
+export const getTourStats: RequestHandler = async (req, res) => {
   try {
     const stats = await Tour.aggregate([
       {
@@ -150,9 +150,9 @@ export const getTourStats = async (req, res) => {
   }
 };
 
-export const getMonthlyPlan = async (req, res) => {
+export const getMonthlyPlan: RequestHandler = async (req, res) => {
   try {
-    const year = req.params.year * 1; // 2021
+    const year = +req.params.year * 1; // 2021
 
     const plan = await Tour.aggregate([
       {

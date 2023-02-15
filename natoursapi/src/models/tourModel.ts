@@ -5,34 +5,34 @@ const tourSchema = new Schema(
   {
     name: {
       type: String,
-      required: [true, "A tour must have a name"],
+      required: [true, "A tour must have a name"], // validator
       unique: true,
       trim: true, // only for strings
-      maxlength: [40, "A tour name must have less or equal then 40 characters"],
-      minlength: [10, "A tour name must have more or equal then 10 characters"],
+      maxlength: [40, "A tour name must have less or equal then 40 characters"], // validator, for strings
+      minlength: [10, "A tour name must have more or equal then 10 characters"], // validator
     },
     slug: String,
     duration: {
       type: Number,
-      required: [true, "A tour must have a duration"],
+      required: [true, "A tour must have a duration"], // validator
     },
     maxGroupSize: {
       type: Number,
-      required: [true, "A tour must have a group size"],
+      required: [true, "A tour must have a group size"], // validator
     },
     difficulty: {
       type: String,
       required: [true, "A tour must have a difficulty"],
       enum: {
-        values: ["easy", "medium", "difficult"],
+        values: ["easy", "medium", "difficult"], // validator, for strings
         message: "Difficulty is either: easy, medium, difficult",
       },
     },
     ratingsAverage: {
       type: Number,
       default: 4.5,
-      min: [1, "Rating must be above 1.0"],
-      max: [5, "Rating must be below 5.0"],
+      min: [1, "Rating must be above 1.0"], // validator, for strings or dates
+      max: [5, "Rating must be below 5.0"], // validator
     },
     ratingsQuantity: {
       type: Number,
@@ -40,7 +40,7 @@ const tourSchema = new Schema(
     },
     price: {
       type: Number,
-      required: [true, "A tour must have a price"],
+      required: [true, "A tour must have a price"], // validator
     },
     priceDiscount: {
       type: Number,
@@ -48,7 +48,7 @@ const tourSchema = new Schema(
     summary: {
       type: String,
       trim: true,
-      required: [true, "A tour must have a description"],
+      required: [true, "A tour must have a description"], // validator
     },
     description: {
       type: String,
@@ -56,7 +56,7 @@ const tourSchema = new Schema(
     },
     imageCover: {
       type: String,
-      required: [true, "A tour must have a cover image"],
+      required: [true, "A tour must have a cover image"], // validator
     },
     images: [String],
     createdAt: {

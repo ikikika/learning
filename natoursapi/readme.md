@@ -101,3 +101,7 @@
 
 - allows us to add hooks before or after an aggregation happens
 - eg, we dont want to count secret tours in our aggregation stats
+
+## Validation
+
+- Model is good place to do validation: fat model, thin controller
