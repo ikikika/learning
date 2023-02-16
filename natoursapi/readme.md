@@ -109,3 +109,10 @@
 - custom validators
   - validator function `this` keyword in model only works when creating new document, not when updating existing document
 - also can use package like `validator` by chriso
+
+## Debugging
+
+- use ndb tool
+- previosuly we need to use console logs
+- can set breakpoints in the code to freeze the code while its running to see whats wrong
+- once code hit breakpoint, we can step forward to identify line that contains error
