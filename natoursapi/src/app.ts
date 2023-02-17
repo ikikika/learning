@@ -18,7 +18,7 @@ connect(DB, {}).then(() => console.log("DB connection successful"));
 // register and execute as middleware
 app.use(json());
 
-app.use("/tours", tourRoutes);
+app.use("/api/v1/tours", tourRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`server running on port ${process.env.PORT}`);
