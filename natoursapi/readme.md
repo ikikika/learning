@@ -116,3 +116,7 @@
 - previosuly we need to use console logs
 - can set breakpoints in the code to freeze the code while its running to see whats wrong
 - once code hit breakpoint, we can step forward to identify line that contains error
+
+## Error Handling
+
+- unhandled routes

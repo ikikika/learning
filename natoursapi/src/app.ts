@@ -20,6 +20,14 @@ app.use(json());
 
 app.use("/api/v1/tours", tourRoutes);
 
+// capture all other routes. must be below all defined routes
+app.all("*", (req, res, next) => {
+  res.status(404).json({
+    status: "fail",
+    message: `Can't find ${req.originalUrl} on this server!`,
+  });
+});
+
 app.listen(process.env.PORT, () => {
   console.log(`server running on port ${process.env.PORT}`);
 });
