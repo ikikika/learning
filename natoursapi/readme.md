@@ -120,3 +120,4 @@
 ## Error Handling
 
 - unhandled routes
+- implement a global error handlign middleware
