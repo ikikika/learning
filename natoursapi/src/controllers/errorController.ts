@@ -1,8 +1,6 @@
 import { ErrorRequestHandler } from "express";
 import { AppError } from "../utils/appError";
 
-
-
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   // console.log(err.stack);
 
@@ -11,7 +9,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
 
   res.status(err.statusCode).json({
     status: err.status,
-    message: err.message
+    message: err.message,
   });
 };
 
