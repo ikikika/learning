@@ -120,4 +120,5 @@
 ## Error Handling
 
 - unhandled routes
-- implement a global error handlign middleware
+- implement a global error handling middleware
+- In production, dun send too much error details to client
