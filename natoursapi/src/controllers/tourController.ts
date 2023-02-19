@@ -46,7 +46,7 @@ export const createTour: RequestHandler = catchAsync(async (req, res, next) => {
 export const getTour: RequestHandler = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id, (err: any) => {
     if (err) {
-      return next(new AppError("No tour found with that ID", 404, err));
+      return next(new AppError("", 404, err));
     }
   }).clone();
 
@@ -68,7 +68,7 @@ export const updateTour: RequestHandler = catchAsync(async (req, res, next) => {
     },
     (err: any) => {
       if (err) {
-        return next(new AppError("No tour found with that ID", 404, err));
+        return next(new AppError("", 404, err));
       }
     }
   ).clone();

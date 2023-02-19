@@ -6,6 +6,7 @@ export class AppError extends Error {
   value?: string;
   code?: string | number;
   errmsg?: string;
+  errors?: { [key: string]: any };
 
   constructor(message: string, statusCode: number | string, err?: any) {
     super(message); // call parent constructor, in this case, its passign the mnessage to the message property of the parent class
@@ -21,6 +22,7 @@ export class AppError extends Error {
       this.value = err.value;
       this.code = err.code;
       this.errmsg = err.errmsg ?? "";
+      this.errors = err.errors ?? {};
     }
 
     Error.captureStackTrace(this, this.constructor);

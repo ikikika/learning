@@ -122,3 +122,6 @@
 - unhandled routes
 - implement a global error handling middleware
 - In production, dun send too much error details to client
+- in error controller, we can implement more features:
+  - rank errors in terms of importance
+  - email administrators should error be encountered, etc
