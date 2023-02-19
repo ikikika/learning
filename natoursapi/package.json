@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "ts": "npx tsc -w",
-    "start": "nodemon dist/app.js",
-    "start:prod": "NODE_ENV=production nodemon dist/app.js",
-    "debug": "ndb dist/app.js"
+    "start": "nodemon dist/server.js",
+    "start:prod": "NODE_ENV=production nodemon dist/server.js",
+    "debug": "ndb dist/server.js"
   },
   "author": "",
   "license": "ISC",
