@@ -2,8 +2,14 @@ import { ErrorRequestHandler } from "express";
 import { AppError } from "../utils/appError";
 
 const handleCastErrorDB = (err: any) => {
-  console.log({ handleCastErrorDB: err });
   const message = `Invalid ${err.path}: ${err.value}.`;
+  return new AppError(message, 400);
+};
+
+const handleDuplicateFieldsDB = (err: any) => {
+  const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
+
+  const message = `Duplicate field value: ${value}. Please use another value!`;
   return new AppError(message, 400);
 };
 
@@ -44,6 +50,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     let error = Object.create(err);
 
     if (error.name === "CastError") error = handleCastErrorDB(error);
+    if (error.code === 11000) error = handleDuplicateFieldsDB(error);
 
     sendErrorProd(error, res);
   }

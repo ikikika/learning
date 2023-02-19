@@ -68,7 +68,7 @@ export const updateTour: RequestHandler = catchAsync(async (req, res, next) => {
     },
     (err: any) => {
       if (err) {
-        return next(new AppError("No tour found with that ID", 404));
+        return next(new AppError("No tour found with that ID", 404, err));
       }
     }
   ).clone();
