@@ -16,7 +16,6 @@ const handleValidationErrorDB = (err: any) => {
   let errorKeys = "";
 
   Object.values(err.errors).map((el: any) => {
-    console.log(el.properties);
     errorKeys = errorKeys + ` ${el.properties.message}.`;
   });
 
@@ -56,6 +55,9 @@ const sendErrorProd = (err: any, res: any) => {
 };
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || "error";
+
   if (process.env.NODE_ENV === "development") {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === "production") {
