@@ -125,3 +125,8 @@
 - in error controller, we can implement more features:
   - rank errors in terms of importance
   - email administrators should error be encountered, etc
+
+## Authentication
+
+- JWT secret shoiuld be 32 characters long
+- JWT expires time can be 90d, 10h, 10h, 5m, 3s
