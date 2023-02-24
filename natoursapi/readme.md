@@ -130,3 +130,8 @@
 
 - JWT secret shoiuld be 32 characters long
 - JWT expires time can be 90d, 10h, 10h, 5m, 3s
+- instance method: a method taht is availabel on all documents of the collection
+
+- Typing for user
+  - https://medium.com/@agentwhs/complete-guide-for-typescript-for-mongoose-for-node-js-8cc0a7e470c1
+  - https://stackoverflow.com/questions/42448372/typescript-mongoose-static-model-method-property-does-not-exist-on-type

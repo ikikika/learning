@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
 
-import { UserProps } from "../types/User.types";
+import { UserDocument, UserModel } from "../types/User.types";
 
 interface PasswordProps {
   password: string;
@@ -25,6 +25,7 @@ const userSchema = new Schema({
     type: String,
     required: [true, "Please provide a password"],
     minlength: 8,
+    select: false, // never show the password in any output
   },
   passwordConfirm: {
     type: String,
@@ -41,12 +42,14 @@ const userSchema = new Schema({
 });
 
 // pre save is the moment when we erceive the data and before saving to the database
-userSchema.pre("save", async function (this: UserProps, next) {
+userSchema.pre("save", async function (this: UserDocument, next) {
   // Only run this function if password was actually modified
   if (!this.isModified("password")) return next();
 
   // Hash the password with cost of 12
-  this.password = await bcrypt.hash(this.password, 12);
+  if (this.password) {
+    this.password = await bcrypt.hash(this.password, 12);
+  }
 
   // Delete passwordConfirm field
   // we only need it for validation
@@ -55,6 +58,15 @@ userSchema.pre("save", async function (this: UserProps, next) {
   next();
 });
 
-const User = model("User", userSchema);
+// instance method: a method taht is availabel on all documents of the collection
+userSchema.methods.comparePassword = async function (
+  candidatePassword: string,
+  userPassword: string
+) {
+  // this.password not availabel because select for password is false
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+const User: UserModel = model<UserDocument, UserModel>("User", userSchema);
 
 export default User;
