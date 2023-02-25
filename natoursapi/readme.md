@@ -135,3 +135,7 @@
 - Typing for user
   - https://medium.com/@agentwhs/complete-guide-for-typescript-for-mongoose-for-node-js-8cc0a7e470c1
   - https://stackoverflow.com/questions/42448372/typescript-mongoose-static-model-method-property-does-not-exist-on-type
+
+### Protecting routes
+
+- use a middleware on route

@@ -1,16 +1,22 @@
 import { RequestHandler } from "express";
+// import { promisify } from "util";
 import User from "../models/userModel";
 import catchAsync from "../utils/catchAsync";
-import jwt from "jsonwebtoken";
+import { sign, verify } from "jsonwebtoken";
 import { AppError } from "../utils/appError";
 import { Types } from "mongoose";
-import { UserDocument } from "../types/User.types";
 
 const signToken = (id: Types.ObjectId) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET!, {
+  return sign({ id }, process.env.JWT_SECRET!, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
+
+interface JwtType {
+  id?: string;
+  iat?: number;
+  exp?: number;
+}
 
 export const signup: RequestHandler = catchAsync(async (req, res, next) => {
   // only store these fields, not all fields cos users may spoof it
@@ -53,4 +59,48 @@ export const login = catchAsync(async (req, res, next) => {
     status: "succcess",
     token,
   });
+});
+
+export const protect = catchAsync(async (req, res, next) => {
+  // 1) Getting token and check of it's there
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+  if (!token) {
+    return next(
+      new AppError("You are not logged in! Please log in to get access.", 401)
+    );
+  }
+  // 2) Verification token
+  // // -- doesnt work ---
+  // // verify is an async function
+  // // promisify makes the function return a promise
+  // // promisify(verify)  <=>  verify now is the promise version of verify, next bracket are the arguments of verify
+  // const decoded = await promisify(verify)(token, process.env.SECRET_KEY);
+  // // ---------------
+
+  const jwtVerifyPromisified = (token: string, secret: string) => {
+    return new Promise<JwtType>((resolve, reject) => {
+      verify(token, secret, (err, decoded) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (typeof decoded !== "string" && typeof decoded !== "undefined") {
+            resolve(decoded);
+          }
+        }
+      });
+    });
+  };
+
+  const decoded = await jwtVerifyPromisified(token, process.env.JWT_SECRET!);
+
+  // // 3) Check if user still exists
+  const currentUser = await User.findById(decoded!.id);
+
+  next();
 });
