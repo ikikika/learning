@@ -13,6 +13,7 @@ interface UserBaseDocument extends User, Document {
     candidatePassword: string,
     userPassword: string | undefined
   ): boolean;
+  changedPasswordAfter(JWTTimestamp: number): boolean;
 }
 
 // for strong typing if model has dependencies on other models

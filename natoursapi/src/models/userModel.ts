@@ -58,13 +58,23 @@ userSchema.pre("save", async function (this: UserDocument, next) {
   next();
 });
 
-// instance method: a method taht is availabel on all documents of the collection
+// instance method: a method that is availabel on all documents of the collection
 userSchema.methods.comparePassword = async function (
   candidatePassword: string,
   userPassword: string
 ) {
   // this.password not availabel because select for password is false
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = this.passwordChangedAt.getTime() / 1000;
+    return JWTTimestamp < changedTimestamp;
+  }
+
+  // False means NOT changed
+  return false;
 };
 
 const User: UserModel = model<UserDocument, UserModel>("User", userSchema);
