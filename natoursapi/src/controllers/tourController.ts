@@ -82,15 +82,19 @@ export const updateTour: RequestHandler = catchAsync(async (req, res, next) => {
 });
 
 export const deleteTour: RequestHandler = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndDelete(req.params.id, (err: any) => {
-    if (err) {
-      return next(new AppError("No tour found with that ID", 404));
+  const tour = await Tour.findByIdAndDelete(
+    req.params.id,
+    (err: any, doc: any) => {
+      if (err) {
+        return next(new AppError("No tour found with that ID", 404, err));
+      }
+      return doc;
     }
-  }).clone();
+  ).clone();
 
-  res.status(204).json({
+  res.status(200).json({
     status: "success",
-    data: null,
+    data: { message: "Tour deleted" },
   });
 });
 

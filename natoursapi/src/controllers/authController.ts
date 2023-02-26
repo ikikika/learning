@@ -120,3 +120,17 @@ export const protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+// pass arguments into middleware, use a wrappper function
+export const restrictTo = (...roles: string[]): RequestHandler => {
+  return (req, res, next) => {
+    // roles ['admin', 'lead-guide']. role='user'
+    // we are able to use req.user.role here because in the previous `protect` middleware, we set `req.user = currentUser;`
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError("You do not have permission to perform this action", 403)
+      );
+    }
+    next();
+  };
+};
