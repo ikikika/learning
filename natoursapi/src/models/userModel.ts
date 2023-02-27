@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 import { UserDocument, UserModel } from "../types/User.types";
 
@@ -44,6 +45,8 @@ const userSchema = new Schema({
     },
   },
   passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
 });
 
 // pre save is the moment when we erceive the data and before saving to the database
@@ -80,6 +83,21 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
 
   // False means NOT changed
   return false;
+};
+
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  console.log({ resetToken }, this.passwordResetToken);
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 
 const User: UserModel = model<UserDocument, UserModel>("User", userSchema);

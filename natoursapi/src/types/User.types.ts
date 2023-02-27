@@ -15,6 +15,7 @@ interface UserBaseDocument extends User, Document {
     userPassword: string | undefined
   ): boolean;
   changedPasswordAfter(JWTTimestamp: number): boolean;
+  createPasswordResetToken(): string;
 }
 
 // for strong typing if model has dependencies on other models
