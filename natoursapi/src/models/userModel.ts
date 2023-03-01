@@ -44,7 +44,7 @@ const userSchema = new Schema({
       message: "Passwords are not the same!",
     },
   },
-  passwordChangedAt: Date,
+  passwordChangedAt: Number,
   passwordResetToken: String,
   passwordResetExpires: Date,
 });
@@ -63,6 +63,13 @@ userSchema.pre("save", async function (this: UserDocument, next) {
   // we only need it for validation
   // no need to persist it to database
   this.passwordConfirm = undefined;
+  next();
+});
+
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next(); // exit this middleware if these condition satisfied
+
+  this.passwordChangedAt = Date.now() - 1000; // else this line will execute
   next();
 });
 
