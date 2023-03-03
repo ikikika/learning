@@ -44,7 +44,7 @@ const userSchema = new Schema({
       message: "Passwords are not the same!",
     },
   },
-  passwordChangedAt: Number,
+  passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
 });
@@ -69,7 +69,7 @@ userSchema.pre("save", async function (this: UserDocument, next) {
 userSchema.pre("save", function (next) {
   if (!this.isModified("password") || this.isNew) return next(); // exit this middleware if these condition satisfied
 
-  this.passwordChangedAt = Date.now() - 1000; // else this line will execute
+  this.passwordChangedAt = new Date(Date.now() - 1000); // else this line will execute
   next();
 });
 
@@ -79,6 +79,13 @@ userSchema.methods.comparePassword = async function (
   userPassword: string
 ) {
   // this.password not availabel because select for password is false
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.correctPassword = async function (
+  candidatePassword: string,
+  userPassword: string
+) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 

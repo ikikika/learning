@@ -18,6 +18,10 @@ interface UserBaseDocument extends User, Document {
   createPasswordResetToken(): string;
   passwordResetToken?: string;
   passwordResetExpires?: number;
+  correctPassword(
+    candidatePassword: string,
+    userPassword: string | undefined
+  ): boolean;
 }
 
 // for strong typing if model has dependencies on other models
