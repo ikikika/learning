@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import { RequestHandler, Response } from "express";
 // import { promisify } from "util";
 import User from "../models/userModel";
 import catchAsync from "../utils/catchAsync";
@@ -7,6 +7,13 @@ import { AppError } from "../utils/appError";
 import { Types } from "mongoose";
 import sendEmail from "../utils/email";
 import crypto from "crypto";
+import { UserDocument } from "../types/User.types";
+
+interface JwtType {
+  id?: string;
+  iat?: number;
+  exp?: number;
+}
 
 const signToken = (id: Types.ObjectId) => {
   return sign({ id }, process.env.JWT_SECRET!, {
@@ -14,11 +21,21 @@ const signToken = (id: Types.ObjectId) => {
   });
 };
 
-interface JwtType {
-  id?: string;
-  iat?: number;
-  exp?: number;
-}
+const createSendToken = (
+  user: UserDocument,
+  statusCode: number,
+  res: Response
+) => {
+  const token = signToken(user._id);
+
+  res.status(statusCode).json({
+    status: "success",
+    token,
+    data: {
+      user,
+    },
+  });
+};
 
 export const signup: RequestHandler = catchAsync(async (req, res, next) => {
   // only store these fields, not all fields cos users may spoof it
@@ -29,15 +46,7 @@ export const signup: RequestHandler = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
   });
 
-  const token = signToken(newUser._id);
-
-  res.status(201).json({
-    status: "succcess",
-    token,
-    data: {
-      user: newUser,
-    },
-  });
+  createSendToken(newUser, 201, res);
 });
 
 export const login = catchAsync(async (req, res, next) => {
@@ -56,12 +65,8 @@ export const login = catchAsync(async (req, res, next) => {
     return next(new AppError("Incorrect email or password", 401));
   }
 
-  const token = signToken(user._id);
   // 3) If everything ok, send token to client
-  res.status(201).json({
-    status: "succcess",
-    token,
-  });
+  createSendToken(user, 200, res);
 });
 
 export const protect = catchAsync(async (req, res, next) => {
@@ -205,12 +210,7 @@ export const resetPassword = catchAsync(async (req, res, next) => {
 
   // 3) Update changedPasswordAt property for the user
   // 4) Log the user in, send JWT
-  const token = signToken(user._id);
-
-  res.status(201).json({
-    status: "succcess",
-    token,
-  });
+  createSendToken(user, 200, res);
 });
 
 export const updatePassword = catchAsync(async (req, res, next) => {
@@ -232,11 +232,6 @@ export const updatePassword = catchAsync(async (req, res, next) => {
     // User.findByIdAndUpdate will NOT work as intended!
 
     // 4) Log user in, send JWT
-    const token = signToken(user._id);
-
-    res.status(201).json({
-      status: "succcess",
-      token,
-    });
+    createSendToken(user, 200, res);
   }
 });
