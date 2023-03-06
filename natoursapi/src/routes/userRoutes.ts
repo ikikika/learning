@@ -7,7 +7,7 @@ import {
   signup,
   updatePassword,
 } from "../controllers/authController";
-import { getAllUsers } from "../controllers/userController";
+import { getAllUsers, updateMe } from "../controllers/userController";
 
 const router = Router();
 
@@ -20,5 +20,7 @@ router.patch("/reset-password/:token", resetPassword);
 router.patch("/update-password", protect, updatePassword);
 
 router.route("/").get(getAllUsers);
+
+router.patch("/update-me", protect, updateMe);
 
 export default router;
