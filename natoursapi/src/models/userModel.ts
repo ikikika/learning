@@ -47,6 +47,11 @@ const userSchema = new Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
 });
 
 // pre save is the moment when we erceive the data and before saving to the database
@@ -113,6 +118,15 @@ userSchema.methods.createPasswordResetToken = function () {
 
   return resetToken;
 };
+
+// will run before a 'find' query. regex esures inclusion of findAndUpdate, findAndDelete, etc.
+// will remove any entry where active is false
+// will also stop 
+userSchema.pre(/^find/, function (next) {
+  // this points to the current query
+  this.find({ active: { $ne: false } });
+  next();
+});
 
 const User: UserModel = model<UserDocument, UserModel>("User", userSchema);
 

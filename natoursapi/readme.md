@@ -139,3 +139,13 @@
 ### Protecting routes
 
 - use a middleware on route
+
+### Update user
+
+- Use different routes to update user info and passwords
+
+### Delete user
+
+- Not actually removing records from db
+- Set active = false in db
+- Use model middleware to filter out deleted records so that they do not show up on find queries, including login
