@@ -149,3 +149,56 @@
 - Not actually removing records from db
 - Set active = false in db
 - Use model middleware to filter out deleted records so that they do not show up on find queries, including login
+
+## Security
+
+### Vulnerabilities
+
+- Compromised database
+
+  - &#9745; Strongly encrypt passwords with salt and hash (`bcrypt`)
+  - &#9745; Strongly encrypt password reset tokens
+
+- Brute force attacks
+
+  - &#9745; use `bcrypt` (to make login requests slow)
+  - Implement rate limiting (`express-rate-limiting`) (will implement)
+    - limit no of requests from 1 single IP
+  - Implement maximum login attempts
+
+- Cross-site scripting (XSS) attacks
+
+  - Attacker tries to inject scripts into our page to run his malicious code
+  - Never ever store the JSON web token in local storage.
+  - Store JWT in HTTPOnly cookies (will implement)
+    - browser can only receive and send the cookie but cannot access or modify it in any way
+    - makes it more difficult for attacker to steal JWT in cookie
+  - Sanitize user input data
+  - Set special HTTP headers (`helmet` package)
+
+- Denial of service (DOS) attacks
+
+  - Implement rate limiting (`express-rate-limiting`)
+  - Limit body payload (in `body-parser`)
+  - &#9745; Avoid evil regex (regex that take an exponential time to run for non-matching inputs and they can be exploited to bring our entire application down.)
+
+- NoSQL query injection
+  - &#9745; Use `mongoose` for MongoDB (instead of SchemaTypes)
+  - Sanitize user input data (will implement)
+
+### Best Practices and Suggestions
+
+- &#9745; Always use HTTPS
+- &#9745; Create random password reset tokens with expiry dates
+- &#9745; Deny access to JWT after password cahnge
+- &#9745; Dun commit sensitive config data to GIT
+- &#9745; Dun send error details to clients
+- Prevent cross site request forgery (`csurf` package)
+- Require re-authentication before high-value action (eg making payment or deleting something)
+- Implement blacklist of untrusted JWT
+- Confirm user email address after creating account
+- Keep user logged in with refresh tokens
+- Implement MFA
+- Prevent parameter pollution causing uncaught exceptions (will implement)
+  - For example, try to just insert two field parameters into the query string that searches for all tours.
+  - our application is not prepared for that.
