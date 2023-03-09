@@ -28,6 +28,25 @@ const createSendToken = (
 ) => {
   const token = signToken(user._id);
 
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() +
+        parseInt(process.env.JWT_COOKIE_EXPIRES_IN!) * 24 * 60 * 60 * 1000 // convert to ms
+    ),
+    httpOnly: true,
+    secure: false, // ensure that the cookie cannot be modified in any way by the browser. browser can only receive it, store it and send it with every request
+  };
+  if (process.env.NODE_ENV === "production") cookieOptions.secure = true; // only create cookie if HTTPS
+
+  res.cookie(
+    "jwt", // name of cookie. cookies with same name will be replaced
+    token, // data we wanna send in the cookie
+    cookieOptions // options for cookie
+  );
+
+  // Remove password from output
+  user.password = undefined;
+
   res.status(statusCode).json({
     status: "success",
     token,

@@ -202,3 +202,12 @@
 - Prevent parameter pollution causing uncaught exceptions (will implement)
   - For example, try to just insert two field parameters into the query string that searches for all tours.
   - our application is not prepared for that.
+
+### Cookies
+
+- a small piece of text that a server can send to clients
+- when the client receives a cookie, it will automatically store it
+- and then automatically send it back along with all future requests to the same server.
+- a browser automatically stores a cookie that it receives and sends it back in all future requests to that server where it came from.
+- attach it to the response object
+
