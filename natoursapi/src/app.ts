@@ -6,10 +6,14 @@ import userRoutes from "./routes/userRoutes";
 import { AppError } from "./utils/appError";
 import globalErrorHandler from "./controllers/errorController";
 import { rateLimit } from "express-rate-limit";
+import helmet from "helmet";
 
 const app = express();
 
 // 1) GLOBAL MIDDLEWARES
+
+// Set security HTTP headers
+app.use(helmet()); // should set this at the top
 
 // Limit requests from same API
 const limiter = rateLimit({

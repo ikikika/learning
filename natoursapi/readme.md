@@ -215,3 +215,9 @@
 
 - Set up as global middleware
 - We can see the rate limit and reset time in the api headers
+
+### Http headers
+
+- `helmet` will introduce extra headers for mroe protection
+- `helmet` is a collection of multiple middlewares
+- https://github.com/helmetjs/helmet
