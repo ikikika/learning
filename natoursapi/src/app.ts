@@ -9,6 +9,7 @@ import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 import xss from "xss-clean";
+import hpp from "hpp";
 
 const app = express();
 
@@ -33,6 +34,22 @@ app.use(mongoSanitize());
 
 // Data sanitization against XSS
 app.use(xss());
+
+// Prevent parameter pollution
+// Use at the end to clean up query string
+
+app.use(
+  hpp({
+    whitelist: [
+      "duration",
+      "ratingsQuantity",
+      "ratingsAverage",
+      "maxGroupSize",
+      "difficulty",
+      "price",
+    ],
+  })
+);
 
 // 2) ROUTES
 app.use("/api/v1/tours", tourRoutes);

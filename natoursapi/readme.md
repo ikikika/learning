@@ -244,3 +244,9 @@
     "passwordConfirm": "ccc@aa.com"
 }
 ```
+
+### Parameter Pollution
+
+- `?sort=duration&sort=price` this will cause an error as server expected `sort` to be string. passing it twice will make it an array.
+- `hpp` will use the last parameter if there is duplicate
+- `hpp` can whitelist parameters if we really need to pass in more than 1
