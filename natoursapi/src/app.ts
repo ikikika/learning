@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 
 import { json } from "body-parser";
 import tourRoutes from "./routes/tourRoutes";
@@ -7,6 +7,8 @@ import { AppError } from "./utils/appError";
 import globalErrorHandler from "./controllers/errorController";
 import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
+import mongoSanitize from "express-mongo-sanitize";
+import xss from "xss-clean";
 
 const app = express();
 
@@ -23,9 +25,16 @@ const limiter = rateLimit({
 });
 app.use("/api", limiter);
 
-// register and execute as middleware
-app.use(json());
+// Body parser, reading data from body into req.body
+app.use(json({ limit: "10kb" }));
 
+// Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+// Data sanitization against XSS
+app.use(xss());
+
+// 2) ROUTES
 app.use("/api/v1/tours", tourRoutes);
 app.use("/api/v1/users", userRoutes);
 

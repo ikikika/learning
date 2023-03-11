@@ -221,3 +221,26 @@
 - `helmet` will introduce extra headers for mroe protection
 - `helmet` is a collection of multiple middlewares
 - https://github.com/helmetjs/helmet
+
+### Data Sanitisation
+
+- Without sanitisation, passing in a request with this body will return a token,
+
+```
+{
+    "email": { "$gt": "" },
+    "password": "newpass111"
+}
+```
+
+- Need to filter out all special characters
+- `xss-clean` will remove malicious html with js code and convert them to other characters. like these
+
+```
+{
+    "name": "<div>bad code</div>",
+    "email": "ccc@aa.com",
+    "password": "ccc@aa.com",
+    "passwordConfirm": "ccc@aa.com"
+}
+```
