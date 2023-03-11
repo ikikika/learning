@@ -211,3 +211,7 @@
 - a browser automatically stores a cookie that it receives and sends it back in all future requests to that server where it came from.
 - attach it to the response object
 
+### Rate limiter
+
+- Set up as global middleware
+- We can see the rate limit and reset time in the api headers
