@@ -5,6 +5,7 @@ import Login from "./screens/Login";
 import Public from "./screens/Public";
 import UsersList from "./screens/Users";
 import Welcome from "./screens/Welcome";
+import RequireAuth from "./app/routing/RequireAuth";
 
 function App() {
   return (
@@ -14,8 +15,10 @@ function App() {
         <Route index element={<Public />} />
         <Route path="login" element={<Login />} />
 
-        <Route path="welcome" element={<Welcome />} />
-        <Route path="userslist" element={<UsersList />} />
+        <Route element={<RequireAuth />}>
+          <Route path="welcome" element={<Welcome />} />
+          <Route path="userslist" element={<UsersList />} />
+        </Route>
       </Route>
     </Routes>
   );

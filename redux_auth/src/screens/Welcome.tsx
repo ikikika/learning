@@ -1,8 +1,16 @@
 import { Link } from "react-router-dom";
+import {
+  selectCurrentUser,
+  selectCurrentToken,
+} from "../features/auth/authSlice";
+import { useAppSelector } from "../app/hooks";
 
 const Welcome = () => {
-  const welcome = "Welcome!";
-  const tokenAbbr = `Token`;
+  const user = useAppSelector(selectCurrentUser);
+  const token = useAppSelector(selectCurrentToken);
+
+  const welcome = user ? `Welcome ${user}!` : "Welcome!";
+  const tokenAbbr = `${token ? `${(token as string).slice(0, 9)}...` : ""}`;
 
   const content = (
     <section className="welcome">
