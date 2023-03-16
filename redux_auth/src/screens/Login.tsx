@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useAppDispatch } from "../app/hooks";
 import { setCredentials } from "../features/auth/authSlice";
-import { useLoginMutation } from "../app/services/authService";
+import { useLoginMutation } from "../features/auth/authAction";
 
 const Login = () => {
   const userRef = useRef<HTMLInputElement>(null);
@@ -32,8 +32,9 @@ const Login = () => {
       setPwd("");
       navigate("/welcome");
     } catch (err: any) {
+      console.log(err);
       if (err.originalStatus) {
-        if (err.originalStatus) {
+        if (!err.originalStatus) {
           // isLoading: true until timeout occurs
           setErrMsg("No Server Response");
         } else if (err.originalStatus === 400) {
