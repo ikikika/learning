@@ -1,4 +1,5 @@
-import { useGetUsersQuery } from "../features/users/userAction";
+import Logout from "../../components/Logout";
+import { useGetUsersQuery } from "../../features/services/userService";
 import { Link } from "react-router-dom";
 
 const UsersList = () => {
@@ -12,7 +13,7 @@ const UsersList = () => {
 
   let content = <>whats going on</>;
   if (isLoading) {
-    content = <p>"Loading..."</p>;
+    content = <p>Loading...</p>;
   } else if (isSuccess) {
     content = (
       <section className="users">
@@ -23,10 +24,17 @@ const UsersList = () => {
           })}
         </ul>
         <Link to="/welcome">Back to Welcome</Link>
+        <Logout>
+          <button>logout</button>
+        </Logout>
       </section>
     );
   } else if (isError) {
-    content = <p>{JSON.stringify(error)}</p>;
+    content = (
+      <p>
+        Error:{JSON.stringify(error)} <Link to="/welcome">Back to Welcome</Link>
+      </p>
+    );
   }
 
   return content;

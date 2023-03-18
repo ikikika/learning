@@ -4,10 +4,10 @@ import {
   createApi,
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
-import { setCredentials, logOut } from "../../features/auth/authSlice";
-import { RootState } from "../store";
+import { setCredentials, logOut } from "../auth/authSlice";
+import { RootState } from "../../app/store";
 
-const baseQuery = fetchBaseQuery({
+export const basicQueryFunction = fetchBaseQuery({
   baseUrl: "http://localhost:3500",
   credentials: "include", // send with httponly cookie
   prepareHeaders: (headers, { getState }) => {
@@ -25,27 +25,35 @@ const baseQueryWithReauth = async (
   api: BaseQueryApi,
   extraOptions: {}
 ) => {
-  let result = await baseQuery(args, api, extraOptions);
+  let result = await basicQueryFunction(args, api, extraOptions);
 
   if (result.error) {
     if ("originalStatus" in result.error) {
       if (result.error.originalStatus === 403) {
         console.log("sending refresh token");
         // send refresh token to get new access token
-        const refreshResult = await baseQuery("/refresh", api, extraOptions);
-        console.log(refreshResult);
+        const refreshResult = await basicQueryFunction(
+          "/refresh",
+          api,
+          extraOptions
+        );
+        // console.log(refreshResult);
         if (refreshResult?.data) {
           const user = (api.getState() as RootState)!.auth.user;
           // store the new token
           api.dispatch(setCredentials({ ...refreshResult.data, user }));
           // retry the original query with new access token
-          result = await baseQuery(args, api, extraOptions);
+          result = await basicQueryFunction(args, api, extraOptions);
         } else {
           api.dispatch(logOut());
         }
       }
     }
   }
+
+  // if (result.error) {
+  //   api.dispatch(logOut());
+  // }
 
   return result;
 };

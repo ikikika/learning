@@ -1,6 +1,6 @@
-import { apiService } from "../../app/services/apiService";
+import { apiService } from "../services/apiService";
 
-export const authAction = apiService.injectEndpoints({
+export const loginService = apiService.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials) => ({
@@ -12,4 +12,4 @@ export const authAction = apiService.injectEndpoints({
   }),
 });
 
-export const { useLoginMutation } = authAction;
+export const { useLoginMutation } = loginService;

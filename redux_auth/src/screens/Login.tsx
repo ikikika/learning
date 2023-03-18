@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useAppDispatch } from "../app/hooks";
 import { setCredentials } from "../features/auth/authSlice";
-import { useLoginMutation } from "../features/auth/authAction";
+import { useLoginMutation } from "../features/auth/loginService";
 
 const Login = () => {
   const userRef = useRef<HTMLInputElement>(null);

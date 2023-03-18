@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import {
   selectCurrentUser,
   selectCurrentToken,
-} from "../features/auth/authSlice";
-import { useAppSelector } from "../app/hooks";
+} from "../../features/auth/authSlice";
+import { useAppSelector } from "../../app/hooks";
+import Logout from "../../components/Logout";
 
 const Welcome = () => {
   const user = useAppSelector(selectCurrentUser);
@@ -19,6 +20,9 @@ const Welcome = () => {
       <p>
         <Link to="/userslist">Go to the Users List</Link>
       </p>
+      <Logout>
+        <button>logout</button>
+      </Logout>
     </section>
   );
 
