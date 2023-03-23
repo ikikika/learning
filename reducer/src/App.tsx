@@ -2,6 +2,8 @@ import React, { ChangeEvent, FormEvent, useState } from "react";
 import "./App.css";
 
 function App() {
+  // these 2 pieces of state are very closely related, as they are used together in handleSubmit
+  // in increment/decrement, we update state by changing the current value. this is an example of future value of state depending on current value
   const [count, setCount] = useState(0);
   const [valueToAdd, setValueToAdd] = useState(0);
 
