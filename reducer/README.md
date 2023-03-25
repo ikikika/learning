@@ -31,3 +31,38 @@ const[  valutToAdd  ,    setValueToAdd    ] = useState(                         
 ### useReducer
 
 - all state for whoile component defined in a single state object
+
+## Replacing useState
+
+- change all useState vars with state vars from useReducer, `count` --> `state.count`
+
+## Update state
+
+- start by calling dispatch function
+- reducer function
+
+  - whatever returned by reducer will be new state
+  - if return nothing, state will be undefined
+  - **always make sure we return some reasonable value**
+  - **no async/await, no requests, no promises, no outside variable**
+  - do not modify `state` directly in reducer
+
+    Bad example:
+
+    ```
+        const reducer = (state, action) => {
+            state.count = state.count +1;
+            return state;
+        }
+    ```
+
+    Good example:
+
+    ```
+        const reducer = (state, action) => {
+            return {
+                ...state, // copy all properties from existing object
+                count: state.count +1 // overwrite the property we wanna change
+            }
+        }
+    ```

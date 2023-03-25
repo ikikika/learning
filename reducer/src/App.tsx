@@ -3,10 +3,16 @@ import "./App.css";
 
 interface StateType {
   count: number;
-  valueToAdd: string;
+  valueToAdd: number;
 }
 
-const reducer = (state: StateType, action: any) => {};
+const reducer = (state: StateType, action: any) => {
+  // whatever gets returned will be the new state
+  return {
+    ...state,
+    count: state.count + 1,
+  };
+};
 
 function App() {
   // these 2 pieces of state are very closely related, as they are used together in handleSubmit
@@ -15,13 +21,14 @@ function App() {
   // const [valueToAdd, setValueToAdd] = useState(0);
 
   const [state, dispatch] = useReducer(reducer, {
-    count: initialCount,
+    count: 0,
     valueToAdd: 0,
   });
   console.log(state);
 
   const increment = () => {
     // setCount(count + 1);
+    dispatch(null);
   };
   const decrement = () => {
     // setCount(count - 1);
