@@ -69,3 +69,40 @@ const[  valutToAdd  ,    setValueToAdd    ] = useState(                         
 
 - put logic in reducer
 - keep dispatches simple
+
+## Reducer without Immer
+
+- No directly changing state
+- Must return new value to use for state
+
+```
+const reducer = (state: StateType, action: ActionObjectType) => {
+  switch (action.type) {
+    case INCREMENT_COUNT:
+      return {
+        ...state,
+        count: state.count + 1,
+      };
+    default:
+      return state;
+  }
+};
+```
+
+## Reducer with Immer
+
+- Can mutate state
+- DO not have to return new value to use for state
+- Still return in each case otherwise we get `fallthrough`
+
+```
+const reducer = (state: StateType, action: ActionObjectType) => {
+  switch (action.type) {
+    case INCREMENT_COUNT:
+      state.count = state.count + 1,
+      return;
+    default:
+      return;
+  }
+};
+```
