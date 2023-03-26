@@ -17,22 +17,21 @@ interface ActionObjectType {
 const reducer = (state: StateType, action: ActionObjectType) => {
   // whatever gets returned will be the new state
 
-  if (action.type === INCREMENT_COUNT) {
-    // tells reducer why it is being called and which piece of state to update
-    return {
-      ...state,
-      count: state.count + 1,
-    };
+  // tells reducer why it is being called and which piece of state to update
+  switch (action.type) {
+    case INCREMENT_COUNT:
+      return {
+        ...state,
+        count: state.count + 1,
+      };
+    case CHANGE_VALUE_TO_ADD:
+      return {
+        ...state,
+        valueToAdd: action.payload ?? 0,
+      };
+    default:
+      return state;
   }
-
-  if (action.type === CHANGE_VALUE_TO_ADD) {
-    return {
-      ...state,
-      valueToAdd: action.payload ?? 0,
-    };
-  }
-
-  return state;
 };
 
 function App() {
