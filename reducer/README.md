@@ -38,7 +38,7 @@ const[  valutToAdd  ,    setValueToAdd    ] = useState(                         
 
 ## Update state
 
-- start by calling dispatch function
+- start by calling `dispatch` function
 - reducer function
 
   - whatever returned by reducer will be new state

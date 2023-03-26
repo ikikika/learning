@@ -6,12 +6,33 @@ interface StateType {
   valueToAdd: number;
 }
 
-const reducer = (state: StateType, action: any) => {
+const INCREMENT_COUNT = "increment-count";
+const CHANGE_VALUE_TO_ADD = "change-value-to-add";
+
+interface ActionObjectType {
+  type: typeof INCREMENT_COUNT | typeof CHANGE_VALUE_TO_ADD;
+  payload?: number;
+}
+
+const reducer = (state: StateType, action: ActionObjectType) => {
   // whatever gets returned will be the new state
-  return {
-    ...state,
-    count: state.count + 1,
-  };
+
+  if (action.type === INCREMENT_COUNT) {
+    // tells reducer why it is being called and which piece of state to update
+    return {
+      ...state,
+      count: state.count + 1,
+    };
+  }
+
+  if (action.type === CHANGE_VALUE_TO_ADD) {
+    return {
+      ...state,
+      valueToAdd: action.payload ?? 0,
+    };
+  }
+
+  return state;
 };
 
 function App() {
@@ -28,7 +49,9 @@ function App() {
 
   const increment = () => {
     // setCount(count + 1);
-    dispatch(null);
+    dispatch({
+      type: INCREMENT_COUNT,
+    });
   };
   const decrement = () => {
     // setCount(count - 1);
@@ -36,6 +59,13 @@ function App() {
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     // setValueToAdd(+event.target.value);
+
+    const value = parseInt(event.target.value) || 0;
+
+    dispatch({
+      type: CHANGE_VALUE_TO_ADD,
+      payload: value,
+    });
   };
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
