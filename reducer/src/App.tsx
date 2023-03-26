@@ -7,10 +7,16 @@ interface StateType {
 }
 
 const INCREMENT_COUNT = "increment-count";
+const DECREMENT_COUNT = "decrement-count";
 const CHANGE_VALUE_TO_ADD = "change-value-to-add";
+const UPDATE_COUNT_WITH_INPUT_VALUE = "update-count-with-input-value";
 
 interface ActionObjectType {
-  type: typeof INCREMENT_COUNT | typeof CHANGE_VALUE_TO_ADD;
+  type:
+    | typeof INCREMENT_COUNT
+    | typeof DECREMENT_COUNT
+    | typeof CHANGE_VALUE_TO_ADD
+    | typeof UPDATE_COUNT_WITH_INPUT_VALUE;
   payload?: number;
 }
 
@@ -24,10 +30,21 @@ const reducer = (state: StateType, action: ActionObjectType) => {
         ...state,
         count: state.count + 1,
       };
+    case DECREMENT_COUNT:
+      return {
+        ...state,
+        count: state.count - 1,
+      };
     case CHANGE_VALUE_TO_ADD:
       return {
         ...state,
         valueToAdd: action.payload ?? 0,
+      };
+    case UPDATE_COUNT_WITH_INPUT_VALUE:
+      return {
+        ...state,
+        count: state.count + state.valueToAdd,
+        valueToAdd: 0,
       };
     default:
       return state;
@@ -54,6 +71,9 @@ function App() {
   };
   const decrement = () => {
     // setCount(count - 1);
+    dispatch({
+      type: DECREMENT_COUNT,
+    });
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -71,6 +91,10 @@ function App() {
 
     // setCount(count + valueToAdd);
     // setValueToAdd(0);
+
+    dispatch({
+      type: UPDATE_COUNT_WITH_INPUT_VALUE,
+    });
   };
 
   return (

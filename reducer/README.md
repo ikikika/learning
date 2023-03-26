@@ -66,3 +66,6 @@ const[  valutToAdd  ,    setValueToAdd    ] = useState(                         
             }
         }
     ```
+
+- put logic in reducer
+- keep dispatches simple
