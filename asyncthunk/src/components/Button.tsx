@@ -2,18 +2,19 @@ import className from "classnames";
 import { ReactNode } from "react";
 
 interface ButtonType {
-  primary: number;
-  secondary: number;
-  success: number;
-  warning: number;
-  danger: number;
+  primary?: number;
+  secondary?: number;
+  success?: number;
+  warning?: number;
+  danger?: number;
 }
 
 interface PropType extends ButtonType {
   children: ReactNode;
-  outline: number;
-  rounded: number;
-  className: string;
+  outline?: number;
+  rounded?: number;
+  className?: string;
+  onClick: () => void;
 }
 
 function Button({
@@ -25,6 +26,7 @@ function Button({
   danger,
   outline,
   rounded,
+  onClick,
   ...rest
 }: PropType) {
   const classes = className(
@@ -47,7 +49,7 @@ function Button({
   );
 
   return (
-    <button {...rest} className={classes}>
+    <button {...rest} className={classes} onClick={onClick}>
       {children}
     </button>
   );

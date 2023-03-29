@@ -12,3 +12,4 @@ export type AppDispatch = typeof store.dispatch;
 
 // step 5: export
 export * from "./thunks/fetchUsers";
+export * from "./thunks/addUser";
