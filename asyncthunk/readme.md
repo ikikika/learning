@@ -109,3 +109,26 @@ src/
 4. In the slice, add extraReducers, watching for the action types made by the thunk.
 5. Export the thunk from the store/index.ts file
 6. When a user does something, dispatch the thunk function to run it
+
+## Handling local loading states
+
+DO NOT CALL SET LOADING IMMEDIATELY AFTER DISPATCH
+
+```
+setIsLoading(true);
+dispatch(fetchUsers());
+setIsLoading(false);
+// BAD
+```
+
+`unwrap` turns `dispatch` into a conventional promise function where we can chain on `.then()` and `.catch()`
+
+```
+setIsLoading(true);
+dispatch(fetchUsers())
+  .unwrap()
+  .then(() => console.log('success))
+  .catch((err) => setError(err))
+  .finally(() => setIsLoading(false))
+// good
+```

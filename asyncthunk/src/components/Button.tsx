@@ -15,6 +15,7 @@ interface PropType extends ButtonType {
   rounded?: number;
   className?: string;
   onClick: () => void;
+  loading?: boolean;
 }
 
 function Button({
@@ -27,6 +28,7 @@ function Button({
   outline,
   rounded,
   onClick,
+  loading,
   ...rest
 }: PropType) {
   const classes = className(
