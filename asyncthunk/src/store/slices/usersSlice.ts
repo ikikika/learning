@@ -1,9 +1,10 @@
 import { SerializedError, createSlice } from "@reduxjs/toolkit";
 import { fetchUsers } from "../thunks/fetchUsers";
 import { addUser } from "../thunks/addUser";
+import { UserType } from "../../types";
 
 interface StateType {
-  data: { id: number; name: string }[];
+  data: UserType[];
   isLoading: boolean;
   error: SerializedError | null;
 }
