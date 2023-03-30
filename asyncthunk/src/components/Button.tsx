@@ -51,7 +51,7 @@ function Button({
       "text-red-500": outline && danger,
     }
   );
-
+  console.log(loading);
   return (
     <button {...rest} disabled={loading} className={classes} onClick={onClick}>
       {loading ? <GoSync className="animate-spin" /> : children}

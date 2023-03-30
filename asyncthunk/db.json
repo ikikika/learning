@@ -1,64 +1,12 @@
 {
   "users": [
     {
-      "id": 1,
-      "name": "Myra"
-    },
-    {
-      "name": "Rudy Haag",
-      "id": 2
-    },
-    {
-      "name": "Noah Hansen",
-      "id": 3
-    },
-    {
-      "name": "Wayne Renner",
-      "id": 4
-    },
-    {
-      "name": "Julio Feil",
-      "id": 5
-    },
-    {
-      "name": "Darryl Sporer",
+      "name": "Samantha Swift",
       "id": 6
     },
     {
-      "name": "Alexis Wisozk",
+      "name": "Carrie Borer",
       "id": 7
-    },
-    {
-      "name": "Roy Torphy",
-      "id": 8
-    },
-    {
-      "name": "Anthony Lehner DVM",
-      "id": 9
-    },
-    {
-      "name": "Devin Flatley DDS",
-      "id": 10
-    },
-    {
-      "name": "Sophie O'Hara",
-      "id": 11
-    },
-    {
-      "name": "Teri Okuneva",
-      "id": 12
-    },
-    {
-      "name": "Miss Max Muller",
-      "id": 13
-    },
-    {
-      "name": "Shelley Bruen",
-      "id": 14
-    },
-    {
-      "name": "Isabel Funk",
-      "id": 15
     }
   ],
   "albums": [],

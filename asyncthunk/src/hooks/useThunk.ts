@@ -1,24 +1,22 @@
 import { AsyncThunk } from "@reduxjs/toolkit";
 import { useState, useCallback, SetStateAction } from "react";
 import { useAppDispatch } from "../store/hooks";
-import { RootState } from "../store";
 
-interface AsyncThunkConfig {
-  state: RootState;
-}
-
-export function useThunk(thunk: AsyncThunk<any, void, AsyncThunkConfig>) {
-  const [isLoading, setIsLoading] = useState(false);
+export function useThunk(thunk: AsyncThunk<any, any, any>) {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState(null);
   const dispatch = useAppDispatch();
 
-  const runThunk = useCallback(() => {
-    setIsLoading(true);
-    dispatch(thunk())
-      .unwrap()
-      .catch((err: SetStateAction<null>) => setError(err))
-      .finally(() => setIsLoading(false));
-  }, [dispatch, thunk]);
+  const runThunk = useCallback(
+    (args: any) => {
+      setIsLoading(true);
+      dispatch(thunk(args))
+        .unwrap()
+        .catch((err: SetStateAction<null>) => setError(err))
+        .finally(() => setIsLoading(false));
+    },
+    [dispatch, thunk]
+  );
 
   return [runThunk, isLoading, error];
 }
