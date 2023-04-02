@@ -132,3 +132,48 @@ dispatch(fetchUsers())
   .finally(() => setIsLoading(false))
 // good
 ```
+
+# Redux Toolkit Query
+
+## API
+
+- Code that go and fetch some data
+- Not a backend server
+
+## Hooks
+
+Query
+
+- making a request specifically to read or fetch some data
+
+Mutation
+
+- making a request to chagne or write some data
+
+```
+import { cretaApi } from "@reduxjs/toolkit/query/react;
+
+const albumsApi = createApi({
+  endpoints(builder){
+    return {
+      fetchAlbums: /* Instructions on how to make a req to fetch albums */,
+      addAlbum: /* Instructions on how to make a req to add an album */,
+      removeAlbum: /* Instructions on how to make a req to remove an album */
+    }
+  }
+})
+
+// These hooks will be automatically generated
+
+export {
+  useFetchAlbumQuery
+  useAddAlbumMutation,
+  useRemoveAlbumMutation
+}
+```
+
+These hooks are used like this to return data fetched, error, and isLoading boolean.
+
+```
+const { data, error, isLoading} = useFetchAlbumQuery();
+```
