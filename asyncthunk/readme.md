@@ -209,3 +209,18 @@ State = {
   }
 }
 ```
+
+## fetchBaseQuery
+
+- preconfigured version of fetch that already has a couple of options assigned to it
+
+## Analysing endpoints
+
+|     | goal?         | fetch album | create album    | remove album |
+| --- | ------------- | ----------- | --------------- | ------------ |
+| a   | name?         | fetchAlbums | createAlbum     | removeAlbum  |
+| b   | q or m?       | q           | m               | m            |
+| c   | path?         | /albums     | /albums         | /albums/:id  |
+| d   | query string? | ?userId=    | -               | -            |
+| e   | method?       | get         | post            | delete       |
+| f   | body?         | -           | {title, userId} | -            |
