@@ -177,3 +177,35 @@ These hooks are used like this to return data fetched, error, and isLoading bool
 ```
 const { data, error, isLoading} = useFetchAlbumQuery();
 ```
+
+## Create a RTK Query
+
+1. Identify a group of related requests that your app needs to make
+2. Make a new file that will create the api
+3. The API needs to store a ton of state related to data, request status, errors. Add a '**reducerPath**'.
+4. The API needs to know how and where to send requests. Add a '**baseQuery**'.
+5. Add '**endpoints**', one for each kind of request you want to make. Reqs that read data are queries, write data are mutations.
+6. Export all of the automatically generated hooks.
+7. Connect API to store. Reducer, middleware and listeners.
+8. Export hooks from store/index.js file.
+
+Step 1: Make fetch, create and delete apis for albums and photos.
+
+```
+State = {
+  users: {
+    isLoading: false,
+    error: null,
+    data: []
+  },
+  // reducerPath - property on the big state object where all of the API state should be maintained
+  // tons of state added by the API to handle requests
+  albums: {
+    queries: { /* stuff */ },
+    mutations: { /* stuff */ }
+    provided: { /* stuff */ },
+    subscriptions: { /* stuff */ },
+    config: { /* stuff */ }
+  }
+}
+```
