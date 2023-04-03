@@ -188,8 +188,9 @@ const { data, error, isLoading} = useFetchAlbumQuery();
 6. Export all of the automatically generated hooks.
 7. Connect API to store. Reducer, middleware and listeners.
 8. Export hooks from store/index.js file.
+9. Use hooks in component
 
-Step 1: Make fetch, create and delete apis for albums and photos.
+// Step 1: Make fetch, create and delete apis for albums and photos.
 
 ```
 State = {

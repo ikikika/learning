@@ -28,3 +28,7 @@ const albumsApi = createApi({
     };
   },
 });
+
+// step 6: export automatically generated hook
+export const { useFetchAlbumsQuery } = albumsApi;
+export { albumsApi };

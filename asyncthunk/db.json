@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "name": "Samantha Swift",
+      "name": "Myra",
       "id": 6
     },
     {
@@ -9,6 +9,12 @@
       "id": 7
     }
   ],
-  "albums": [],
+  "albums": [
+    {
+      "id": 1111111,
+      "title": "jklsjdf trip",
+      "userId": 6
+    }
+  ],
   "photos": []
 }

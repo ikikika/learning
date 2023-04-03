@@ -27,7 +27,7 @@ function UsersListItem({ id, name }: UserType) {
 
   return (
     <ExpandablePanel header={header}>
-      <AlbumsList name={name} />
+      <AlbumsList id={id} name={name} />
     </ExpandablePanel>
   );
 }
