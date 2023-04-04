@@ -225,3 +225,10 @@ State = {
 | d   | query string? | ?userId=    | -               | -            |
 | e   | method?       | get         | post            | delete       |
 | f   | body?         | -           | {title, userId} | -            |
+
+## After running mutations
+
+- need to decide if we need to refetch data
+- how to refetch data
+- how to use tags to prevent duplication of data
+- sometimes we might wanna invalidate tag based on results of mutation

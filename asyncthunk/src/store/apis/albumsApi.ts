@@ -10,11 +10,16 @@ const albumsApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:3005",
   }),
+  tagTypes: ["Album"],
   // step 5: add enpoints from analysis
   endpoints(builder) {
     return {
       // point a, point b
       fetchAlbums: builder.query({
+        providesTags: (result, error, arg) => {
+          // arg is whatever u pass into ur hook. in this case, its user
+          return [{ type: "Album", id: arg.id }];
+        },
         query: (user) => {
           return {
             url: "/albums", // point c
@@ -27,6 +32,9 @@ const albumsApi = createApi({
         },
       }),
       addAlbum: builder.mutation({
+        invalidatesTags: (result, error, arg) => {
+          return [{ type: "Album", id: arg.id }];
+        },
         query: (user) => {
           return {
             url: "/albums",
