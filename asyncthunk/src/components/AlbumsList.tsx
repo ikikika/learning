@@ -1,13 +1,8 @@
 import { useFetchAlbumsQuery, useAddAlbumMutation } from "../store";
-import { UserType } from "../types";
+import { AlbumType, UserType } from "../types";
 import Skeleton from "./Skeleton";
-import ExpandablePanel from "./ExpandablePanel";
 import Button from "./Button";
-
-interface AlbumType {
-  id: number;
-  title: string;
-}
+import AlbumsListItem from "./AlbumsListItem";
 
 function AlbumsList({ id, name }: UserType) {
   // step 9: use hook
@@ -25,11 +20,8 @@ function AlbumsList({ id, name }: UserType) {
     content = <div>Error loading data</div>;
   } else {
     content = data.map((album: AlbumType) => {
-      const header = <div>{album.title}</div>;
       return (
-        <ExpandablePanel key={album.id} header={header}>
-          List of photos
-        </ExpandablePanel>
+        <AlbumsListItem key={album.id} id={album.id} title={album.title} />
       );
     });
   }
