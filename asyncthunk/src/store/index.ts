@@ -27,4 +27,4 @@ export * from "./thunks/addUser";
 export * from "./thunks/removeUser";
 
 // step 8: export from store/index.ts
-export { useFetchAlbumsQuery } from "./apis/albumsApi";
+export { useFetchAlbumsQuery, useAddAlbumMutation } from "./apis/albumsApi";

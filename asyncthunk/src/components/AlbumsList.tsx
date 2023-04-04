@@ -1,4 +1,4 @@
-import { useFetchAlbumsQuery } from "../store";
+import { useFetchAlbumsQuery, useAddAlbumMutation } from "../store";
 import { UserType } from "../types";
 import Skeleton from "./Skeleton";
 import ExpandablePanel from "./ExpandablePanel";
@@ -12,6 +12,11 @@ interface AlbumType {
 function AlbumsList({ id, name }: UserType) {
   // step 9: use hook
   const { data, error, isLoading } = useFetchAlbumsQuery({ id, name });
+  const [addAlbum, results] = useAddAlbumMutation();
+
+  const handleAddAlbum = () => {
+    addAlbum({ id, name });
+  };
 
   let content;
   if (isLoading) {
@@ -31,7 +36,10 @@ function AlbumsList({ id, name }: UserType) {
 
   return (
     <div>
-      <div>Albums for {name}</div>
+      <div>
+        Albums for {name}
+        <Button onClick={handleAddAlbum}>+ Add Album</Button>
+      </div>
       <div>{content}</div>
     </div>
   );

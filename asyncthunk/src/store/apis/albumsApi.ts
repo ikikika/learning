@@ -1,6 +1,7 @@
 // Step 2: Make a new file that will create the api
 
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { faker } from "@faker-js/faker";
 
 const albumsApi = createApi({
   // step 3: add reducerPath
@@ -25,10 +26,22 @@ const albumsApi = createApi({
           };
         },
       }),
+      addAlbum: builder.mutation({
+        query: (user) => {
+          return {
+            url: "/albums",
+            method: "POST",
+            body: {
+              userId: user.id,
+              title: faker.commerce.productName(),
+            },
+          };
+        },
+      }),
     };
   },
 });
 
 // step 6: export automatically generated hook
-export const { useFetchAlbumsQuery } = albumsApi;
+export const { useFetchAlbumsQuery, useAddAlbumMutation } = albumsApi;
 export { albumsApi };
