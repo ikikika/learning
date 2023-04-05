@@ -1,0 +1,34 @@
+{
+  "users": [
+    {
+      "name": "Myra",
+      "id": 6
+    },
+    {
+      "name": "Carrie Borer",
+      "id": 7
+    },
+    {
+      "name": "Charlene Bogan",
+      "id": 8
+    }
+  ],
+  "albums": [
+    {
+      "userId": 6,
+      "title": "Generic Granite Shoes",
+      "id": 100
+    },
+    {
+      "userId": 6,
+      "title": "Tasty Rubber Salad",
+      "id": 101
+    },
+    {
+      "userId": 6,
+      "title": "Fantastic Cotton Hat",
+      "id": 102
+    }
+  ],
+  "photos": []
+}
