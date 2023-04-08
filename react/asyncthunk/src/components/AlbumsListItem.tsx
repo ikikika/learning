@@ -3,6 +3,7 @@ import Button from "./Button";
 import ExpandablePanel from "./ExpandablePanel";
 import { AlbumType } from "../types";
 import { useRemoveAlbumMutation } from "../store/apis/albumsApi";
+import PhotosList from "./PhotosList";
 
 function AlbumsListItem({ id, title }: AlbumType) {
   const [removeAlbum, results] = useRemoveAlbumMutation();
@@ -26,7 +27,7 @@ function AlbumsListItem({ id, title }: AlbumType) {
 
   return (
     <ExpandablePanel key={id} header={header}>
-      List of photos in the album
+      <PhotosList album={{ id, title }} />
     </ExpandablePanel>
   );
 }
