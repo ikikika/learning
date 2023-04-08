@@ -20,14 +20,24 @@
       "id": 100
     },
     {
-      "userId": 6,
-      "title": "Tasty Rubber Salad",
-      "id": 101
-    },
-    {
       "userId": 7,
       "title": "Tasty Fresh Chair",
       "id": 103
+    },
+    {
+      "userId": 6,
+      "title": "Modern Granite Chair",
+      "id": 104
+    },
+    {
+      "userId": 6,
+      "title": "Tasty Metal Tuna",
+      "id": 106
+    },
+    {
+      "userId": 6,
+      "title": "Rustic Soft Gloves",
+      "id": 107
     }
   ],
   "photos": []

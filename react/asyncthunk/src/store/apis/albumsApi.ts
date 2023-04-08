@@ -22,7 +22,7 @@ const albumsApi = createApi({
       return fetch(...args);
     },
   }),
-  tagTypes: ["Album"],
+  tagTypes: ["Album", "UsersAlbums"],
   // step 5: add enpoints from analysis
   endpoints(builder) {
     return {
@@ -30,7 +30,11 @@ const albumsApi = createApi({
       fetchAlbums: builder.query({
         providesTags: (result, error, arg) => {
           // arg is whatever u pass into ur hook. in this case, its user
-          return [{ type: "Album", id: arg.id }];
+          const tags = result.map((album: { id: number }) => {
+            return { type: "Album", id: album.id };
+          });
+          tags.push({ type: "UsersAlbums", id: arg.id });
+          return tags;
         },
         query: (user) => {
           return {
@@ -44,8 +48,8 @@ const albumsApi = createApi({
         },
       }),
       addAlbum: builder.mutation({
-        invalidatesTags: (result, error, arg) => {
-          return [{ type: "Album", id: arg.id }];
+        invalidatesTags: (result, error, user) => {
+          return [{ type: "UsersAlbums", id: user.id }];
         },
         query: (user) => {
           return {
@@ -60,7 +64,7 @@ const albumsApi = createApi({
       }),
       removeAlbum: builder.mutation({
         invalidatesTags: (result, error, album) => {
-          return [{ type: "Album", id: album.userId }];
+          return [{ type: "Album", id: album.id }];
         },
         query: (album) => {
           return {
