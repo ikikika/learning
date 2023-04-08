@@ -6,7 +6,7 @@ import AlbumsListItem from "./AlbumsListItem";
 
 function AlbumsList({ id, name }: UserType) {
   // step 9: use hook
-  const { data, error, isLoading } = useFetchAlbumsQuery({ id, name });
+  const { data, error, isFetching } = useFetchAlbumsQuery({ id, name });
   const [addAlbum, results] = useAddAlbumMutation();
 
   const handleAddAlbum = () => {
@@ -14,7 +14,7 @@ function AlbumsList({ id, name }: UserType) {
   };
 
   let content;
-  if (isLoading) {
+  if (isFetching) {
     content = <Skeleton times={3} className="h-10 w-full" />;
   } else if (error) {
     content = <div>Error loading data</div>;
