@@ -4,7 +4,7 @@ import classes from "./button.module.css";
 import { ReactNode } from "react";
 
 interface ButtonType {
-  link: string;
+  link?: string;
   children: ReactNode;
   onClick?: () => void;
 }
