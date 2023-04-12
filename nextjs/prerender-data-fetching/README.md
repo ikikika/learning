@@ -1,38 +1,40 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Page pre-rendering
 
-## Getting Started
+Request
 
-First, run the development server:
+-> /some-route
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+-> Return pre-rendered page
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+-> Hydrate with react code once loaded
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+-> Page/App is interactive
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## 2 forms of prerendering
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+### Static generation
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- all the pages are pre-generated in advance during build time.
 
-## Learn More
+### Server-side rendering
 
-To learn more about Next.js, take a look at the following resources:
+- pages are created just in time after deployment when a request reaches the server.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Both techniques can be mixed
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Static Generation
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Data and pages are prepared during build time when you build your application before you deploy it.
+- Once you deploy them, they can be cached by the server, by the CDN that might be serving your app.
+- Therefore, incoming requests can be served instantly with those pre-built pages.
+- Pages which are sent to your clients, are not empty initially but pre populated with content.
+- How do we tell Next.js
+  - that a certain page should be pre-generated?
+  - which data is needed to pre-generate a page?
+- There is a specific async function which we can export from inside our page components
+  - `export async function getStaticProps(context) {...}`
+  - in this function, you can run any code that would normally run on the server side only.
+  - don't run the client side code,
+  - don't have access to certain client side API,
+  - don't have access to the window object, for example,
+  - code that you write inside of this getStaticProps function, will not be included in the code bundle that's sent back to your clients.
