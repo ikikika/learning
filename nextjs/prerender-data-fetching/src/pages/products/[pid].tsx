@@ -10,6 +10,7 @@ function ProductDetailPage(props: { loadedProduct: ProductType }) {
 
   const { loadedProduct } = props;
 
+  // if fallback is true, need to prepare a fallabck state in case loadedProduct is not defined in getStaticPaths
   if (!loadedProduct) {
     return <p>Loading...</p>;
   }
@@ -60,6 +61,7 @@ export async function getStaticPaths() {
   return {
     paths: pathsWithParams,
     fallback: true,
+    // when fallback is true, we tell nextjs that there are pages wehre params is not defined, but may still be valid
   };
 }
 
