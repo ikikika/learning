@@ -12,17 +12,17 @@ Request
 
 ## 2 forms of prerendering
 
-### - Static generation
+### A. Static generation
 
 - all the pages are pre-generated in advance during build time.
 
-### - Server-side rendering
+### B. Server-side rendering
 
 - pages are created just in time after deployment when a request reaches the server.
 
 Both techniques can be mixed
 
-## Static Generation
+## A. Static Generation
 
 - Data and pages are prepared during build time when you build your application before you deploy it.
 - Once you deploy them, they can be cached by the server, by the CDN that might be serving your app.
@@ -39,13 +39,35 @@ Both techniques can be mixed
   - don't have access to the window object, for example,
   - code that you write inside of this getStaticProps function, will not be included in the code bundle that's sent back to your clients.
 
-## Incremental Static Generation
+### Incremental Static Generation
 
 -> Pre-generate page
 -> Re-generate it on every request, OR re-generate every X seconds and serve it
 
-## getStaticProps
+### getStaticProps
 
 - Tells nextjs that we want to prerender this page in advance
 - If route is dynamic and has getStaticProps, we need a way to tell nextjs how many pages are required to be generated
   - Use `getStaticPaths` for this
+
+## B. Server-side rendering
+
+- getStaticProps and getStaticPaths have no access to the actual request
+  - they are called when the apge is built
+- Sometimes, we need to pre-render for every request OR need access to request object (eg, for cookies)
+- Nextjs allows us to run real SSR code as well
+- Code that runs on the server only, after deployemnt and re-executed for every incoming request
+
+### getServerSideProps
+
+- `export async function getServerSideProps(context) {...}`
+- **CANNOT USE WITH `getStaticProps`**. Must choose one.
+- `context` object in argument contains `params`, `req`, `res`
+  - can write server side code to manipulate object and get back an appripriate response
+  - has access to headers if we wanted to
+  - getting access to these data can be important if
+  - eg need special header or cookie data
+- Dun need req or res specific data, but want to ensure that function runs for every incoming request so taht its never static pre-generated (eg user profile pages)
+- Difference with `getStaticProps`
+  - has context object
+  - revalidate timing
