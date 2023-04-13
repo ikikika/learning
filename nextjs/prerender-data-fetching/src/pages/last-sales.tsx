@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-function LastSalesPage() {
-  const [sales, setSales] = useState<SalesType[]>();
+function LastSalesPage(props: { sales: SalesType[] }) {
+  const [sales, setSales] = useState<SalesType[]>(props.sales);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -43,6 +43,23 @@ function LastSalesPage() {
       ))}
     </ul>
   );
+}
+
+export async function getStaticProps() {
+  const response = await fetch("https://jsonplaceholder.typicode.com/users");
+  const data = await response.json();
+
+  const transformedSales = [];
+
+  for (const key in data) {
+    transformedSales.push({
+      id: key,
+      username: data[key].username,
+      company: data[key].company.name,
+    });
+  }
+
+  return { props: { sales: transformedSales } };
 }
 
 export default LastSalesPage;

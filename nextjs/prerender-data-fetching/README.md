@@ -80,3 +80,8 @@ Both techniques can be mixed
   - highly user specific data (eg orders in an online shop)
   - Partial data (eg dashboard data)
 - "Traditional" client side data fetching (useEffect with fetch) is fine
+
+## Combining both server side and client side data fetching
+- getStaticProps can get the data from the server side and render first
+- useEffect can run on client side to get updates if any
+- 
