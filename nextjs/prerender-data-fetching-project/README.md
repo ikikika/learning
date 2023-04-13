@@ -1,17 +1,7 @@
-## Create project
+## Project
 
-```
-npx create-next-app@latest --ts
-```
+useEffect and getStaticProps make sense
+getStaticProps get inital data, useEffect update the data on client side
 
-## File based routing
-
-- filenames are route names
-- dynamic routes indicated by square brackets [id].tsx
-
-| Route             | Description                                 |
-| ----------------- | ------------------------------------------- |
-| `/`               | starting page                               |
-| `/events`         | Events page (Show all events)               |
-| `/events/:id`     | Event Detail Page (show selected event)     |
-| `/events/...slug` | Filtered events page (show filtered events) |
+useEffect and getServerSideProps make no sense
+getServerSideProps is reexecuted for every request anyway, guaranteed to have the latest data
