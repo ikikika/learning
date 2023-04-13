@@ -84,4 +84,30 @@ Both techniques can be mixed
 ## Combining both server side and client side data fetching
 - getStaticProps can get the data from the server side and render first
 - useEffect can run on client side to get updates if any
-- 
+
+# Summary
+
+## getStaticProps
+- Used inside a page to fetch data at build time
+- Once app is built, will refuse to refresh the data till the time another build has been run.
+- As data is rendered before reaching the client, SEO of the page improves by leaps and bounds.
+- advantage 
+  - lets the page be statically generated
+  - fastest load times.
+- should use if
+  - data required to render the page is available at build time ahead of a user’s request
+  - data comes from a headless CMS
+  - page must be pre-rendered (for SEO) and be very fast 
+  - cached by a CDN for performance
+
+## getServerSideProps
+- Used to fetch data for every instance that a user issues a request to the page.
+- Fetches the data first before sending the page to the client. Should the client happen to issue a subsequent request, the data is fetched again.
+- Allows you to improve your SEO as in this method the data is rendered before it reaches the client.
+- Data is refreshed every time the user loads the page, they can view the updated information at all times.
+- should use if
+  - need to render a page whose data must be fetched at the requested time
+  - Pages will be server-side rendered at request time and only be cached if cache-control headers are configured.
+
+## Client side
+- Do not need data during request time
