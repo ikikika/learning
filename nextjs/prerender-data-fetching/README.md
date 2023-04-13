@@ -12,11 +12,11 @@ Request
 
 ## 2 forms of prerendering
 
-### Static generation
+### - Static generation
 
 - all the pages are pre-generated in advance during build time.
 
-### Server-side rendering
+### - Server-side rendering
 
 - pages are created just in time after deployment when a request reaches the server.
 
@@ -38,3 +38,8 @@ Both techniques can be mixed
   - don't have access to certain client side API,
   - don't have access to the window object, for example,
   - code that you write inside of this getStaticProps function, will not be included in the code bundle that's sent back to your clients.
+
+## Incremental Static Generation
+
+-> Pre-generate page
+-> Re-generate it on every request, OR re-generate every X seconds and serve it

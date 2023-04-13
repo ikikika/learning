@@ -31,7 +31,7 @@ export async function getStaticProps() {
   }
 
   if (data.products.length === 0) {
-    return { notFound: true };
+    return { notFound: true }; // will show not found page if failed to fetch data
   }
 
   // always need to return props. this function prepares props for the component
@@ -39,7 +39,7 @@ export async function getStaticProps() {
     props: {
       products: data.products,
     },
-    revalidate: 10,
+    revalidate: 10, // for ISR, regenerate every 10 seconds
   };
 }
 
