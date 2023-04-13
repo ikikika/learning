@@ -71,3 +71,4 @@ Both techniques can be mixed
 - Difference with `getStaticProps`
   - has context object
   - revalidate timing
+  - cannot use `getStaticPaths`
