@@ -72,3 +72,11 @@ Both techniques can be mixed
   - has context object
   - revalidate timing
   - cannot use `getStaticPaths`
+
+## Client-side data fetching
+
+- Some data dun need to be prerendered
+  - data changing with high frequency (eg stock data)
+  - highly user specific data (eg orders in an online shop)
+  - Partial data (eg dashboard data)
+- "Traditional" client side data fetching (useEffect with fetch) is fine
