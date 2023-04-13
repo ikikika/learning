@@ -4,4 +4,5 @@ export interface EventType {
   date: string;
   location: string;
   id: string;
+  description: string;
 }
