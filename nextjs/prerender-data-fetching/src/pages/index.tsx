@@ -2,14 +2,20 @@
 import path from "path"; // core nodejs module. no need install
 import fs from "fs/promises"; // core nodejs module. no need install
 
+import { ProductType } from "./products/product.type";
+import Link from "next/link";
+
 // props returned from getStaticProps
 function HomePage(props: { products: ProductType[] }) {
+  // can useEffect to fetch data but that woudl not be loaded in SSR
   const { products } = props;
 
   return (
     <ul>
       {products.map((product) => (
-        <li key={product.id}>{product.title}</li>
+        <li key={product.id}>
+          <Link href={`/products/${product.id}`}>{product.title}</Link>
+        </li>
       ))}
     </ul>
   );
@@ -44,8 +50,3 @@ export async function getStaticProps() {
 }
 
 export default HomePage;
-
-interface ProductType {
-  id: string;
-  title: string;
-}

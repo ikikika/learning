@@ -43,3 +43,9 @@ Both techniques can be mixed
 
 -> Pre-generate page
 -> Re-generate it on every request, OR re-generate every X seconds and serve it
+
+## getStaticProps
+
+- Tells nextjs that we want to prerender this page in advance
+- If route is dynamic and has getStaticProps, we need a way to tell nextjs how many pages are required to be generated
+  - Use `getStaticPaths` for this
