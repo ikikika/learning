@@ -11,6 +11,16 @@ type Data = {
   };
 };
 
+function buildFeedbackPath() {
+  return path.join(process.cwd(), "data", "feedback.json");
+}
+
+function extractFeedback(filepath: string) {
+  const fileData = fs.readFileSync(filepath);
+  const data = JSON.parse(fileData.toString());
+  return data;
+}
+
 function Handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   if (req.method === "POST") {
     const email = req.body.email;
@@ -22,13 +32,17 @@ function Handler(req: NextApiRequest, res: NextApiResponse<Data>) {
       text: feedbackText,
     };
 
-    const filepath = path.join(process.cwd(), "data", "feedback.json");
-    const fileData = fs.readFileSync(filepath);
-    const data = JSON.parse(fileData.toString());
+    const filepath = buildFeedbackPath();
+    const data = extractFeedback(filepath);
     data.push(newFeedback);
     fs.writeFileSync(filepath, JSON.stringify(data));
 
     res.status(201).json({ message: "success", feedback: newFeedback });
+  } else if (req.method === "GET") {
+    const filepath = buildFeedbackPath();
+    const data = extractFeedback(filepath);
+
+    res.status(201).json({ message: "success", feedback: data });
   }
 }
 

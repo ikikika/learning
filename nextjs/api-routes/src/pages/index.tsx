@@ -1,8 +1,9 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 export default function Home() {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const feedbackInputRef = useRef<HTMLTextAreaElement>(null);
+  const [feedbackItems, setFeedbackItems] = useState([]);
 
   function submitFormHandler(event: { preventDefault: () => void }) {
     event.preventDefault();
@@ -20,7 +21,13 @@ export default function Home() {
       },
     })
       .then((response) => response.json())
-      .then((response) => console.log(response));
+      .then((data) => console.log(data));
+  }
+
+  function loadFeecbackHandler() {
+    fetch("/api/feedback")
+      .then((response) => response.json())
+      .then((data) => setFeedbackItems(data.feedback));
   }
 
   return (
@@ -31,6 +38,14 @@ export default function Home() {
         <textarea ref={feedbackInputRef}></textarea>
         <button>Submit</button>
       </form>
+      <button onClick={loadFeecbackHandler}>Load feedback</button>
+      <ul>
+        {feedbackItems.map((item: any) => (
+          <li key={item.id}>
+            {item.email}: {item.text}
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
