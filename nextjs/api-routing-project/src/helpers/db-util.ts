@@ -25,7 +25,7 @@ export async function insertDocument(
 export async function getAllDocuments(
   client: MongoClient,
   collection: string,
-  sort: string
+  sort: {}
 ) {
   const db = client.db();
 

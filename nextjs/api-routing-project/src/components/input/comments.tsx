@@ -10,6 +10,7 @@ function Comments(props: { eventId: string }) {
 
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState([]);
+  const [reloadComments, setReloadComments] = useState(false);
 
   useEffect(() => {
     if (showComments) {
@@ -19,7 +20,7 @@ function Comments(props: { eventId: string }) {
           setComments(data.comments);
         });
     }
-  }, [eventId, showComments]);
+  }, [eventId, showComments, reloadComments]);
 
   function toggleCommentsHandler() {
     setShowComments((prevStatus) => !prevStatus);
@@ -34,7 +35,10 @@ function Comments(props: { eventId: string }) {
       },
     })
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        console.log(data);
+        setReloadComments((prevState) => !prevState);
+      });
   }
 
   return (
