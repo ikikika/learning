@@ -3,6 +3,7 @@ import EventLogistics from "@/components/events/event-logistics";
 import EventContent from "@/components/events/event-content";
 import { getEventById, getFeaturedEvents } from "@/helpers/api-util";
 import { EventType } from "@/types/event.type";
+import Comments from "@/components/input/comments";
 
 function EventDetailPage(props: { selectedEvent: EventType }) {
   const event = props.selectedEvent;
@@ -26,6 +27,7 @@ function EventDetailPage(props: { selectedEvent: EventType }) {
       <EventContent>
         <p>{event.description}</p>
       </EventContent>
+      <Comments eventId={event.id} />
     </>
   );
 }

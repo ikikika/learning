@@ -1,7 +1,10 @@
-import { Data } from "@/types/api.type";
+import { NewsletterResponseType } from "@/types/api.type";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<NewsletterResponseType>
+) {
   if (req.method === "POST") {
     const userEmail = req.body.email;
 
