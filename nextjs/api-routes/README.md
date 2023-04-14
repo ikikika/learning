@@ -28,3 +28,8 @@ function handler(req, res){
 ## getStaticProps
 
 - SHOULD NOT USE FETCH TO TALK TO OUR OWN API
+
+## Dynamic API routs
+
+- can also name `[...apiRoute].ts` to catch more query parameters
+  - `/api/something1/something2`
