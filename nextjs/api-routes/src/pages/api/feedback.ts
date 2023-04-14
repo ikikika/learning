@@ -2,20 +2,22 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import path from "path";
 
-type Data = {
-  message: string;
-  feedback: {
-    id: string;
-    email: string;
-    text: string;
-  };
+export type FeedbackType = {
+  id: string;
+  email: string;
+  text: string;
 };
 
-function buildFeedbackPath() {
+type Data = {
+  message: string;
+  feedback: FeedbackType;
+};
+
+export function buildFeedbackPath() {
   return path.join(process.cwd(), "data", "feedback.json");
 }
 
-function extractFeedback(filepath: string) {
+export function extractFeedback(filepath: string) {
   const fileData = fs.readFileSync(filepath);
   const data = JSON.parse(fileData.toString());
   return data;

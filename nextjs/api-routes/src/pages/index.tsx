@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
+import { FeedbackType } from "./api/feedback";
 
 export default function Home() {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const feedbackInputRef = useRef<HTMLTextAreaElement>(null);
-  const [feedbackItems, setFeedbackItems] = useState([]);
+  const [feedbackItems, setFeedbackItems] = useState<FeedbackType[]>([]);
 
   function submitFormHandler(event: { preventDefault: () => void }) {
     event.preventDefault();
@@ -40,7 +41,7 @@ export default function Home() {
       </form>
       <button onClick={loadFeecbackHandler}>Load feedback</button>
       <ul>
-        {feedbackItems.map((item: any) => (
+        {feedbackItems.map((item) => (
           <li key={item.id}>
             {item.email}: {item.text}
           </li>

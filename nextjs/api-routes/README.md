@@ -24,3 +24,7 @@ function handler(req, res){
     res.status(200).json({ message: "it works" });
 }
 ```
+
+## getStaticProps
+
+- SHOULD NOT USE FETCH TO TALK TO OUR OWN API
