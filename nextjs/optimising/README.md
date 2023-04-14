@@ -16,3 +16,10 @@ If there are same tags, the latest one will win.
 - All elements that make up an HTML document, can add to the `_document.tsx` file.
 - Only import `{ Html, Head, Main, NextScript }` from `next/document`, not `next/Head`
 - Allows us to add HTML content outside of component tree
+
+## Image
+
+- `Next/Image` automatically generates compatible size and format for images.
+- Width and height will be overwritten with css styles
+- Width and height in Image only state the size of the image to be fetched.
+- Super important
