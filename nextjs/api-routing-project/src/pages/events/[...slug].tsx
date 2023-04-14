@@ -14,22 +14,22 @@ function FilteredEventsPage() {
 
   const filterData = router.query.slug;
 
-  const { data, error } = useSWR("http://localhost:3005/events", (url) =>
+  const { data, error } = useSWR("http://localhost:3000/api/events", (url) =>
     fetch(url).then((res) => res.json())
   );
 
   useEffect(() => {
     if (data) {
-      const events = [];
+      // const events = [];
 
-      for (const key in data) {
-        events.push({
-          id: key,
-          ...data[key],
-        });
-      }
+      // for (const key in data) {
+      //   events.push({
+      //     id: key,
+      //     ...data[key],
+      //   });
+      // }
 
-      setLoadedEvents(events);
+      setLoadedEvents(data.events);
     }
   }, [data]);
 

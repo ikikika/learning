@@ -52,7 +52,10 @@ async function handler(
       newComment._id = result.insertedId;
       res.status(201).json({ message: "Added comment.", comment: newComment });
     } catch (error) {
-      res.status(500).json({ message: "Inserting comment failed!" });
+      res.status(500).json({ message: "Data insertion failed." });
+    } finally {
+      console.log("Database connection closed.");
+      client.close();
     }
   }
 
@@ -61,7 +64,10 @@ async function handler(
       const documents = await getAllDocuments(client, "comments", { _id: -1 });
       res.status(200).json({ comments: documents as CommentType[] });
     } catch (error) {
-      res.status(500).json({ message: "Getting comments failed." });
+      res.status(500).json({ message: "Get comments failed." });
+    } finally {
+      console.log("Database connection closed.");
+      client.close();
     }
   }
 }

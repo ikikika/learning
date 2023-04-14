@@ -1,19 +1,19 @@
 import { EventType } from "@/types/event.type";
 
-export async function getAllEvents() {
-  const response = await fetch("http://localhost:3005/events");
+export async function getAllEvents(): Promise<EventType[]> {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events`);
   const data = await response.json();
 
-  const events = [];
+  // const events = [];
 
-  for (const key in data) {
-    events.push({
-      id: key,
-      ...data[key],
-    });
-  }
+  // for (const key in data) {
+  //   events.push({
+  //     id: key,
+  //     ...data[key],
+  //   });
+  // }
 
-  return events;
+  return data.events;
 }
 
 export async function getFeaturedEvents(): Promise<EventType[]> {
@@ -23,7 +23,7 @@ export async function getFeaturedEvents(): Promise<EventType[]> {
 
 export async function getEventById(id: string | number) {
   const allEvents = await getAllEvents();
-  return allEvents.find((event) => event.id === id);
+  return allEvents.find((event) => event._id === id);
 }
 
 export async function getFilteredEvents(dateFilter: {

@@ -27,8 +27,10 @@ async function handler(
       await insertDocument(client, "newsletter", { email: userEmail });
       client.close();
     } catch (error) {
-      res.status(500).json({ message: "Inserting data failed!" });
-      return;
+      res.status(500).json({ message: "Data insertion failed." });
+    } finally {
+      console.log("Database connection closed.");
+      client.close();
     }
 
     res.status(201).json({ message: "Signed up!" });
