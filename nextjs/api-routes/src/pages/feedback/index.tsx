@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   FeedbackType,
   buildFeedbackPath,
@@ -5,14 +6,29 @@ import {
 } from "../api/feedback";
 
 function FeedbackPage(props: { feedbackItems: FeedbackType[] }) {
+  const [feedbackData, setFeedbackData] = useState<FeedbackType>();
+
+  function loadFeedbackHandler(id: string) {
+    fetch(`/api/${id}`)
+      .then((response) => response.json())
+      .then((data) => setFeedbackData(data.feedback));
+  }
   return (
-    <ul>
-      {props.feedbackItems.map((item) => (
-        <li key={item.id}>
-          {item.email}: {item.text}
-        </li>
-      ))}
-    </ul>
+    <>
+    {
+        feedbackData && <p>{feedbackData.email}: {feedbackData.text}</p>
+    }
+      <ul>
+        {props.feedbackItems.map((item) => (
+          <li key={item.id}>
+            {item.email}{" "}
+            <button onClick={loadFeedbackHandler.bind(null, item.id)}>
+              Show details
+            </button>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
 

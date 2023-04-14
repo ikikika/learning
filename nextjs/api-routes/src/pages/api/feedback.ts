@@ -10,14 +10,14 @@ export type FeedbackType = {
 
 type Data = {
   message: string;
-  feedback: FeedbackType;
+  feedback: FeedbackType | FeedbackType[];
 };
 
 export function buildFeedbackPath() {
   return path.join(process.cwd(), "data", "feedback.json");
 }
 
-export function extractFeedback(filepath: string) {
+export function extractFeedback(filepath: string): FeedbackType[] {
   const fileData = fs.readFileSync(filepath);
   const data = JSON.parse(fileData.toString());
   return data;
