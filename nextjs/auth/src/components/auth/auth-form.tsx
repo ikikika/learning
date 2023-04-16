@@ -1,8 +1,10 @@
 import { FormEvent, useRef, useState } from "react";
 import classes from "./auth-form.module.css";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
+import { CredentialType } from "@/types/credentials.type";
 
-async function createUser(email: string, password: string) {
+async function createUser({ email, password }: CredentialType) {
   const response = await fetch("/api/auth/signup", {
     method: "POST",
     body: JSON.stringify({ email, password }),
@@ -40,10 +42,23 @@ function AuthForm() {
     // optional: Add validation
 
     if (isLogin) {
-      // login code
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: enteredEmail,
+        password: enteredPassword,
+      });
+
+      if (result && !result.error) {
+        // set some auth state
+        console.log(result);
+        // router.replace("/profile");
+      }
     } else {
       try {
-        const result = await createUser(enteredEmail, enteredPassword);
+        const result = await createUser({
+          email: enteredEmail,
+          password: enteredPassword,
+        });
         console.log(result);
       } catch (error) {
         console.log(error);
