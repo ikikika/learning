@@ -1,14 +1,14 @@
 import { verifyPassword } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
-import NextAuth, { Awaitable, User } from "next-auth";
+import NextAuth, { Awaitable, NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-// NextAuth() executes and returns a handler function
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   // object used to configure NextAuth's behaviour
   session: {
     strategy: "jwt",
   },
+  secret: "asd",
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -50,4 +50,7 @@ export default NextAuth({
       },
     }),
   ],
-});
+};
+
+// NextAuth() executes and returns a handler function
+export default NextAuth(authOptions);
