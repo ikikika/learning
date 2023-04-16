@@ -1,8 +1,10 @@
 import { createContext, useState, useEffect, ReactNode } from "react";
 
+const initialState = { title: "", message: "", status: "" };
+
 const NotificationContext = createContext({
-  notification: null, // { title, message, status }
-  showNotification: function () {},
+  notification: initialState, // { title, message, status }
+  showNotification: function (notificationData: NotificationType) {},
   hideNotification: function () {},
 });
 
@@ -11,14 +13,15 @@ export function NotificationContextProvider({
 }: {
   children: ReactNode;
 }) {
-  const [activeNotification, setActiveNotification] = useState<null>(null);
+  const [activeNotification, setActiveNotification] =
+    useState<NotificationType>(initialState);
 
-  function showNotificationHandler() {
-    setActiveNotification(null);
+  function showNotificationHandler(notificationData: NotificationType) {
+    setActiveNotification(notificationData);
   }
 
   function hideNotificationHandler() {
-    setActiveNotification(null);
+    setActiveNotification(initialState);
   }
 
   const context = {
@@ -35,3 +38,9 @@ export function NotificationContextProvider({
 }
 
 export default NotificationContext;
+
+interface NotificationType {
+  title: string;
+  message: string;
+  status: string;
+}
