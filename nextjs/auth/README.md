@@ -10,3 +10,6 @@
 - catch all `[...nextauth].ts`
 - next auth package behind the scenes will expose multiple routes for user login and for user logout, for example.
 - https://next-auth.js.org/getting-started/rest-api
+
+- NextAuth will create cookie with jwt token on signIn
+- will clear cookies on signOut
