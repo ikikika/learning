@@ -1,3 +1,4 @@
+import { NotificationType } from "@/types/notification.type";
 import { createContext, useState, useEffect, ReactNode } from "react";
 
 const initialState = { title: "", message: "", status: "" };
@@ -38,9 +39,3 @@ export function NotificationContextProvider({
 }
 
 export default NotificationContext;
-
-interface NotificationType {
-  title: string;
-  message: string;
-  status: string;
-}
