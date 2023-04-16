@@ -17,6 +17,22 @@ export function NotificationContextProvider({
   const [activeNotification, setActiveNotification] =
     useState<NotificationType>(initialState);
 
+  useEffect(() => {
+    if (
+      activeNotification &&
+      (activeNotification.status === "success" ||
+        activeNotification.status === "error")
+    ) {
+      const timer = setTimeout(() => {
+        setActiveNotification(initialState);
+      }, 3000);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [activeNotification]);
+
   function showNotificationHandler(notificationData: NotificationType) {
     setActiveNotification(notificationData);
   }
