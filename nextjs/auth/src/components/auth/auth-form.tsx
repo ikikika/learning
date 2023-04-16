@@ -50,8 +50,7 @@ function AuthForm() {
 
       if (result && !result.error) {
         // set some auth state
-        console.log(result);
-        // router.replace("/profile");
+        router.replace("/profile");
       }
     } else {
       try {

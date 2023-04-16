@@ -13,8 +13,6 @@ export default NextAuth({
     CredentialsProvider({
       name: "credentials",
       authorize: async (credentials) => {
-        console.log("credentials= ", credentials);
-
         const client = await connectToDatabase();
 
         const usersCollection = client.db().collection("users");
@@ -28,7 +26,6 @@ export default NextAuth({
           client.close();
           throw new Error("No user found!");
         }
-        console.log("user= ", user);
 
         // found a user with that email address, check for password
         const isValid = await verifyPassword(
