@@ -1,18 +1,17 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// step 3
+// step 5
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 
 module.exports = {
   mode: 'development',
   devServer: {
-    port: 8081,
+    port: 8080,
   },
   plugins: [
-    new ModuleFederationPlugin({ // step 3
-      name: 'products',
-      filename: 'remoteEntry.js',
-      exposes: {
-        './ProductsIndex': './src/index',
+    new ModuleFederationPlugin({ // step 5
+      name: 'container',
+      remotes: {
+        products: 'products@http://localhost:8081/remoteEntry.js',
       },
     }),
     new HtmlWebpackPlugin({
