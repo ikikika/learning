@@ -19,3 +19,7 @@
 - If we cannot have multiple version of package in our project (eg. react), we need to set it to singleton true
   - If we use singlton rules with conflicting versions, MFE will throw a warning in the container saying there are incopmpatible versions of package
   - Teams have to debug and decide if 1 should upgrade or another one should downgrade
+
+## Take note
+
+- DO not name the module with the same name as the div id, else there will be a clash in the browser
