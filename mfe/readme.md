@@ -8,7 +8,7 @@
     - No shared state
     - Shared libraries through MF is ok
 
-### 2. NEar-zero coupling between container and child apps
+### 2. Near-zero coupling between container and child apps
 
     - Container shouldn't assume that a child is using a particular framework
     - Any necessary communication to be done with callbacks or simple events
@@ -66,7 +66,7 @@
    - Each app might be using a completely different navigation framwework
    - We might swap out or upgrade navigation libraries all the time - shouldn't require a rewrite of the rest of the app
 
-## How Routing Libraries Work
+### How Routing Libraries Work
 
 - Decide what content to show on the screen
 - 2 parts
@@ -84,7 +84,7 @@
 
 ### Setting up Navigation Mode for MF
 
-- In MF, apps may be xompeting to set the route and conflict
+- In MF, apps may be competing to set the route and conflict with each other
 - Need a way of control
 - Most common way
   - Container: Browser History
@@ -92,3 +92,25 @@
     - Auth: Memory History
 - Container is the only history that will access the address bar and look at URL and eventually update it
 - Subapps will have codes that sync history object
+
+### Communication between Apps
+
+- User clicks link governed by Container
+  - Browser History
+  - Communicate change **DOWN** to Marketing
+  - Marketing's **Memory History** should update its current path
+- User clicks link governed by Marketing
+  - Memory History
+  - Communicate change **UP** to Container
+  - Container's **Browser History** should update its current path
+- **COMMUNICATION ABOUT ROUTING BETWEEN CONTAINER AND SUBAPP SHOULD BE AS GENERIC AS POSSIBLE**
+
+  - done with simple objects, simple events, simple callbacks
+  - so that different routing libraries can interpret the information and act accordingly
+
+- User clicks link in Marketing
+  - Container shows marketing app
+  - Container pass down callback function `onNavigate`
+  - User clicks on link inside marketing app
+  - Update Memory History's current path to `/pricing`
+  - Call `onNavigate` to tell container that the current path has changed
