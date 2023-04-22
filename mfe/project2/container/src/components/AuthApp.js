@@ -16,6 +16,9 @@ export default () => {
           history.push(nextPathname);
         }
       },
+      onSignIn: () => { // we can call this onAuthChange, but should include logic for signout
+        console.log('User signed in');
+      },
     });
 
     history.listen(onParentNavigate);

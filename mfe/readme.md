@@ -114,3 +114,22 @@
   - User clicks on link inside marketing app
   - Update Memory History's current path to `/pricing`
   - Call `onNavigate` to tell container that the current path has changed
+
+## Authentication
+
+- Auth app is for signing in/up users **ONLY**
+- Auth app **is not for**
+  - enforcing permissions,
+  - allowing access to certain routes,
+  - figuring out if user is signed in
+  - why?
+    - Eg, if user goes to /dashboard, which is a protected page,
+    - only code for Container and Dashboard are loaded. Auth is not.
+    - Hence, Auth should not be responsible for checking
+    - Loading Auth everytime a user access the Container is inefficient
+- Two approaches for handling auth
+  - Each app is aware of auth
+    - Not recommended as we will have a lot of duplicate codes because each individual app needs to have some authentication related code to decide whether or not the user is logged in, whether they're signed out, whether they have permission to go to some page, and so on.
+  - Centralise auth in Container
+    - Recommend approach
+    - Container communicate down to each sub app the user's current authentication status.
