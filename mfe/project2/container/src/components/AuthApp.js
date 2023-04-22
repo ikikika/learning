@@ -2,7 +2,7 @@ import { mount } from 'auth/AuthApp';
 import React, { useRef, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
-export default () => {
+export default ({onSignIn}) => {
   const ref = useRef(null);
   const history = useHistory();
 
@@ -17,7 +17,7 @@ export default () => {
         }
       },
       onSignIn: () => { // we can call this onAuthChange, but should include logic for signout
-        console.log('User signed in');
+        onSignIn();
       },
     });
 
