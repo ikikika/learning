@@ -9,6 +9,9 @@ function App() {
   const [list, setList] = useState<string[]>([])
 
   function handleChange(e: { target: { value: string; }; }) {
+    // sets name and large list at the same time
+    // very slow and takes time to update both name and large list
+
     setName(e.target.value)
 
     const l: string[] = [];
