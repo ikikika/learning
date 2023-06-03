@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 function slowFunction(num: number) {
   console.log('calling slow function');
@@ -13,7 +13,14 @@ function App() {
   // this function is very slow 
   // will be called whenever theres a change in state and the component needs to rerender
   // results does not change that often
-  const doubleNumber = slowFunction(number); 
+
+  // this function will always give us the same output everytime we give it the same input
+  // useMemo cache input value and output it give us
+  // so we dun have to recompute it every single time
+  // react will only rerun the code inside useMemo if number changes
+  const doubleNumber = useMemo(() => {
+    return slowFunction(number);
+  }, [number]) 
 
   const themeStyles = {
     backgroundColor: dark ? 'black' : 'white',
@@ -32,3 +39,6 @@ function App() {
 }
 
 export default App
+
+// useMemo does have performance overhead and memory overhead
+// only use useMemo when the function u r calling is incredibly slow
