@@ -1,33 +1,32 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+
+function slowFunction(num: number) {
+  console.log('calling slow function');
+  for (let i = 0; i < 100000000; i++) { } // simulate slow function
+  return num * 2;
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [number, setNumber] = useState(0);
+  const [dark, setDark] = useState(false);
+
+  // this function is very slow 
+  // will be called whenever theres a change in state and the component needs to rerender
+  // results does not change that often
+  const doubleNumber = slowFunction(number); 
+
+  const themeStyles = {
+    backgroundColor: dark ? 'black' : 'white',
+    color: dark ? 'white' : 'black'
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <input type="number" value={number} onChange={e => setNumber(parseInt(e.target.value))} />
+      <button onClick={() => setDark(prevDark => !prevDark)}>Change theme</button>
+
+      {/* take a long time to output this because of slow function */}
+      <div style={themeStyles}>{doubleNumber}</div>
     </>
   )
 }
