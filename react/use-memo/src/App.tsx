@@ -20,12 +20,14 @@ function App() {
   // react will only rerun the code inside useMemo if number changes
   const doubleNumber = useMemo(() => {
     return slowFunction(number);
-  }, [number]) 
+  }, [number])
 
-  const themeStyles = {
+  // wrapping the output in useMemo ensures that if theres no change in value, it will not cause the useEffect to rerun
+  // this is called referenital equality
+  const themeStyles = useMemo(() => ({
     backgroundColor: dark ? 'black' : 'white',
     color: dark ? 'white' : 'black'
-  }
+  }), [dark])
 
   useEffect(() => {
     console.log('theme changed');
