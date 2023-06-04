@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 
 function slowFunction(num: number) {
   console.log('calling slow function');
@@ -26,6 +26,13 @@ function App() {
     backgroundColor: dark ? 'black' : 'white',
     color: dark ? 'white' : 'black'
   }
+
+  useEffect(() => {
+    console.log('theme changed');
+    // this useEffect will be triggered everytime we rerender the function 
+    // because every time the function is run, a new themeStyles object is created, even though it might have the same value as the last run
+    // different reference in the memory
+  }, [themeStyles]);
 
   return (
     <>
