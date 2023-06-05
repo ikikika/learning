@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
-function List({ getItems }: {getItems: () => number[]}) {
+function List({ getItems }: { getItems: (arg: number) => number[] }) {
   const [items, setItems] = useState<number[]>([]);
 
-  useEffect( () => {
-    setItems(getItems());
+  useEffect(() => {
+    setItems(getItems(5));
     // problem: we only want this console log when number is updated
     // however, because App is rerendered no matter if the state number or dark changes
     // getItems is always recreated and will always be different on every rerender
@@ -18,10 +18,14 @@ function App() {
   const [number, setNumber] = useState(1);
   const [dark, setDark] = useState(false);
 
-  const getItems = () => {
+  // useCallback only recreates the function when the number changes
+  // not going to recreate function when dark varialble changes
+  // we can pass in arguments and let it do function things
+  // if this function is really really slow, we can useCallback to only recreate the function when we need to
+  const getItems = useCallback((arg: number) => {
     // simulate a funciton taht calls an api
-    return [number, number + 1, number + 2];
-  }
+    return [number, number + arg, number + arg + 2];
+  }, [number]);
 
   const theme = {
     backgroundColor: dark ? '#333' : '#fff',
