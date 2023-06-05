@@ -1,34 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react'
+
+function List({ getItems }: {getItems: () => number[]}) {
+  const [items, setItems] = useState<number[]>([]);
+
+  useEffect( () => {
+    setItems(getItems());
+    console.log('updating items');
+  }, [getItems]);
+
+  return items.map(item => <div key={item}>{item}</div>);
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [number, setNumber] = useState(1);
+  const [dark, setDark] = useState(false);
+
+  const getItems = () => {
+    // simulate a funciton taht calls an api
+    return [number, number + 1, number + 2];
+  }
+
+  const theme = {
+    backgroundColor: dark ? '#333' : '#fff',
+    color: dark ? '#fff' : '#333'
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div style={theme}>
+      <input
+        type="number"
+        value={number}
+        onChange={e => setNumber(parseInt(e.target.value))}
+      />
+      <button onClick={() => setDark(prev => !prev)}>
+        Toggle theme
+      </button>
+      <List getItems={getItems} />
+    </div>
   )
 }
 
