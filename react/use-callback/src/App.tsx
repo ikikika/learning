@@ -5,6 +5,9 @@ function List({ getItems }: {getItems: () => number[]}) {
 
   useEffect( () => {
     setItems(getItems());
+    // problem: we only want this console log when number is updated
+    // however, because App is rerendered no matter if the state number or dark changes
+    // getItems is always recreated and will always be different on every rerender
     console.log('updating items');
   }, [getItems]);
 
