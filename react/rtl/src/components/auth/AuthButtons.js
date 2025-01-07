@@ -4,8 +4,6 @@ import useUser from '../../hooks/useUser';
 function AuthButtons() {
   const { user, isLoading } = useUser();
 
-  debugger;
-
   if (isLoading) {
     return null;
   } else if (user) {

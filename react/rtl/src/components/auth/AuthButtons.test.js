@@ -18,13 +18,13 @@ describe('when user is signed in', () => {
     {
       path: '/api/user',
       res: () => {
+        console.log('LOGGED IN RESPONSE');
         return { user: { id: 3, email: 'asdf@asdf.com' } };
       },
     },
   ]);
 
-  test.only('sign in and sign up are not visible', async () => {
-    debugger;
+  test('sign in and sign up are not visible', async () => {
     await renderComponent();
 
     const signInButton = screen.queryByRole('link', {
@@ -56,13 +56,13 @@ describe('when user is not signed in', () => {
     {
       path: '/api/user',
       res: () => {
+        console.log('NOT LOGGED IN RESPONSE');
         return { user: null };
       },
     },
   ]);
 
-  test.only('sign in and sign up are visible', async () => {
-    debugger;
+  test('sign in and sign up are visible', async () => {
     await renderComponent();
 
     const signInButton = screen.getByRole('link', {
