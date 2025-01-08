@@ -1,13 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { SWRConfig } from 'swr';
 import { createServer } from '../../test/server';
 import AuthButtons from './AuthButtons';
 
 async function renderComponent() {
   render(
-    <MemoryRouter>
-      <AuthButtons />
-    </MemoryRouter>
+    <SWRConfig value={{ provider: () => new Map() }}>
+      <MemoryRouter>
+        <AuthButtons />
+      </MemoryRouter>
+    </SWRConfig>
   );
   await screen.findAllByRole('link');
 }
@@ -18,7 +21,6 @@ describe('when user is signed in', () => {
     {
       path: '/api/user',
       res: () => {
-        console.log('LOGGED IN RESPONSE');
         return { user: { id: 3, email: 'asdf@asdf.com' } };
       },
     },
@@ -56,7 +58,6 @@ describe('when user is not signed in', () => {
     {
       path: '/api/user',
       res: () => {
-        console.log('NOT LOGGED IN RESPONSE');
         return { user: null };
       },
     },
