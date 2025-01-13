@@ -8,5 +8,7 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.component.sass'
 })
 export class AppComponent {
-  title = 'pwgen';
+  onButtonClick() {
+    console.log('Button was clicked');
+  }
 }
