@@ -8,7 +8,14 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.component.sass'
 })
 export class AppComponent {
+
+  passwordString = '';
+
   onButtonClick() {
-    console.log('Button was clicked');
+    this.passwordString = 'my password';
+  }
+
+  getPassword() {
+    return this.passwordString;
   }
 }
