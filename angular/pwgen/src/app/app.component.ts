@@ -10,12 +10,33 @@ import { RouterOutlet } from '@angular/router';
 export class AppComponent {
 
   passwordString = '';
-
-  onButtonClick() {
-    this.passwordString = 'my password';
-  }
+  includeLetters = false;
+  includeNumbers = false;
+  includeSymbols = false;
 
   getPassword() {
     return this.passwordString;
+  }
+
+  onChangeUseLetters() {
+    this.includeLetters = !this.includeLetters;
+  }
+
+  onChangeUseNumbers() {
+    this.includeNumbers = !this.includeNumbers;
+  }
+
+  onChangeUseSymbols() {
+    this.includeSymbols = !this.includeSymbols;
+  }
+
+  onButtonClick() {
+    console.log(`
+      About to generate a password with the following:
+      Includes letters: ${this.includeLetters}
+      Includes numbers: ${this.includeNumbers}
+      Includes symbols: ${this.includeSymbols}
+    `);
+    this.passwordString = 'MY PASSWORD!!!';
   }
 }
