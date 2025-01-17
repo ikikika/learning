@@ -13,9 +13,20 @@ export class AppComponent {
   includeLetters = false;
   includeNumbers = false;
   includeSymbols = false;
+  lengthOfString = 0;
 
   getPassword() {
     return this.passwordString;
+  }
+
+  onChangeLength(event: Event) {
+    const parsedValue = parseInt((event.target as HTMLInputElement).value);
+
+    console.log(parsedValue);
+
+    if (!isNaN(parsedValue)) {
+      this.lengthOfString = parsedValue;
+    }
   }
 
   onChangeUseLetters() {

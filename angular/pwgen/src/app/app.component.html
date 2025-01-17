@@ -2,7 +2,8 @@
 
 <div>
   <label>Enter Length</label>
-  <input />
+  <input (input)="onChangeLength($event)" />
+  {{ lengthOfString }}
 </div>
 
 <div>
