@@ -22,7 +22,7 @@ export class AppComponent {
   onChangeLength(event: Event) {
     const parsedValue = parseInt((event.target as HTMLInputElement).value);
 
-    console.log(parsedValue);
+    // console.log(parsedValue);
 
     if (!isNaN(parsedValue)) {
       this.lengthOfString = parsedValue;
@@ -42,12 +42,34 @@ export class AppComponent {
   }
 
   onButtonClick() {
-    console.log(`
-      About to generate a password with the following:
-      Includes letters: ${this.includeLetters}
-      Includes numbers: ${this.includeNumbers}
-      Includes symbols: ${this.includeSymbols}
-    `);
-    this.passwordString = 'MY PASSWORD!!!';
+    // console.log(`
+    //   About to generate a password with the following:
+    //   Includes letters: ${this.includeLetters}
+    //   Includes numbers: ${this.includeNumbers}
+    //   Includes symbols: ${this.includeSymbols}
+    // `);
+    // this.passwordString = 'MY PASSWORD!!!';
+
+    const numbers = '1234567890';
+    const letters = 'abcdefghijklmnopqrstuvwyz';
+    const symbols = '!@#$%^&*()';
+
+    let validChars = '';
+    if (this.includeLetters) {
+      validChars += letters;
+    }
+    if (this.includeNumbers) {
+      validChars += numbers;
+    }
+    if (this.includeSymbols) {
+      validChars += symbols;
+    }
+
+    let generatedPassword = '';
+    for (let i = 0; i < this.lengthOfString; i++) {
+      const index = Math.floor(Math.random() * validChars.length);
+      generatedPassword += validChars[index];
+    }
+    this.passwordString = generatedPassword;
   }
 }
