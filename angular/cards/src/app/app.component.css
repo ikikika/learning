@@ -1,0 +1,5 @@
+/* css in here applies to only HTML created by the app.component.html file */
+.card {
+    width: 350px;
+}
+  
