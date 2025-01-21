@@ -8,7 +8,11 @@
       </p>
 
       <div class="field">
-        <input class="input" />
+        <input 
+          #userInput 
+          class="input" 
+          (input)="onInput(userInput.value)"
+        />
       </div>
 
       <div class="box has-text-centered">

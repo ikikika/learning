@@ -10,4 +10,8 @@ import { faker } from "@faker-js/faker";
 })
 export class AppComponent {
   randomText = faker.lorem.sentence();
+
+  onInput(value: string) {
+    console.log(value);
+  }
 }
