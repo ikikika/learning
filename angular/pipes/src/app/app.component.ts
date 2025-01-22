@@ -11,9 +11,14 @@ import { TitleCasePipe } from '@angular/common';
 export class AppComponent {
 
   fullName: string = '';
+  date: string = '';
 
   onNameChange(value: string) {
     this.fullName = value;
+  }
+
+  onDateChange(value: string) {
+    this.date = value;
   }
 }
 

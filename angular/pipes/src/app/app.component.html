@@ -7,7 +7,7 @@
       <input 
         class="form-control" 
         #userInput 
-        (input)="onNameChange(userInput .value)" 
+        (input)="onNameChange(userInput.value)" 
       />
     </div>
 
@@ -18,4 +18,24 @@
       </div>
     </div>
   </div>
+
+  <div class="row">
+    <div class="form-group col">
+      <label>Payment Date</label>
+      <input 
+        class="form-control" 
+        type="date"
+        #dateInput 
+        (input)="onDateChange(dateInput.value)" 
+      />
+    </div>
+
+    <div class="col">
+      <label><b>Date</b></label>
+      <div>
+        {{ date }}
+      </div>
+    </div>
+  </div>
+
 </div>
