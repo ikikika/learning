@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  currentPage = 0;
+  currentPage = 3;
   images = [
     {
       title: 'At the Beach',
