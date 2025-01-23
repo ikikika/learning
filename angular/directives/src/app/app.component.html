@@ -6,15 +6,20 @@
         (click)="currentPage = currentPage - 1"  
       >Prev</a>
     </li>
-    <li 
-      class="page-item" 
-      [ngClass]="{ active: i === currentPage }"
-      *ngFor="let image of images; let i = index">
-      <a 
-        class="page-link"
-        (click)="currentPage = i"
-      >{{ i + 1 }}</a>
-    </li>
+    <!-- cannot have more than 1 ng directive per tag -->
+    <!-- use ng-container to get around that rule -->
+    <ng-container *ngFor="let image of images; let i = index">
+      <li 
+        class="page-item" 
+        [ngClass]="{ active: i === currentPage }"
+        *ngIf="checkWindowIndex(i)"
+      >
+        <a 
+          class="page-link"
+          (click)="currentPage = i"
+        >{{ i + 1 }}</a>
+      </li>
+    </ng-container>
     <li
       class="page-item"
       [ngClass]="{ disabled: currentPage === images.length - 1 }"
@@ -26,8 +31,8 @@
     </li>
   </ul>
 </nav>
-<!-- ngClass also accepts array and adds to the classname one by one
-[ngClass]="['class1', 'class2']" -->
+<!-- ngClass also accepts array and adds to the classname one by one -->
+<!-- [ngClass]="['class1', 'class2']" -->
 
 
 <div>
