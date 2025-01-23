@@ -1,6 +1,6 @@
 <nav>
   <ul class="pagination">
-    <li class="page-item" [ngClass]="{ disabled: currentPage === 0 }">
+    <li class="page-item" appClass [ngClass]="{ disabled: currentPage === 0 }">
       <a 
         class="page-link"
         (click)="currentPage = currentPage - 1"  
@@ -34,7 +34,7 @@
 <!-- ngClass also accepts array and adds to the classname one by one -->
 <!-- [ngClass]="['class1', 'class2']" -->
 
-<div [ngSwitch]="currentPage">
+<!-- <div [ngSwitch]="currentPage">
   <div *ngSwitchCase="0">
     Current Page is zero
   </div>
@@ -47,7 +47,7 @@
   <div *ngSwitchDefault>
     Unknown current page!
   </div>
-</div>
+</div> -->
 
 <div>
   <h4>{{ images[currentPage].title }}</h4>
