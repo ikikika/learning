@@ -33,7 +33,19 @@
     <div class="col">
       <label><b>Date</b></label>
       <div>
-        {{ date }}
+        {{ date | date }}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <label><b>Today</b></label>
+      <div>
+        <p>Today is {{ today | date }}</p>   
+        <p>Or if you prefer, {{ today | date:'fullDate' }}</p>   
+        <p>The time is {{ today | date:'h:mm a z' }}</p>
+        <p>{{ today | date:"MMM dd, yyyy 'at' hh:mm a" }}</p>
       </div>
     </div>
   </div>
