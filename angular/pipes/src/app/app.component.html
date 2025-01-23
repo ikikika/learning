@@ -50,4 +50,40 @@
     </div>
   </div>
 
+  <div class="row">
+    <div class="form-group col">
+      <label>Payment Amount</label>
+      <input
+        class="form-control"
+        #amountInput
+        (input)="onAmountChange(amountInput.value)"
+      />
+    </div>
+
+    <div class="col">
+      <label><b>Payment Amount</b></label>
+      <div>
+        {{ amount | currency: 'JPY' }}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col">
+      <label>Height</label>
+      <input
+        class="form-control"
+        #heightInput
+        (input)="onHeightChange(heightInput.value)"
+      />
+    </div>
+
+    <div class="col">
+      <label><b>Height</b></label>
+      <div>
+        {{ height | number: '1.1-3' }}
+      </div>
+    </div>
+  </div>
+
 </div>
