@@ -34,6 +34,20 @@
 <!-- ngClass also accepts array and adds to the classname one by one -->
 <!-- [ngClass]="['class1', 'class2']" -->
 
+<div [ngSwitch]="currentPage">
+  <div *ngSwitchCase="0">
+    Current Page is zero
+  </div>
+  <div *ngSwitchCase="1">
+    Current Page is two
+  </div>
+  <div *ngSwitchCase="2">
+    Current Page is three
+  </div>
+  <div *ngSwitchDefault>
+    Unknown current page!
+  </div>
+</div>
 
 <div>
   <h4>{{ images[currentPage].title }}</h4>
