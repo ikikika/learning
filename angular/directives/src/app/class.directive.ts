@@ -20,7 +20,13 @@ export class ClassDirective {
   }
 
   // allows angular to intercept anytme  we try to set a value to backgroundColor property and use it to update something else
-  @Input() set backgroundColor(color: string) {
+  // provide a string that is going to be the name of the property that we are trying to set from the outside world.
+  // Now, whenever we try to set the appClass property, this input decorator is going to kind of redirect that to the backgroundColor method.
+  @Input('appClass') set backgroundColor(color: string) {
+
+    // So from the outside world everyone thinks we are setting appClass.
+    // But inside of our actual class, what actually gets executed is the backgroundColor method.
+
     this.element.nativeElement.style.backgroundColor = color;
   }
 
