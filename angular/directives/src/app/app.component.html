@@ -28,3 +28,9 @@
 </nav>
 <!-- ngClass also accepts array and adds to the classname one by one
 [ngClass]="['class1', 'class2']" -->
+
+
+<div>
+  <h4>{{ images[currentPage].title }}</h4>
+  <img [src]="images[currentPage].url" />
+</div>
