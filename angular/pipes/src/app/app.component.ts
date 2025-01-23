@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TitleCasePipe, DatePipe, CurrencyPipe, DecimalPipe } from '@angular/common';
+import { TitleCasePipe, DatePipe, CurrencyPipe, DecimalPipe, JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [TitleCasePipe, DatePipe, CurrencyPipe, DecimalPipe, RouterOutlet],
+  imports: [TitleCasePipe, DatePipe, CurrencyPipe, DecimalPipe, JsonPipe, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -15,6 +15,12 @@ export class AppComponent {
   today: number = Date.now();
   amount: number | undefined;
   height: number | undefined;
+
+  car = {
+    make: 'Toyota',
+    model: 'Camry',
+    year: 2000
+  };
 
   onNameChange(value: string) {
     this.fullName = value;
