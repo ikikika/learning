@@ -8,7 +8,15 @@
     </li>
     <!-- cannot have more than 1 ng directive per tag -->
     <!-- use ng-container to get around that rule -->
-    <ng-container *ngFor="let image of images; let i = index">
+
+    <!-- we never use image. we only using it to get i -->
+    <!-- <ng-container *ngFor="let image of images; let i = index"> -->
+
+    <!-- example of exposing property from directive context object -->
+    <!-- <ng-container *appTimes="images.length; let i = index; let c=color;">
+      {{ c }} -->
+
+    <ng-container *appTimes="images.length; let i = index; let c=color;">
       <li 
         class="page-item" 
         [appClass]="{ active: i === currentPage }"

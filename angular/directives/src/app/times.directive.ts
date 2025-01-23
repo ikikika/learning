@@ -26,7 +26,11 @@ export class TimesDirective {
       // iterate from zero all the way up to times.
       // for every step of iteration, I'm going to create a new instance of this template ref and we're going to add it into the view container
       this.viewContainer.createEmbeddedView(this.templateRef, {
-        index: i
+        index: i, // context object: can add in some different properties inside of here that will make some different values accessible inside of our template through our directive
+        // this is how checkWindowIndex can have access to i
+
+        // we ever want to expose any other properties, then we can very easily add them into this context object.
+        // color: 'red'
       });
     }
   }
