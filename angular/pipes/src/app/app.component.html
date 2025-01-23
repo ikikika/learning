@@ -86,6 +86,27 @@
     </div>
   </div>
 
+  <div class="row">
+    <div class="form-group col">
+      <label>Miles</label>
+      <input
+        class="form-control"
+        #milesInput
+        (input)="onMilesChange(milesInput.value)"
+      />
+    </div>
+
+    <div class="col">
+      <label><b>Kilometers</b></label>
+      <div>
+        {{ miles | convert: 'km' | number: '1.0-2' }}
+      </div>
+      <div *ngIf="(miles | convert: 'km') > 10">
+        More than 10km
+      </div>
+    </div>
+  </div>
+
 </div>
 
 {{ car | json }}

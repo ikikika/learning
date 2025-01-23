@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TitleCasePipe, DatePipe, CurrencyPipe, DecimalPipe, JsonPipe } from '@angular/common';
+import { TitleCasePipe, DatePipe, CurrencyPipe, DecimalPipe, JsonPipe, CommonModule } from '@angular/common';
+import { ConvertPipe } from './convert.pipe';
 
 @Component({
   selector: 'app-root',
-  imports: [TitleCasePipe, DatePipe, CurrencyPipe, DecimalPipe, JsonPipe, RouterOutlet],
+  imports: [TitleCasePipe, DatePipe, CurrencyPipe, DecimalPipe, JsonPipe, ConvertPipe, CommonModule, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -15,6 +16,7 @@ export class AppComponent {
   today: number = Date.now();
   amount: number | undefined;
   height: number | undefined;
+  miles: number | undefined;
 
   car = {
     make: 'Toyota',
@@ -36,6 +38,10 @@ export class AppComponent {
 
   onHeightChange(value: string) {
     this.height = parseFloat(value);
+  }
+
+  onMilesChange(value: string) {
+    this.miles = parseFloat(value);
   }
 }
 
