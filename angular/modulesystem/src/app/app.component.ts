@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ElementsModule } from './elements/elements.module';
 import { CollectionsModule } from './collections/collections.module';
 
@@ -8,6 +8,7 @@ import { CollectionsModule } from './collections/collections.module';
   imports: [
     RouterOutlet,
     RouterLink,
+    RouterLinkActive,
     ElementsModule,
     CollectionsModule
   ],
