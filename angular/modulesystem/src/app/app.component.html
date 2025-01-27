@@ -1,1 +1,14 @@
-<router-outlet />
+<div class="ui container">
+    <div class="ui secondary pointing menu">
+        <a routerLink="/elements" class="item"
+        >Elements</a
+        >
+        <a routerLink="/collections" class="item"
+        >Collections</a
+        >
+    </div>
+    <div class="ui segment">
+        <!-- wherever we place our router outlet is where our component is going to be created -->
+        <router-outlet />
+    </div>
+</div>

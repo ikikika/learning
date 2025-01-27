@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { ElementsModule } from './elements/elements.module';
 import { CollectionsModule } from './collections/collections.module';
 
 @Component({
   selector: 'app-root',
   imports: [
-    RouterOutlet, 
+    RouterOutlet,
+    RouterLink,
     ElementsModule,
     CollectionsModule
   ],
