@@ -5,7 +5,9 @@ import { DividerComponent } from './divider/divider.component';
 
 
 @NgModule({
-  declarations: [DividerComponent],
+  declarations: [
+    DividerComponent
+  ],
   imports: [
     CommonModule
   ],
