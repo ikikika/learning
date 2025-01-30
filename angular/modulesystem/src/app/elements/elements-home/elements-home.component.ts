@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DividerComponent } from '../../shared/divider/divider.component';
 
 @Component({
   selector: 'app-elements-home',

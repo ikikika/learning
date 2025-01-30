@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-divider',
-  imports: [],
   templateUrl: './divider.component.html',
-  styleUrl: './divider.component.css'
+  styleUrl: './divider.component.css',
+  standalone: false
 })
 export class DividerComponent {
 
