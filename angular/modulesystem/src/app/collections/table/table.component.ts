@@ -7,6 +7,8 @@ import { Component, Input } from '@angular/core';
   standalone: false
 })
 export class TableComponent {
+  @Input() classNames: string = '';
+
   @Input() data: any = [];
   @Input() headers = [] as any;
 }
