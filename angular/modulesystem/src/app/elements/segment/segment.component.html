@@ -1,9 +1,8 @@
 <div class="ui placeholder segment">
     <div class="ui icon header">
-        <i class="pdf file outline icon"></i>
-        No documents
+        <ng-content select="header"></ng-content>
+        <!-- <ng-content select="[iconHeader]"></ng-content> -->
+        <!-- <ng-content select=".icon-header"></ng-content> -->
     </div>
-    <button class="ui primary button">
-        Add document
-    </button>
+    <ng-content></ng-content>
 </div>
