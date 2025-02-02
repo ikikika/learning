@@ -1,0 +1,8 @@
+/* css in here applies to only HTML created by the app.component.html file */
+
+/* :host refers to <app-root> */
+:host {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
