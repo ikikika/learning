@@ -1,0 +1,68 @@
+<nav>
+  <ul class="pagination">
+    <li class="page-item" [appClass]="{ disabled: currentPage === 0 }">
+      <a 
+        class="page-link"
+        (click)="currentPage = currentPage - 1"  
+      >Prev</a>
+    </li>
+    <!-- cannot have more than 1 ng directive per tag -->
+    <!-- use ng-container to get around that rule -->
+
+    <!-- we never use image. we only using it to get i -->
+    <!-- <ng-container *ngFor="let image of images; let i = index"> -->
+
+    <!-- example of exposing property from directive context object -->
+    <!-- <ng-container *appTimes="images.length; let i = index; let c=color;">
+      {{ c }} -->
+
+    <ng-container *appTimes="images.length; let i = index; let c=color;">
+      <li 
+        class="page-item" 
+        [appClass]="{ active: i === currentPage }"
+        *ngIf="checkWindowIndex(i)"
+      >
+        <a 
+          class="page-link"
+          (click)="currentPage = i"
+        >{{ i + 1 }}</a>
+      </li>
+    </ng-container>
+    <li
+      class="page-item"
+      [appClass]="{ disabled: currentPage === images.length - 1 }"
+    >
+      <a 
+        class="page-link"
+        (click)="currentPage = currentPage + 1"
+      >Next</a>
+    </li>
+  </ul>
+</nav>
+<!-- ngClass also accepts array and adds to the classname one by one -->
+<!-- [ngClass]="['class1', 'class2']" -->
+
+<!-- <div [ngSwitch]="currentPage">
+  <div *ngSwitchCase="0">
+    Current Page is zero
+  </div>
+  <div *ngSwitchCase="1">
+    Current Page is two
+  </div>
+  <div *ngSwitchCase="2">
+    Current Page is three
+  </div>
+  <div *ngSwitchDefault>
+    Unknown current page!
+  </div>
+</div> -->
+
+<div>
+  property has same name as directive, can remove property
+  <h4>{{ images[currentPage].title }}</h4>
+  <img [src]="images[currentPage].url" />
+</div>
+
+<ul *appTimes="5"> 
+  <li>Hi</li> 
+</ul>
