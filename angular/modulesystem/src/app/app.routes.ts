@@ -15,6 +15,11 @@ export const routes: Routes = [
       import('./collections/collections.module').then((m) => m.CollectionsModule),
   },
   {
+    path: 'views',
+    loadChildren: () =>
+      import('./views/views.module').then((m) => m.ViewsModule),
+  },
+  {
     path: '', component: HomeComponent
   },
   {
