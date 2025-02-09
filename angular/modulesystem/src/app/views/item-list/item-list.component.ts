@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-item-list',
@@ -7,5 +7,6 @@ import { Component } from '@angular/core';
   standalone: false
 })
 export class ItemListComponent {
+  @Input() items: { image: string; title: string; description: string; }[] = [];
 
 }
