@@ -15,5 +15,10 @@ export class ModalComponent {
     document.body.appendChild(this.element.nativeElement);
     // we can get access to data that has been provided from a parent component, but we cannot access that data anywhere inside of our component before ngOnInit gets called.
   }
+
+  ngOnDestroy() {
+    // called automatically when we navigate away from mods
+    this.element.nativeElement.remove();
+  }
   
 }
