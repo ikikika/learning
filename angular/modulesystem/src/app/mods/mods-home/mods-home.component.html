@@ -8,4 +8,8 @@
     Show Modal
 </button>
 
-<app-modal *ngIf="modalOpen" />
+<app-modal 
+    *ngIf="modalOpen" 
+    (close)="onClick()"
+/>
+<!-- this will listen for an event called close and call the onClick method when it is emitted. -->

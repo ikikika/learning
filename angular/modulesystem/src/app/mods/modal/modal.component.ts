@@ -1,4 +1,4 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-modal',
@@ -7,6 +7,9 @@ import { Component, ElementRef } from '@angular/core';
   standalone: false
 })
 export class ModalComponent {
+
+  @Output() close = new EventEmitter();
+
   constructor(private element: ElementRef) {
     console.log(this.element.nativeElement);
   }
@@ -19,6 +22,11 @@ export class ModalComponent {
   ngOnDestroy() {
     // called automatically when we navigate away from mods
     this.element.nativeElement.remove();
+  }
+
+  onCloseClick() {
+    // this will emit an event called close
+    this.close.emit();
   }
   
 }
