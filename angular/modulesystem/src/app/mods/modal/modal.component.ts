@@ -11,7 +11,7 @@ export class ModalComponent {
   @Output() close = new EventEmitter();
 
   constructor(private element: ElementRef) {
-    console.log(this.element.nativeElement);
+    // console.log(this.element.nativeElement);
   }
 
   ngOnInit() {
