@@ -1,15 +1,9 @@
-<app-divider>
-    Modal Component
-</app-divider>
+<app-divider> Modal Component </app-divider>
 
-<button 
-    (click)="onClick()"
->
-    Show Modal
-</button>
+<button (click)="onClick()">Show Modal</button>
 
-<app-modal 
-    *ngIf="modalOpen" 
-    (close)="onClick()"
-/>
+<app-modal *ngIf="modalOpen" (close)="onClick()">
+  <div modalTitle>REUSABLE Modal Title</div>
+  <p>REUSABLE modal window</p>
+</app-modal>
 <!-- this will listen for an event called close and call the onClick method when it is emitted. -->
