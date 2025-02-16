@@ -1,0 +1,14 @@
+.actions:empty {
+  display: none;
+}
+
+.actions-default {
+  display: none;
+}
+
+/* If we find an element that has a class of actions and is empty,
+   and there is a sibling element,
+    apply this  */
+.actions:empty + .actions-default {
+  display: block;
+}

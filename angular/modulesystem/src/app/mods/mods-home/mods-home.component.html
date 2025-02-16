@@ -5,5 +5,11 @@
 <app-modal *ngIf="modalOpen" (close)="onClick()">
   <div modalTitle>REUSABLE Modal Title</div>
   <p>REUSABLE modal window</p>
+
+  <!--commenting this out will remove the footer from the modal -->
+  <ng-container modalFooter>
+    <button class="ui button" (click)="onClick()">CLOSE ME!</button>
+  </ng-container>
+  
 </app-modal>
 <!-- this will listen for an event called close and call the onClick method when it is emitted. -->
