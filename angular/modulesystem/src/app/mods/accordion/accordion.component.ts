@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-accordion',
-  imports: [],
   templateUrl: './accordion.component.html',
-  styleUrl: './accordion.component.css'
+  styleUrl: './accordion.component.css',
+  standalone: false
 })
 export class AccordionComponent {
 
