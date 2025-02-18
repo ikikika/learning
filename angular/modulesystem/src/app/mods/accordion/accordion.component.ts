@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-accordion',
   templateUrl: './accordion.component.html',
   styleUrl: './accordion.component.css',
-  standalone: false
+  standalone: false,
 })
 export class AccordionComponent {
-
+  @Input() items: { title: string; content: string }[] | [] = [];
 }
