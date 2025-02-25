@@ -4,8 +4,12 @@ import { Component } from '@angular/core';
   selector: 'app-search-bar',
   standalone: true,
   templateUrl: './search-bar.component.html',
-  styleUrl: './search-bar.component.scss'
+  styleUrl: './search-bar.component.scss',
 })
 export class SearchBarComponent {
+  term = '';
 
+  onInput(value: string | null) {
+    this.term = value ?? '';
+  }
 }
