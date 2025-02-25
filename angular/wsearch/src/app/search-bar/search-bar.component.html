@@ -1,2 +1,4 @@
-<input #inputBox (input)="onInput(inputBox.value)" />
+<!-- <input #inputBox (input)="onInput(inputBox.value)" /> -->
 <!-- use template reference variables -->
+
+<input #inputBox (input)="term = inputBox.value" />

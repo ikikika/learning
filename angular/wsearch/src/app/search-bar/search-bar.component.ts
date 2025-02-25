@@ -9,7 +9,7 @@ import { Component } from '@angular/core';
 export class SearchBarComponent {
   term = '';
 
-  onInput(value: string | null) {
-    this.term = value ?? '';
-  }
+  // onInput(value: string | null) {
+  //   this.term = value ?? '';
+  // }
 }
