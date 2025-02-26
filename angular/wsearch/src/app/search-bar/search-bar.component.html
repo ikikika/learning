@@ -1,4 +1,6 @@
 <!-- <input #inputBox (input)="onInput(inputBox.value)" /> -->
 <!-- use template reference variables -->
 
-<input #inputBox (input)="term = inputBox.value" />
+<form (submit)="onFormSubmit($event)">
+  <input #inputBox (input)="term = inputBox.value" />
+</form>

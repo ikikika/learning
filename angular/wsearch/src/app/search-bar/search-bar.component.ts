@@ -12,4 +12,9 @@ export class SearchBarComponent {
   // onInput(value: string | null) {
   //   this.term = value ?? '';
   // }
+
+  onFormSubmit = (event: Event) => {
+    event.preventDefault();
+    console.log(this.term);
+  }
 }
