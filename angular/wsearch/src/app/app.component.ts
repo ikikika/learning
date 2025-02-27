@@ -10,5 +10,7 @@ import { PageListComponent } from './page-list/page-list.component';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'wsearch';
+  onTerm(term: string) {
+    console.log('I am the app and here is the term', term);
+  }
 }
