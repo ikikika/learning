@@ -8,6 +8,9 @@ interface SnippetShowPageProps {
 }
 
 export default async function SnippetShowPage(props: SnippetShowPageProps) {
+  // artificially showing delay
+  await new Promise((r) => setTimeout(r, 2000));
+  
   const { id } = await props.params;
 
   const snippet = await db.snippet.findFirst({
