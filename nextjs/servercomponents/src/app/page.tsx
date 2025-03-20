@@ -1,5 +1,13 @@
-import { db } from '@/db';
-import Link from 'next/link';
+import { db } from "@/db";
+import Link from "next/link";
+
+// This is a dynamic route that will always be revalidated on every request
+// and will not be cached. This is useful for pages that need to be
+// updated frequently, such as a dashboard or a page that displays
+// real-time data. By setting `dynamic` to 'force-dynamic', we ensure
+// that the page is always generated on the server and not cached by
+// the client or CDN.
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const snippets = await db.snippet.findMany();
