@@ -2,13 +2,16 @@
 
 import { redirect } from "next/navigation";
 import { db } from "@/db";
+import { revalidatePath } from "next/cache";
+
+// when we update the data for each of these, or when we make some kind of update, do we need to refresh the data on our home page?
 
 export async function editSnippet(id: number, code: string) {
   await db.snippet.update({
     where: { id },
     data: { code },
   });
-
+  revalidatePath(`/snippets/${id}`);
   redirect(`/snippets/${id}`);
 }
 
@@ -16,7 +19,7 @@ export async function deleteSnippet(id: number) {
   await db.snippet.delete({
     where: { id },
   });
-
+  revalidatePath('/');
   redirect("/");
 }
 
@@ -60,6 +63,7 @@ export async function createSnippet(
     }
   }
 
+  revalidatePath('/');
   // // Redirect the user back to the root route
   // we do not want to put our redirect statements into a trycatch.
   // always leave them outside
