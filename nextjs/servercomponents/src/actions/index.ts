@@ -4,13 +4,15 @@ import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { revalidatePath } from "next/cache";
 
-// when we update the data for each of these, or when we make some kind of update, do we need to refresh the data on our home page?
+// before applying revalidatePath, when we update the data for each of these, or when we make some kind of update, do we need to refresh the data on the page?
 
 export async function editSnippet(id: number, code: string) {
   await db.snippet.update({
     where: { id },
     data: { code },
   });
+
+  // force the page to revalidate
   revalidatePath(`/snippets/${id}`);
   redirect(`/snippets/${id}`);
 }
