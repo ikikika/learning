@@ -1,0 +1,38 @@
+<app-divider>
+    Placeholder component
+</app-divider>
+<!-- Angular is going to take any content, any HTML elements, any directives, pipes, plain text, anything that we add inside of the app divider tags is going to be automatically taken and shoved into our template at ng-content  -->
+<app-placeholder [lines]="10" />
+<!-- placing header as a property here also works -->
+<!-- <app-placeholder [header]="false" /> -->
+
+<app-divider>
+    Segment component
+</app-divider>
+<app-segment>
+    
+    <!-- the order of these choldren are already defined in segment.component
+    app-segment will look for ng-content with header tag and render on the predefined position -->
+    
+    <!-- <div iconHeader> if attribute selector defined in segment.component -->
+    <!-- <div class="icon-header" -->
+    <header>
+        <i class="pdf file outline icon"></i>
+        No documents are listed for this customer.
+    </header>
+  
+    <button class="ui primary button">
+      Add Document
+    </button>
+</app-segment>
+
+<app-segment>
+    <!-- <header>
+      <i class="add icon"></i>
+      Add a resource
+    </header> -->
+  
+    <button class="ui primary button">
+      Click to Add
+    </button>
+</app-segment>
