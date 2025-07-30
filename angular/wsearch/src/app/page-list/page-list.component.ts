@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 interface Page {
   title: string;
   wordcount: number;
   snippet: string;
+  pageid: number;
 }
 
 @Component({
@@ -14,7 +15,9 @@ interface Page {
   styleUrl: './page-list.component.scss',
   imports: [CommonModule],
 })
-export class PageListComponent {
+export class PageListComponent implements OnInit{
   @Input() pages: Page[] = [];
+
+  ngOnInit() {}
 
 }
