@@ -1,7 +1,13 @@
 <form [formGroup]="cardForm">
   <label for="name">Name:</label>
   <input id="name" formControlName="name" required />
-  <ng-container *ngIf="cardForm.controls.name.errors">
+  <ng-container
+    *ngIf="
+      cardForm.controls.name.dirty &&
+      cardForm.controls.name.touched &&
+      cardForm.controls.name.errors
+    "
+  >
     <div *ngIf="cardForm.controls.name.errors?.['required']">
       Name is required.
     </div>
@@ -14,6 +20,7 @@
     </div>
   </ng-container>
 </form>
+<br />
 
 <div>Form contents: {{ cardForm.value | json }}</div>
 <div>Form is valid: {{ cardForm.valid }}</div>
