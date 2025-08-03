@@ -1,4 +1,4 @@
-import { JsonPipe } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   FormControl,
@@ -9,7 +9,7 @@ import {
 
 @Component({
   selector: 'app-card-form',
-  imports: [ReactiveFormsModule, JsonPipe],
+  imports: [ReactiveFormsModule, JsonPipe, CommonModule],
   templateUrl: './card-form.component.html',
   styleUrl: './card-form.component.scss',
   standalone: true,
