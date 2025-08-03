@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { InputComponent } from "../input/input.component";
+import { InputComponent } from '../input/input.component';
 
 @Component({
   selector: 'app-card-form',
@@ -17,7 +17,12 @@ import { InputComponent } from "../input/input.component";
 })
 export class CardFormComponent implements OnInit {
   cardForm = new FormGroup({
-    name: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    name: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+      // Validators.maxLength(5),
+      // Validators.pattern('/\\s'),
+    ]),
   });
 
   ngOnInit() {

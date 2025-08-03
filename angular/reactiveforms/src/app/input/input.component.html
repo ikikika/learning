@@ -1,20 +1,30 @@
 <label for="name">Name:</label>
 <input id="name" [formControl]="control" required />
-<!-- <ng-container
+<ng-container
   *ngIf="
-    cardForm.controls.name.dirty &&
-    cardForm.controls.name.touched &&
-    cardForm.controls.name.errors
+    control.dirty &&
+    control.touched &&
+    control.errors
   "
 >
-  <div *ngIf="cardForm.controls.name.errors?.['required']">
+  <div *ngIf="control.errors?.['required']">
     Name is required.
   </div>
-  <div *ngIf="cardForm.controls.name.errors?.['minlength']">
+  <div *ngIf="control.errors?.['minlength']">
     The value you entered is
-    {{ cardForm.controls.name.errors["minlength"].actualLength }}
+    {{ control.errors["minlength"].actualLength }}
     characters long, but it must be at least
-    {{ cardForm.controls.name.errors["minlength"].requiredLength }}
+    {{ control.errors["minlength"].requiredLength }}
     characters long.
   </div>
-</ng-container> -->
+  <div *ngIf="control.errors?.['maxlength']">
+    The value you entered is
+    {{ control.errors["maxlength"].actualLength }}
+    characters long, but it cannot exceed
+    {{ control.errors["maxlength"].requiredLength }}
+    characters long.
+  </div>
+  <div *ngIf="control.errors?.['pattern']">
+    Invalid format.
+  </div>
+</ng-container>
