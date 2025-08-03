@@ -1,11 +1,23 @@
-import { Component } from '@angular/core';
+import { JsonPipe } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-card-form',
-  imports: [],
+  imports: [ReactiveFormsModule, JsonPipe],
   templateUrl: './card-form.component.html',
-  styleUrl: './card-form.component.scss'
+  styleUrl: './card-form.component.scss',
+  standalone: true,
 })
-export class CardFormComponent {
+export class CardFormComponent implements OnInit {
+
+  cardForm = new FormGroup({
+    name: new FormControl(''),
+  })
+
+
+  ngOnInit() {
+    // Initialization logic here
+  }
 
 }
