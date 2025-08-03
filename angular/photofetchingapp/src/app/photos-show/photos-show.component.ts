@@ -6,18 +6,21 @@ import { CommonModule } from '@angular/common';
   selector: 'app-photos-show',
   imports: [CommonModule],
   templateUrl: './photos-show.component.html',
-  styleUrl: './photos-show.component.scss'
+  styleUrl: './photos-show.component.scss',
 })
 export class PhotosShowComponent implements OnInit {
-
-  photoUrl: string = "";
+  photoUrl: string = '';
 
   constructor(private photosService: PhotosService) {
     this.fetchPhoto();
   }
 
+  onClick() {
+    this.fetchPhoto();
+  }
+
   fetchPhoto() {
-    this.photosService.getPhoto().subscribe(response => {
+    this.photosService.getPhoto().subscribe((response) => {
       this.photoUrl = response.urls.regular;
     });
   }
