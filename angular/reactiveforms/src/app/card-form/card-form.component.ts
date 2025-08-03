@@ -6,10 +6,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { InputComponent } from "../input/input.component";
 
 @Component({
   selector: 'app-card-form',
-  imports: [ReactiveFormsModule, JsonPipe, CommonModule],
+  imports: [ReactiveFormsModule, JsonPipe, CommonModule, InputComponent],
   templateUrl: './card-form.component.html',
   styleUrl: './card-form.component.scss',
   standalone: true,

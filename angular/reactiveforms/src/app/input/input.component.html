@@ -1,1 +1,20 @@
-<p>input works!</p>
+<label for="name">Name:</label>
+<input id="name" [formControl]="control" required />
+<!-- <ng-container
+  *ngIf="
+    cardForm.controls.name.dirty &&
+    cardForm.controls.name.touched &&
+    cardForm.controls.name.errors
+  "
+>
+  <div *ngIf="cardForm.controls.name.errors?.['required']">
+    Name is required.
+  </div>
+  <div *ngIf="cardForm.controls.name.errors?.['minlength']">
+    The value you entered is
+    {{ cardForm.controls.name.errors["minlength"].actualLength }}
+    characters long, but it must be at least
+    {{ cardForm.controls.name.errors["minlength"].requiredLength }}
+    characters long.
+  </div>
+</ng-container> -->
