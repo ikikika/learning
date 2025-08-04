@@ -1,4 +1,4 @@
-<form [formGroup]="cardForm">
+<form [formGroup]="cardForm" (ngSubmit)="onSubmit()">
   <app-input label="Name" [control]="cardForm.controls.name"></app-input>
   <app-input
     label="Card Number"
@@ -12,6 +12,9 @@
     label="Security Code"
     [control]="cardForm.controls.securityCode"
   ></app-input>
+  <button class="button is-primary" [disabled]="cardForm.invalid" type="submit">
+    Submit
+  </button>
 </form>
 <br />
 

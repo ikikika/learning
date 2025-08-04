@@ -25,10 +25,14 @@ export class CardFormComponent implements OnInit {
     ]),
     cardNumber: new FormControl(''),
     expiration: new FormControl(''),
-    securityCode: new FormControl('')
+    securityCode: new FormControl(''),
   });
 
   ngOnInit() {
     // Initialization logic here
+  }
+
+  onSubmit() {
+    console.log('Form Submitted', this.cardForm.value);
   }
 }
