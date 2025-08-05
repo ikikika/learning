@@ -8,10 +8,11 @@ import {
 } from '@angular/forms';
 import { InputComponent } from '../input/input.component';
 import { DateFormControl } from '../date-form-control';
+import { CardComponent } from "../card/card.component";
 
 @Component({
   selector: 'app-card-form',
-  imports: [ReactiveFormsModule, JsonPipe, CommonModule, InputComponent],
+  imports: [ReactiveFormsModule, JsonPipe, CommonModule, InputComponent, CardComponent],
   templateUrl: './card-form.component.html',
   styleUrl: './card-form.component.scss',
   standalone: true,
