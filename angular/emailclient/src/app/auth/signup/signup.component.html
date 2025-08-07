@@ -1,25 +1,36 @@
 <h3>Create an account</h3>
 <form class="ui form" [formGroup]="authForm">
-  <div class="field">
-    <label for="username">Username</label>
-    <input id="username" formControlName="username" required />
-    {{ authForm.get("username")?.errors | json }}
+  <app-input
+    inputType="text"
+    label="Username"
+    [control]="usernameControl"
+  ></app-input>
+
+  <app-input
+    inputType="password"
+    label="Password"
+    [control]="passwordControl"
+  ></app-input>
+
+  <app-input
+    inputType="password"
+    label="Password Confirmation"
+    [control]="passwordConfirmControl"
+  ></app-input>
+
+  <div
+    *ngIf="
+      (passwordControl.dirty || passwordConfirmControl.dirty) &&
+      authForm.errors?.['passwordsDontMatch']
+    "
+    class="ui red basic label"
+  >
+    <p *ngIf="authForm.errors?.['passwordsDontMatch']">
+      Password and Password Confirmation must match
+    </p>
   </div>
-  <div class="field">
-    <label for="password">Password</label>
-    <input id="password" type="password" formControlName="password" required />
-    {{ authForm.get("password")?.errors | json }}
+
+  <div>
+    <button class="ui submit button primary">Submit</button>
   </div>
-  <div class="field">
-    <label for="passwordConfirm">Confirm Password</label>
-    <input
-      id="passwordConfirm"
-      type="password"
-      formControlName="passwordConfirm"
-      required
-    />
-    {{ authForm.get("passwordConfirm")?.errors | json }}
-  </div>
-  <button class="ui submit button primary">Submit</button>
-  {{ authForm.errors | json }}
 </form>

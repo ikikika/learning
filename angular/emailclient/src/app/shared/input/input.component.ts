@@ -1,11 +1,25 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-input',
-  imports: [],
   templateUrl: './input.component.html',
-  styleUrl: './input.component.scss'
+  styleUrl: './input.component.scss',
+  imports: [CommonModule, ReactiveFormsModule],
+  standalone: true,
 })
-export class InputComponent {
+export class InputComponent implements OnInit {
+  @Input() label: string = '';
+  @Input() control!: FormControl; // Use the ! Non-null Assertion Operator
+  @Input() inputType: string = '';
 
+  constructor() {}
+
+  ngOnInit() {}
+
+  showErrors() {
+    const { dirty, touched, errors } = this.control;
+    return (dirty || touched) && !!errors;
+  }
 }
