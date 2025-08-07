@@ -1,16 +1,19 @@
+import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
+@Injectable({ providedIn: 'root' })
 export class MatchPassword {
-  static validate: ValidatorFn = (
-    control: AbstractControl
-  ): ValidationErrors | null => {
-    const password = control.get('password')?.value;
-    const passwordConfirm = control.get('passwordConfirm')?.value;
+  
+  validate(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const password = control.get('password')?.value;
+      const passwordConfirm = control.get('passwordConfirm')?.value;
 
-    if (password && passwordConfirm && password !== passwordConfirm) {
-      return { passwordsDontMatch: true };
-    }
+      if (password && passwordConfirm && password !== passwordConfirm) {
+        return { passwordsDontMatch: true };
+      }
 
-    return null;
-  };
+      return null;
+    };
+  }
 }
