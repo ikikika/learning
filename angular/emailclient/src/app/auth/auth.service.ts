@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
+import { BehaviorSubject, tap } from 'rxjs';
 
 interface UsernameAvailableResponse {
   available: boolean;
@@ -20,6 +21,8 @@ interface SignupResponse {
   providedIn: 'root',
 })
 export class AuthService {
+  signedin$ = new BehaviorSubject(false); // dollar sign indicates an observable
+
   constructor(private http: HttpClient) {}
 
   usernameAvailable(username: string) {
@@ -32,9 +35,15 @@ export class AuthService {
   }
 
   signup(credentials: SignupCredentials) {
-    return this.http.post<SignupResponse>(
-      `${environment.apiUrl}/auth/signup`,
-      credentials
-    );
+    return this.http
+      .post<SignupResponse>(`${environment.apiUrl}/auth/signup`, credentials)
+      .pipe(
+        // tap allows us to reach in, intercept a value and do something with it
+        // tap does not transform the underlying value
+        // the pipe will be skipped if there is an error with api call
+        tap(() => {
+          this.signedin$.next(true);
+        })
+      );
   }
 }

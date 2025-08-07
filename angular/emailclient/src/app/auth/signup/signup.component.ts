@@ -14,7 +14,7 @@ import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [ReactiveFormsModule, InputComponent, CommonModule, JsonPipe],
+  imports: [ReactiveFormsModule, InputComponent, CommonModule],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss',
 })
