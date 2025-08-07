@@ -24,10 +24,7 @@ export class AppComponent {
     this.signedin$ = this.authService.signedin$;
   }
 
-  // ngOnInit() {
-  //   // check if the user is authenticated when the app initializes
-  //   this.authService.signedin$.subscribe((isSignedIn) => {
-  //     this.signedin = isSignedIn;
-  //   });
-  // }
+  ngOnInit() {
+    this.authService.checkAuth().subscribe(() => {});
+  }
 }
