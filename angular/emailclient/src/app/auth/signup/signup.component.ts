@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   FormControl,
@@ -14,7 +14,7 @@ import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [ReactiveFormsModule, InputComponent, CommonModule],
+  imports: [ReactiveFormsModule, InputComponent, CommonModule, JsonPipe],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss',
 })
@@ -69,11 +69,22 @@ export class SignupComponent implements OnInit {
   }
 
   onSubmit() {
+    console.log(this.authForm.errors)
     if (this.authForm.invalid) {
       return;
     }
-    this.authService.signup(this.authForm.value).subscribe((response) => {
-      console.log(response);
+    this.authService.signup(this.authForm.value).subscribe({
+      next: (response) => {
+        // Navigate to some other route
+      },
+      error: (err) => {
+        if (!err.status) {
+          this.authForm.setErrors({ noConnection: true });
+        } else {
+          this.authForm.setErrors({ unknownError: true });
+        }
+      },
+      // no need for complete here as we are not using it
     });
   }
 }

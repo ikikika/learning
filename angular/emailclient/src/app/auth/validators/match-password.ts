@@ -7,7 +7,7 @@ export class MatchPassword {
   validate(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const password = control.get('password')?.value;
-      const passwordConfirm = control.get('passwordConfirm')?.value;
+      const passwordConfirm = control.get('passwordConfirmation')?.value;
 
       if (password && passwordConfirm && password !== passwordConfirm) {
         return { passwordsDontMatch: true };
