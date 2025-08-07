@@ -18,14 +18,16 @@ import { CommonModule } from '@angular/common';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  signedin = false;
+  signedin$: BehaviorSubject<boolean>; // reference to the signedin$ observable in AuthService
 
-  constructor(private authService: AuthService) {}
-
-  ngOnInit() {
-    // check if the user is authenticated when the app initializes
-    this.authService.signedin$.subscribe((isSignedIn) => {
-      this.signedin = isSignedIn;
-    });
+  constructor(private authService: AuthService) {
+    this.signedin$ = this.authService.signedin$;
   }
+
+  // ngOnInit() {
+  //   // check if the user is authenticated when the app initializes
+  //   this.authService.signedin$.subscribe((isSignedIn) => {
+  //     this.signedin = isSignedIn;
+  //   });
+  // }
 }

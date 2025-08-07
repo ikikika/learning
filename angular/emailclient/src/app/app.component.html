@@ -3,7 +3,9 @@
     <a routerLink="/" class="item">Angular Email</a>
 
     <div class="right menu">
-      <ng-container *ngIf="signedin">
+      <ng-container *ngIf="signedin$ | async">
+        <!-- Anytime that observable or promise emits or resolves a value, 
+         the async pipe right here is going to take that value and use it to update some part of our template. -->
         <a class="ui item" routerLink="/inbox" routerLinkActive="active">
           Inbox
         </a>
@@ -11,7 +13,7 @@
           Sign Out
         </a>
       </ng-container>
-      <ng-container *ngIf="!signedin">
+      <ng-container *ngIf="!(signedin$ | async)">
         <a class="ui item" routerLink="/" routerLinkActive="active">
           Sign In
         </a>
