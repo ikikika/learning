@@ -1,8 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { AuthService, SigninCredentials } from '../auth.service';
 import { CommonModule } from '@angular/common';
 import { InputComponent } from '../../shared/input/input.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signin',
@@ -31,7 +37,7 @@ export class SigninComponent implements OnInit {
     }),
   });
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   get usernameControl(): FormControl {
     return this.authForm.get('username') as FormControl;
@@ -49,7 +55,9 @@ export class SigninComponent implements OnInit {
     }
     const creds: SigninCredentials = this.authForm.getRawValue();
     this.authService.signin(creds).subscribe({
-      next: () => {},
+      next: () => {
+        this.router.navigateByUrl('/inbox');
+      },
       error: ({ error }) => {
         if (error.username || error.password) {
           this.authForm.setErrors({ credentials: true });
