@@ -68,4 +68,15 @@ export class AuthService {
         })
       );
   }
+
+  // whenever this method is called, it will update the signedin$ observable
+  // all component subscribed to signedin$ will be notified
+  // this is how we can update the UI when the user signs out
+  signout() {
+    return this.http.post(`${environment.apiUrl}/auth/signout`, {}).pipe(
+      tap(() => {
+        this.signedin$.next(false);
+      })
+    );
+  }
 }
