@@ -41,9 +41,14 @@ export class AuthService {
 
   signup(credentials: SignupCredentials) {
     return this.http
-      .post<SignupResponse>(`${environment.apiUrl}/auth/signup`, credentials, {
-        withCredentials: true, // include cookies in the request
-      })
+      .post<SignupResponse>(
+        `${environment.apiUrl}/auth/signup`,
+        credentials
+        // cookies handled by AuthHttpInterceptor
+        //   , {
+        //   withCredentials: true, // include cookies in the request
+        // }
+      )
       .pipe(
         // tap allows us to reach in, intercept a value and do something with it
         // tap does not transform the underlying value
@@ -56,9 +61,7 @@ export class AuthService {
 
   checkAuth() {
     return this.http
-      .get<SignedinResponse>(`${environment.apiUrl}/auth/signedin`, {
-        withCredentials: true, 
-      })
+      .get<SignedinResponse>(`${environment.apiUrl}/auth/signedin`)
       .pipe(
         tap(({ authenticated }) => {
           this.signedin$.next(authenticated);
