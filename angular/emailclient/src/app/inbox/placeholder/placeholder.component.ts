@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-placeholder',
-  imports: [],
   templateUrl: './placeholder.component.html',
-  styleUrl: './placeholder.component.scss'
+  styleUrl: './placeholder.component.scss',
+  standalone: false,
 })
 export class PlaceholderComponent {
 
