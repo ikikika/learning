@@ -71,7 +71,6 @@ export class SignupComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.authForm.errors)
     if (this.authForm.invalid) {
       return;
     }
