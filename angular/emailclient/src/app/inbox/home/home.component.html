@@ -6,3 +6,7 @@
     <router-outlet></router-outlet>
   </div>
 </div>
+
+<app-modal (dismiss)="showModal = false" *ngIf="showModal">
+  <div modalTitle>Compose</div>
+</app-modal>
