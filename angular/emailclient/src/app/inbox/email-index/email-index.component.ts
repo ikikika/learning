@@ -15,6 +15,11 @@ export class EmailIndexComponent implements OnInit {
   ngOnInit() {
     this.emailService.getEmails().subscribe((emails) => {
       this.emails = emails;
+      this.emails.push({
+        id: '1',
+        subject: 'Test Email',
+        from: '',
+      });
     });
   }
 }

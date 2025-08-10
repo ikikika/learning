@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanMatchFn, Router, UrlTree } from '@angular/router';
-import { map, skipWhile, take, tap } from 'rxjs/operators';
+import { map, skipWhile, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 
@@ -12,10 +12,11 @@ export const authGuard: CanMatchFn = (): Observable<boolean | UrlTree> => {
     // skipWhile: if your stream emits null, wait until it returns true or false
     skipWhile((value) => value === null),
     take(1),
-    tap((authenticated) => {
+    map((authenticated) => {
       if (!authenticated) {
         router.navigateByUrl('/');
       }
+      return true;
     })
   );
 };

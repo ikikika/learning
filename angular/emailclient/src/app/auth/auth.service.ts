@@ -31,7 +31,7 @@ export interface SigninCredentials {
   providedIn: 'root',
 })
 export class AuthService {
-  signedin$ = new BehaviorSubject(false); // dollar sign indicates an observable
+  signedin$ = new BehaviorSubject<boolean | null>(false); // dollar sign indicates an observable
 
   constructor(private http: HttpClient) {}
 

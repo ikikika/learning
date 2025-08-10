@@ -18,7 +18,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  signedin$: BehaviorSubject<boolean>; // reference to the signedin$ observable in AuthService
+  signedin$: BehaviorSubject<boolean | null>; // reference to the signedin$ observable in AuthService
 
   constructor(private authService: AuthService) {
     this.signedin$ = this.authService.signedin$;

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
+import { Email } from './email';
 
 export interface EmailSummary {
   id: string;
@@ -17,5 +18,9 @@ export class EmailService {
   getEmails() {
     return this.http.get<EmailSummary[]>(`${environment.apiUrl}/emails`);
     // cookies handled by AuthHttpInterceptor
+  }
+
+  getEmail(id: string) {
+    return this.http.get<Email>(`${environment.apiUrl}/emails/${id}`);
   }
 }
