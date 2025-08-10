@@ -22,6 +22,10 @@ interface SignedinResponse {
   username: string;
 }
 
+interface SigninResponse {
+  username: string;
+}
+
 export interface SigninCredentials {
   username: string;
   password: string;
@@ -32,6 +36,7 @@ export interface SigninCredentials {
 })
 export class AuthService {
   signedin$ = new BehaviorSubject<boolean | null>(false); // dollar sign indicates an observable
+  username: string = '';
 
   constructor(private http: HttpClient) {}
 
@@ -68,8 +73,9 @@ export class AuthService {
     return this.http
       .get<SignedinResponse>(`${environment.apiUrl}/auth/signedin`)
       .pipe(
-        tap(({ authenticated }) => {
+        tap(({ authenticated, username }) => {
           this.signedin$.next(authenticated);
+          this.username = username;
         })
       );
   }
@@ -87,10 +93,11 @@ export class AuthService {
 
   signin(credentials: SigninCredentials) {
     return this.http
-      .post(`${environment.apiUrl}/auth/signin`, credentials)
+      .post<SigninResponse>(`${environment.apiUrl}/auth/signin`, credentials)
       .pipe(
-        tap(() => {
+        tap(({ username }) => {
           this.signedin$.next(true);
+          this.username = username;
         })
       );
   }
