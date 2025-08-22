@@ -63,8 +63,9 @@ export class AuthService {
         // tap allows us to reach in, intercept a value and do something with it
         // tap does not transform the underlying value
         // the pipe will be skipped if there is an error with api call
-        tap(() => {
+        tap(({ username }) => {
           this.signedin$.next(true);
+          this.username = username;
         })
       );
   }

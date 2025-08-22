@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Email } from '../email';
 import { AuthService } from '../../auth/auth.service';
 import { EmailService } from '../email.service';
-import { SharedModule } from "../../shared/shared.module";
 
 @Component({
   selector: 'app-email-create',

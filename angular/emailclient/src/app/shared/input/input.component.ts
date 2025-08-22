@@ -13,6 +13,7 @@ export class InputComponent implements OnInit {
   @Input() label: string = '';
   @Input() control!: FormControl; // Use the ! Non-null Assertion Operator
   @Input() inputType: string = '';
+  @Input() controlType = 'input';
 
   constructor() {}
 
