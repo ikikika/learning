@@ -28,4 +28,10 @@ export class EmailCreateComponent {
   }
 
   ngOnInit() {}
+
+  onSubmit(email: Email) {
+    this.emailService.sendEmail(email).subscribe(() => {
+      this.showModal = false;
+    });
+  }
 }

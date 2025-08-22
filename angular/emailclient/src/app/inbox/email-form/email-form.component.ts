@@ -61,8 +61,8 @@ export class EmailFormComponent {
       return;
     }
 
-    // this.emailSubmit.emit(this.emailForm.value);
+    this.emailSubmit.emit(this.emailForm.value);
 
-    console.log(this.emailForm.value);// get all values from the form, even the disabled fields
+    // console.log(this.emailForm.value);// get all values from the form, even the disabled fields
   }
 }
