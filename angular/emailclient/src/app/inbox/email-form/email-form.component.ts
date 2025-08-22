@@ -4,7 +4,8 @@ import { Component } from '@angular/core';
   selector: 'app-email-form',
   imports: [],
   templateUrl: './email-form.component.html',
-  styleUrl: './email-form.component.scss'
+  styleUrl: './email-form.component.scss',
+  standalone: true
 })
 export class EmailFormComponent {
 

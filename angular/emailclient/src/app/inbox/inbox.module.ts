@@ -7,6 +7,7 @@ import { HomeComponent } from './home/home.component';
 import { PlaceholderComponent } from './placeholder/placeholder.component';
 import { SharedModule } from '../shared/shared.module';
 import { EmailCreateComponent } from './email-create/email-create.component';
+import { EmailFormComponent } from './email-form/email-form.component';
 
 @NgModule({
   declarations: [
@@ -15,10 +16,6 @@ import { EmailCreateComponent } from './email-create/email-create.component';
     PlaceholderComponent,
     EmailCreateComponent,
   ],
-  imports: [
-    CommonModule,
-    InboxRoutingModule,
-    SharedModule
-  ],
+  imports: [CommonModule, InboxRoutingModule, SharedModule, EmailFormComponent],
 })
 export class InboxModule {}
