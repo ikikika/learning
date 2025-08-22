@@ -28,6 +28,4 @@ export class EmailCreateComponent {
   }
 
   ngOnInit() {}
-
-  onSubmit(email: Email) {}
 }

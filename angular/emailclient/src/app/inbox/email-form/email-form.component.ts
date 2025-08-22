@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Email } from '../email';
 import {
   FormControl,
@@ -43,17 +43,26 @@ export class EmailFormComponent {
     text: '',
     html: '',
   };
+  @Output() emailSubmit = new EventEmitter();
 
   ngOnInit() {
     const { subject, from, to, text } = this.email;
 
     this.emailForm.patchValue({
-      to: this.email.to ?? '',
-      from: this.email.from ?? '',
-      subject: this.email.subject ?? '',
-      text: this.email.text ?? '',
+      to: to ?? '',
+      from: from ?? '',
+      subject: subject ?? '',
+      text: text ?? '',
     });
   }
 
-  onSubmit() {}
+  onSubmit() {
+    if (this.emailForm.invalid) {
+      return;
+    }
+
+    // this.emailSubmit.emit(this.emailForm.value);
+
+    console.log(this.emailForm.value);// get all values from the form, even the disabled fields
+  }
 }
