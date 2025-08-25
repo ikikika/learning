@@ -12,7 +12,7 @@ function App() {
 function AppContent() {
   return (
     <SafeAreaView style={styles.container}>
-      <Text>Test123</Text>
+      <Text style={{ fontSize: 50, fontFamily: 'Inter-Black' }}>Test123</Text>
     </SafeAreaView>
   );
 }
