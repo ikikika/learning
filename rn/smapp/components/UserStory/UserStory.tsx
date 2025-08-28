@@ -1,12 +1,14 @@
 import { Image, ImageSourcePropType, Text, View } from 'react-native';
 import style from './style';
+import UserProfileImage from '../UserProfileImage/UserProfileImage';
 
 const UserStory = ({ firstName, profileImage }: UserStoryProps) => {
   return (
     <View style={style.storyContainer}>
-      <View style={style.userImageContainer}>
-        <Image source={profileImage} style={style.image} />
-      </View>
+      <UserProfileImage
+        profileImage={profileImage}
+        imageDimensions={65}
+      />
       <Text style={style.firstName}>{firstName}</Text>
     </View>
   );
