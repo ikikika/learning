@@ -24,13 +24,16 @@ const globalStyle = StyleSheet.create({
     borderRadius: 10,
     position: 'absolute',
     right: 12,
-    top: 14
-
+    top: 14,
   },
   messageNumber: {
     color: '#ffffff',
     fontSize: 6,
     fontFamily: getFontFamily({ baseFont: 'Inter', weight: '600' }),
+  },
+  userStoryContainer: {
+    marginTop: 20,
+    marginHorizontal: 28,
   },
 });
 
