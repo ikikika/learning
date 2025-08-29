@@ -13,6 +13,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import globalStyle from './assets/styles/globalStyle';
 import UserStory from './components/UserStory/UserStory';
 import { useEffect, useState } from 'react';
+import UserPost from './components/UserPost/UserPost';
 
 const userStories = [
   {
@@ -62,13 +63,76 @@ const userStories = [
   },
 ];
 
+const userPosts = [
+  {
+    firstName: 'Allison',
+    lastName: 'Becker',
+    location: 'Boston, MA',
+    likes: 1201,
+    comments: 24,
+    bookmarks: 55,
+    id: 1,
+    image: require('./assets/images/default_post.png'),
+    profileImage: require('./assets/images/default_profile.png'),
+  },
+  {
+    firstName: 'Jennifer',
+    lastName: 'Wilkson',
+    location: 'Worcester, MA',
+    likes: 1301,
+    comments: 25,
+    bookmarks: 70,
+    id: 2,
+    image: require('./assets/images/default_post.png'),
+    profileImage: require('./assets/images/default_profile.png'),
+  },
+  {
+    firstName: 'Adam',
+    lastName: 'Spera',
+    location: 'Worcester, MA',
+    likes: 100,
+    comments: 8,
+    bookmarks: 3,
+    id: 3,
+    image: require('./assets/images/default_post.png'),
+    profileImage: require('./assets/images/default_profile.png'),
+  },
+  {
+    firstName: 'Nata',
+    lastName: 'Vacheishvili',
+    location: 'New York, NY',
+    likes: 200,
+    comments: 16,
+    bookmarks: 6,
+    id: 4,
+    image: require('./assets/images/default_post.png'),
+    profileImage: require('./assets/images/default_profile.png'),
+  },
+  {
+    firstName: 'Nicolas',
+    lastName: 'Namoradze',
+    location: 'Berlin, Germany',
+    likes: 2000,
+    comments: 32,
+    bookmarks: 12,
+    id: 5,
+    image: require('./assets/images/default_post.png'),
+    profileImage: require('./assets/images/default_profile.png'),
+  },
+];
+
 function App() {
-  const userStoriesPageSize = 3;
+  const userStoriesPageSize = 4;
   const [userStoriesCurrentPage, setUserStoriesCurrentPage] = useState(1);
   const [userStoriesRenderedData, setUserStoriesRenderedData] = useState<
     typeof userStories
   >([]);
   const [isLoadingUserStories, setIsLoadingUserStories] = useState(false);
+
+  const userPostsPageSize = 4;
+  const [userPostsCurrentPage, setUserPostsCurrentPage] = useState(1);
+  const [userPostsRenderedData, setUserPostsRenderedData] = useState([]);
+  const [isLoadingUserPosts, setIsLoadingUserPosts] = useState(false);
 
   const pagination = ({
     database,
@@ -102,56 +166,78 @@ function App() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
-        <View style={globalStyle.header}>
-          <Title title="Let's Explore" />
-          <TouchableOpacity style={globalStyle.messageIcon}>
-            <FontAwesomeIcon
-              icon={faEnvelope as IconProp}
-              size={20}
-              color="#8980ab"
-            />
-            <View style={globalStyle.messageNumberContainer}>
-              <Text style={globalStyle.messageNumber}>2</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={globalStyle.userStoryContainer}>
+        <View>
           <FlatList
-            onEndReachedThreshold={0.1} // 10% away from end of list
-            onEndReached={() => {
-              if (isLoadingUserStories) {
-                return;
-              }
-              setIsLoadingUserStories(true);
-              const contentToAppend = pagination({
-                database: userStories,
-                currentPage: userStoriesCurrentPage + 1,
-                pageSize: userStoriesPageSize,
-              });
-              setTimeout(() => {
-                if (contentToAppend.length > 0) {
-                  setUserStoriesCurrentPage(userStoriesCurrentPage + 1);
-                  setUserStoriesRenderedData(prev => [
-                    ...prev,
-                    ...contentToAppend,
-                  ]);
-                }
-
-                setIsLoadingUserStories(false);
-              }, 5000);
-            }}
-            showsHorizontalScrollIndicator={false}
-            horizontal={true}
-            data={userStoriesRenderedData}
+            ListHeaderComponent={
+              // determines whats at the head of the list
+              // in this project, the user list will scroll with the post, instead of staying fixed on top
+              <>
+                <View style={globalStyle.header}>
+                  <Title title={'Let’s Explore'} />
+                  <TouchableOpacity style={globalStyle.messageIcon}>
+                    <FontAwesomeIcon
+                      icon={faEnvelope as IconProp}
+                      size={20}
+                      color={'#898DAE'}
+                    />
+                    <View style={globalStyle.messageNumberContainer}>
+                      <Text style={globalStyle.messageNumber}>2</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                <View style={globalStyle.userStoryContainer}>
+                  <FlatList
+                    onEndReachedThreshold={0.5}
+                    onEndReached={() => {
+                      if (isLoadingUserStories) {
+                        return;
+                      }
+                      setIsLoadingUserStories(true);
+                      const contentToAppend = pagination({
+                        database: userStories,
+                        currentPage: userStoriesCurrentPage + 1,
+                        pageSize: userStoriesPageSize,
+                      });
+                      if (contentToAppend.length > 0) {
+                        setUserStoriesCurrentPage(userStoriesCurrentPage + 1);
+                        setUserStoriesRenderedData(prev => [
+                          ...prev,
+                          ...contentToAppend,
+                        ]);
+                      }
+                      setIsLoadingUserStories(false);
+                    }}
+                    showsHorizontalScrollIndicator={false}
+                    horizontal={true}
+                    data={userStoriesRenderedData}
+                    renderItem={({ item }) => (
+                      <UserStory
+                        key={'userStory' + item.id}
+                        firstName={item.firstName}
+                        profileImage={item.profileImage}
+                      />
+                    )}
+                  />
+                </View>
+              </>
+            }
+            data={userPosts}
+            showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
-              <UserStory
-                key={'userStory' + item.id}
-                firstName={item.firstName}
-                profileImage={item.profileImage}
-              />
+              <View style={globalStyle.userPostContainer}>
+                <UserPost
+                  firstName={item.firstName}
+                  lastName={item.lastName}
+                  image={item.image}
+                  likes={item.likes}
+                  comments={item.comments}
+                  bookmarks={item.bookmarks}
+                  profileImage={item.profileImage}
+                  location={item.location}
+                />
+              </View>
             )}
           />
-          {isLoadingUserStories && <Text>Loading</Text>}
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

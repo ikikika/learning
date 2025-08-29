@@ -4,7 +4,7 @@ import style from './style';
 const UserProfileImage = ({
   profileImage,
   imageDimensions,
-}: UserProfileImage) => {
+}: UserProfileImageType) => {
   return (
     <View style={[style.userImageContainer, { borderRadius: imageDimensions }]}>
       <Image
@@ -14,7 +14,7 @@ const UserProfileImage = ({
     </View>
   );
 };
-interface UserProfileImage {
+interface UserProfileImageType {
   profileImage: ImageSourcePropType;
   imageDimensions: number;
 }
