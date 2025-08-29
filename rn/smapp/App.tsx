@@ -12,6 +12,7 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons/faEnvelope';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import globalStyle from './assets/styles/globalStyle';
 import UserStory from './components/UserStory/UserStory';
+import { useEffect, useState } from 'react';
 
 const userStories = [
   {
@@ -62,43 +63,93 @@ const userStories = [
 ];
 
 function App() {
+  const userStoriesPageSize = 4;
+  const [userStoriesCurrentPage, setUserStoriesCurrentPage] = useState(1);
+  const [userStoriesRenderedData, setUserStoriesRenderedData] = useState<
+    typeof userStories
+  >([]);
+  const [isLoadingUserStories, setIsLoadingUserStories] = useState(false);
+
+  const pagination = ({
+    database,
+    currentPage,
+    pageSize,
+  }: {
+    database: typeof userStories;
+    currentPage: number;
+    pageSize: number;
+  }) => {
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    if (startIndex >= database.length) {
+      return [];
+    }
+    return database.slice(startIndex, endIndex);
+  };
+
+  useEffect(() => {
+    setIsLoadingUserStories(true);
+    const getInitialData = pagination({
+      database: userStories,
+      currentPage: 1,
+      pageSize: userStoriesPageSize,
+    });
+    setUserStoriesRenderedData(getInitialData);
+    setIsLoadingUserStories(false);
+  }, []);
+
   return (
     <SafeAreaProvider>
-      <AppContent />
-    </SafeAreaProvider>
-  );
-}
-
-function AppContent() {
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={globalStyle.header}>
-        <Title title="Let's Explore" />
-        <TouchableOpacity style={globalStyle.messageIcon}>
-          <FontAwesomeIcon
-            icon={faEnvelope as IconProp}
-            size={20}
-            color="#8980ab"
-          />
-          <View style={globalStyle.messageNumberContainer}>
-            <Text style={globalStyle.messageNumber}>2</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-      <View style={globalStyle.userStoryContainer}>
-        <FlatList
-          showsHorizontalScrollIndicator={false}
-          horizontal={true}
-          data={userStories}
-          renderItem={({ item }) => (
-            <UserStory
-              firstName={item.firstName}
-              profileImage={item.profileImage}
+      <SafeAreaView style={styles.container}>
+        <View style={globalStyle.header}>
+          <Title title="Let's Explore" />
+          <TouchableOpacity style={globalStyle.messageIcon}>
+            <FontAwesomeIcon
+              icon={faEnvelope as IconProp}
+              size={20}
+              color="#8980ab"
             />
-          )}
-        />
-      </View>
-    </SafeAreaView>
+            <View style={globalStyle.messageNumberContainer}>
+              <Text style={globalStyle.messageNumber}>2</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View style={globalStyle.userStoryContainer}>
+          <FlatList
+            // onEndReachedThreshold={0.5}
+            // onEndReached={() => {
+            //   if (isLoadingUserStories) {
+            //     return;
+            //   }
+            //   setIsLoadingUserStories(true);
+            //   const contentToAppend = pagination({
+            //     database: userStories,
+            //     currentPage: userStoriesCurrentPage + 1,
+            //     pageSize: userStoriesPageSize,
+            //   });
+            //   if (contentToAppend.length > 0) {
+            //     setUserStoriesCurrentPage(userStoriesCurrentPage + 1);
+            //     setUserStoriesRenderedData(prev => [
+            //       ...prev,
+            //       ...contentToAppend,
+            //     ]);
+            //   }
+            //   setIsLoadingUserStories(false);
+            // }}
+            showsHorizontalScrollIndicator={false}
+            horizontal={true}
+            data={userStoriesRenderedData}
+            renderItem={({ item }) => (
+              <UserStory
+                // key={'userStory' + item.id}
+                firstName={item.firstName}
+                profileImage={item.profileImage}
+              />
+            )}
+          />
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
