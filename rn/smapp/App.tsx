@@ -129,9 +129,11 @@ function App() {
   >([]);
   const [isLoadingUserStories, setIsLoadingUserStories] = useState(false);
 
-  const userPostsPageSize = 4;
+  const userPostsPageSize = 2;
   const [userPostsCurrentPage, setUserPostsCurrentPage] = useState(1);
-  const [userPostsRenderedData, setUserPostsRenderedData] = useState([]);
+  const [userPostsRenderedData, setUserPostsRenderedData] = useState<
+    typeof userPosts
+  >([]);
   const [isLoadingUserPosts, setIsLoadingUserPosts] = useState(false);
 
   const pagination = ({
@@ -139,7 +141,7 @@ function App() {
     currentPage,
     pageSize,
   }: {
-    database: typeof userStories;
+    database: typeof userStories | typeof userPosts;
     currentPage: number;
     pageSize: number;
   }) => {
@@ -161,6 +163,15 @@ function App() {
     });
     setUserStoriesRenderedData(getInitialData);
     setIsLoadingUserStories(false);
+
+    setIsLoadingUserPosts(true);
+    const getInitialDataPosts = pagination({
+      database: userPosts,
+      currentPage: 1,
+      pageSize: userPostsPageSize,
+    });
+    setUserPostsRenderedData(getInitialDataPosts as typeof userPosts);
+    setIsLoadingUserPosts(false);
   }, []);
 
   return (
@@ -173,7 +184,7 @@ function App() {
               // in this project, the user list will scroll with the post, instead of staying fixed on top
               <>
                 <View style={globalStyle.header}>
-                  <Title title={'Let’s Explore'} />
+                  <Title title={"Let's Explore"} />
                   <TouchableOpacity style={globalStyle.messageIcon}>
                     <FontAwesomeIcon
                       icon={faEnvelope as IconProp}
@@ -221,7 +232,33 @@ function App() {
                 </View>
               </>
             }
-            data={userPosts}
+            onEndReachedThreshold={0.1}
+            onEndReached={() => {
+              if (isLoadingUserPosts) {
+                return;
+              }
+              setIsLoadingUserPosts(true);
+              console.log(
+                'fetching more data for you ',
+                userPostsCurrentPage + 1,
+              );
+              const contentToAppend = pagination({
+                database: userPosts,
+                currentPage: userPostsCurrentPage + 1,
+                pageSize: userPostsPageSize,
+              });
+              setTimeout(() => {
+                if (contentToAppend.length > 0) {
+                  setUserPostsCurrentPage(userPostsCurrentPage + 1);
+                  setUserPostsRenderedData(prev => [
+                    ...prev,
+                    ...(contentToAppend as typeof userPosts),
+                  ]);
+                }
+                setIsLoadingUserPosts(false);
+              }, 3000);
+            }}
+            data={userPostsRenderedData}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
               <View style={globalStyle.userPostContainer}>
@@ -239,6 +276,7 @@ function App() {
             )}
           />
         </View>
+        {isLoadingUserPosts && <Text>loading posts...</Text>}
       </SafeAreaView>
     </SafeAreaProvider>
   );
