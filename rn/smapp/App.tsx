@@ -1,8 +1,9 @@
 import {
   FlatList,
-  Platform,
+  StatusBar,
+  // Platform,
   StyleSheet,
-  Switch,
+  // Switch,
   Text,
   TouchableOpacity,
   View,
@@ -139,8 +140,8 @@ function App() {
   >([]);
   const [isLoadingUserPosts, setIsLoadingUserPosts] = useState(false);
 
-  const [isOn, setIsOn] = useState(false);
-  console.log(Platform);
+  // const [isOn, setIsOn] = useState(false);
+  // console.log(Platform);
 
   const pagination = ({
     database,
@@ -183,6 +184,11 @@ function App() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
+        <StatusBar
+          backgroundColor="red"
+          barStyle="light-content"
+          translucent={false}
+        />
         <View>
           <FlatList
             ListHeaderComponent={
@@ -201,7 +207,7 @@ function App() {
                       <Text style={globalStyle.messageNumber}>2</Text>
                     </View>
                   </TouchableOpacity>
-                  <View
+                  {/* <View
                     style={{
                       flex: 1,
                       flexDirection: 'row',
@@ -226,7 +232,7 @@ function App() {
                       }
                       onValueChange={value => setIsOn(value)}
                     />
-                  </View>
+                  </View> */}
                 </View>
                 <View style={globalStyle.userStoryContainer}>
                   <FlatList
