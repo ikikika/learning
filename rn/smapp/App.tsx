@@ -14,6 +14,7 @@ import globalStyle from './assets/styles/globalStyle';
 import UserStory from './components/UserStory/UserStory';
 import { useEffect, useState } from 'react';
 import UserPost from './components/UserPost/UserPost';
+import { scaleFontSize } from './assets/styles/scaling';
 
 const userStories = [
   {
@@ -188,7 +189,7 @@ function App() {
                   <TouchableOpacity style={globalStyle.messageIcon}>
                     <FontAwesomeIcon
                       icon={faEnvelope as IconProp}
-                      size={20}
+                      size={scaleFontSize(20)}
                       color={'#898DAE'}
                     />
                     <View style={globalStyle.messageNumberContainer}>

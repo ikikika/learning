@@ -9,6 +9,7 @@ import {
   faMessage,
 } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { horizontalScale, scaleFontSize } from '../../assets/styles/scaling';
 
 const UserPost = ({
   firstName,
@@ -24,7 +25,10 @@ const UserPost = ({
     <View style={style.userPostContainer}>
       <View style={style.user}>
         <View style={style.userContainer}>
-          <UserProfileImage profileImage={profileImage} imageDimensions={48} />
+          <UserProfileImage
+            profileImage={profileImage}
+            imageDimensions={horizontalScale(48)}
+          />
           <View style={style.userTextContainer}>
             <Text style={style.username}>
               {firstName} {lastName}
@@ -34,7 +38,7 @@ const UserPost = ({
         </View>
         <FontAwesomeIcon
           icon={faEllipsisH as IconProp}
-          size={24}
+          size={scaleFontSize(24)}
           color={'#79869F'}
         />
       </View>
