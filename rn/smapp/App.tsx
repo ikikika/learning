@@ -1,6 +1,8 @@
 import {
   FlatList,
+  Platform,
   StyleSheet,
+  Switch,
   Text,
   TouchableOpacity,
   View,
@@ -137,6 +139,9 @@ function App() {
   >([]);
   const [isLoadingUserPosts, setIsLoadingUserPosts] = useState(false);
 
+  const [isOn, setIsOn] = useState(false);
+  console.log(Platform);
+
   const pagination = ({
     database,
     currentPage,
@@ -196,6 +201,32 @@ function App() {
                       <Text style={globalStyle.messageNumber}>2</Text>
                     </View>
                   </TouchableOpacity>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: 'row',
+                      justifyContent: 'flex-start',
+                    }}
+                  >
+                    <Switch
+                      value={isOn}
+                      style={
+                        Platform.OS === 'android' && {
+                          transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }],
+                        }
+                      }
+                      ios_backgroundColor={'#000'} // track color for ios
+                      trackColor={
+                        Platform.OS === 'android'
+                          ? {
+                              false: 'grey',
+                              true: 'red',
+                            }
+                          : {}
+                      }
+                      onValueChange={value => setIsOn(value)}
+                    />
+                  </View>
                 </View>
                 <View style={globalStyle.userStoryContainer}>
                   <FlatList
