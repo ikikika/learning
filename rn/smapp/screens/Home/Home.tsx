@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  FlatList,
-  StatusBar,
-  // Platform,
-  StyleSheet,
-  // Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
@@ -19,6 +10,7 @@ import { scaleFontSize } from '../../assets/styles/scaling';
 import globalStyle from '../../assets/styles/globalStyle';
 import Title from '../../components/Title/Title';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { NavProp, Routes } from '../../navigation/Routes';
 
 const userStories = [
   {
@@ -125,7 +117,7 @@ const userPosts = [
   },
 ];
 
-const Home = () => {
+const Home = ({ navigation }: NavProp) => {
   const userStoriesPageSize = 4;
   const [userStoriesCurrentPage, setUserStoriesCurrentPage] = useState(1);
   const [userStoriesRenderedData, setUserStoriesRenderedData] = useState<
@@ -187,7 +179,12 @@ const Home = () => {
               <>
                 <View style={style.header}>
                   <Title title={'Let’s Explore'} />
-                  <TouchableOpacity style={style.messageIcon}>
+                  <TouchableOpacity
+                    style={style.messageIcon}
+                    onPress={() => {
+                      navigation.navigate(Routes.Profile);
+                    }}
+                  >
                     <FontAwesomeIcon
                       icon={faEnvelope as IconProp}
                       size={scaleFontSize(20)}
