@@ -7,6 +7,10 @@ const globalStyle = StyleSheet.create({
   flex: {
     flex: 1,
   },
+  flexGrow: {
+    flexGrow: 1,
+    paddingTop: 20
+  },
 });
 
 export default globalStyle;
