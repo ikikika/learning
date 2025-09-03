@@ -4,6 +4,7 @@ import globalStyle from '../../assets/styles/globalStyle';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { NavProp } from '../../navigation/Routes';
 import style from './style';
+import { ProfileTabsNavigation } from '../../navigation/MainNavigation';
 
 const Profile = ({ navigation }: NavProp) => {
   return (
@@ -33,6 +34,9 @@ const Profile = ({ navigation }: NavProp) => {
             <Text style={style.statAmount}>100</Text>
             <Text style={style.statType}>Posts</Text>
           </View>
+        </View>
+        <View style={globalStyle.flex}>
+          <ProfileTabsNavigation />
         </View>
       </ScrollView>
     </SafeAreaProvider>
