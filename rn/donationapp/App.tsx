@@ -1,23 +1,12 @@
-import { Text, useColorScheme, View } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { NavigationContainer } from '@react-navigation/native';
+import { useColorScheme } from 'react-native';
+import MainNavigation from './navigation/MainNavigation';
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
   return (
-    <SafeAreaProvider>
-      <SafeAreaView>
-        <AppContent />
-      </SafeAreaView>
-    </SafeAreaProvider>
-  );
-}
-
-function AppContent() {
-  return (
-    <View>
-      <Text>hello</Text>
-    </View>
+    <NavigationContainer>
+      <MainNavigation />
+    </NavigationContainer>
   );
 }
 
