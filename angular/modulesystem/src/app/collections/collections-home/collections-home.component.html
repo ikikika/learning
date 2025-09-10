@@ -7,4 +7,28 @@
     [headers]="headers"
 ></app-table>
 
-<router-outlet></router-outlet>
+<app-divider>Tab Menu</app-divider>
+<app-tabs>
+    <a 
+        class="item" 
+        [routerLink]="[baseUrl]"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+    >
+        Biography
+    </a>
+    <a 
+        class="item" 
+        [routerLink]="[baseUrl, 'companies']"
+        routerLinkActive="active"
+    >
+        Companies
+    </a>
+    <a 
+        class="item" 
+        [routerLink]="[baseUrl, 'partners']"
+        routerLinkActive="active"
+    >
+        Partners
+    </a>
+</app-tabs>

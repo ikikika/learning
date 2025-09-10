@@ -1,0 +1,18 @@
+<div class="ui dimmer visible active" (click)="onCloseClick()">
+  <div class="ui modal visible active" (click)="$event.stopPropagation()">
+    <!-- $event.stopPropagation() prevents the click event from bubbling up to the parent, which would close the modal wherever you click. which is not expected behaviour -->
+    <i class="close icon" (click)="onCloseClick()"></i>
+    <div class="header">
+      <ng-content select="[modalTitle]" />
+    </div>
+    <div class="content">
+      <ng-content />
+    </div>
+    <div class="actions">
+      <ng-content select="[modalFooter]"></ng-content>
+    </div>
+    <div class="actions actions-default">
+      <button (click)="onCloseClick()" class="ui button">OK</button>
+    </div>
+  </div>
+</div>
