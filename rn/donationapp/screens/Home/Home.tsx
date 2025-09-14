@@ -3,9 +3,10 @@ import React from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import globalStyle from '../../assets/styles/globalStyle';
 import Header from '../../components/Header/Header';
-import Button from '../../components/Button/Button';
 import Tab from '../../components/Tab/Tab';
 import Badge from '../../components/Badge/Badge';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 const Home = () => {
   return (
@@ -15,6 +16,7 @@ const Home = () => {
         <Tab title={'Highlight'} />
         <Tab title={'Highlight'} isInactive={true} />
         <Badge title={'Environment'} />
+        <FontAwesomeIcon icon={faSearch} />
       </SafeAreaView>
     </SafeAreaProvider>
   );
