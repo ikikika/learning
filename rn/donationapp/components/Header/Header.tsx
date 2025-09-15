@@ -1,10 +1,10 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import { View, Text } from 'react-native';
 import style from './style';
 
-const Header = (props: HeaderTypes) => {
+const Header = ({ type, title, color = '#000000' }: HeaderTypes) => {
   const styleToApply = () => {
-    switch (props.type) {
+    switch (type) {
       case 1:
         return style.title1;
       case 2:
@@ -15,20 +15,15 @@ const Header = (props: HeaderTypes) => {
   };
   return (
     <View>
-      <Text style={styleToApply()}>{props.title}</Text>
+      <Text style={[styleToApply(), color && { color: color }]}>{title}</Text>
     </View>
   );
-};
-
-//accidentally types default in the video, but should actually be defaultProps
-Header.defaultProps = {
-  title: '',
-  type: 1,
 };
 
 interface HeaderTypes {
   title: string;
   type: number;
-};
+  color: string;
+}
 
 export default Header;
