@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import style from './style';
 
-const Header = ({ type, title, color = '#000000' }: HeaderTypes) => {
+const Header = ({ type = 1, title, color = '#000000' }: HeaderTypes) => {
   const styleToApply = () => {
     switch (type) {
       case 1:
@@ -22,8 +22,8 @@ const Header = ({ type, title, color = '#000000' }: HeaderTypes) => {
 
 interface HeaderTypes {
   title: string;
-  type: number;
-  color: string;
+  type?: number;
+  color?: string;
 }
 
 export default Header;
