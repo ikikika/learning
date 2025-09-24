@@ -5,7 +5,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { scaleFontSize } from '../../assets/styles/scaling';
 import style from './style';
 
-const Search = ({ onSearch }: SearchTypes) => {
+const Search = ({ onSearch, placeholder = 'Search' }: SearchTypes) => {
   const textInputRef = useRef<TextInput>(null);
   const [search, setSearch] = useState('');
 
@@ -25,6 +25,7 @@ const Search = ({ onSearch }: SearchTypes) => {
         size={scaleFontSize(22)}
       />
       <TextInput
+        placeholder={placeholder}
         ref={textInputRef}
         style={style.searchInput}
         value={search}
@@ -36,6 +37,7 @@ const Search = ({ onSearch }: SearchTypes) => {
 
 interface SearchTypes {
   onSearch: (searchValue: string) => void;
+  placeholder?: string;
 }
 
 export default Search;
