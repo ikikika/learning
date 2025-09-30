@@ -1,0 +1,34 @@
+<div class="fluid">
+  <label class="label">{{ label }}:</label>
+  <div class="control">
+    <input
+      class="input"
+      [formControl]="control"
+      [ngClass]="{
+        'is-danger': showErrors()
+      }"
+    />
+    <!-- mask="(0000) 0000 0000 0000" -->
+  </div>
+
+  <ng-container *ngIf="control.errors && showErrors()">
+    <div class="help is-danger" *ngIf="control.errors?.['required']">
+      {{ label }} is required.
+    </div>
+    <div class="help is-danger" *ngIf="control.errors?.['minlength']">
+      The value you entered is
+      {{ control.errors["minlength"]?.actualLength ?? "" }}
+      characters long, but it must be at least
+      {{ control.errors["minlength"]?.requiredLength }}
+      characters long.
+    </div>
+    <div class="help is-danger" *ngIf="control.errors?.['maxlength']">
+      The value you entered is
+      {{ control.errors["maxlength"].actualLength }}
+      characters long, but it cannot exceed
+      {{ control.errors["maxlength"].requiredLength }}
+      characters long.
+    </div>
+    <div *ngIf="control.errors?.['pattern']">Invalid format.</div>
+  </ng-container>
+</div>
