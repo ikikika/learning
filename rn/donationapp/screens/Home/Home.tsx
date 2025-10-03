@@ -25,6 +25,9 @@ const Home = () => {
   // const dispatch = useDispatch();
   // dispatch(resetToInitialState());
 
+  const categories = useAppSelector(state => state.categories);
+  console.log(categories);
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={[globalStyle.backgroundWhite, globalStyle.flex]}>
