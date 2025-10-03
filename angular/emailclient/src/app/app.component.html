@@ -1,0 +1,34 @@
+<div class="ui container">
+  <div class="ui secondary pointing menu">
+    <a routerLink="/" class="item">Angular Email</a>
+
+    <div class="right menu">
+      <ng-container *ngIf="signedin$ | async">
+        <!-- Anytime that observable or promise emits or resolves a value, 
+         the async pipe right here is going to take that value and use it to update some part of our template. -->
+        <a class="ui item" routerLink="/inbox" routerLinkActive="active">
+          Inbox
+        </a>
+        <a class="ui item" routerLink="/signout" routerLinkActive="active">
+          Sign Out
+        </a>
+      </ng-container>
+      <ng-container *ngIf="!(signedin$ | async)">
+        <a
+          class="ui item"
+          routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <!-- square brackets around routerLinkActiveOptions because we are passing in an object -->
+          Sign In
+        </a>
+        <a class="ui item" routerLink="/signup" routerLinkActive="active">
+          Sign Up
+        </a>
+      </ng-container>
+    </div>
+  </div>
+
+  <router-outlet></router-outlet>
+</div>
