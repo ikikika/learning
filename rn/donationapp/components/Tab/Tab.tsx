@@ -4,7 +4,7 @@ import { Pressable, Text } from 'react-native';
 import { horizontalScale } from '../../assets/styles/scaling';
 import style from './style';
 
-const Tab = ({ title, isInactive = false, onPress = () => {} }: TabProps) => {
+const Tab = ({ tabId, title, isInactive = false, onPress }: TabProps) => {
   const [width, setWidth] = useState(0);
   const textRef = useRef(null);
   const paddingHorizontal = 33;
@@ -13,9 +13,9 @@ const Tab = ({ title, isInactive = false, onPress = () => {} }: TabProps) => {
   };
   return (
     <Pressable
-      disabled={isInactive}
+      // disabled={isInactive}
       style={[style.tab, isInactive && style.inactiveTab, tabWidth]}
-      onPress={() => onPress()}
+      onPress={() => onPress && onPress(tabId)}
     >
       <Text
         onTextLayout={event => {
@@ -32,9 +32,10 @@ const Tab = ({ title, isInactive = false, onPress = () => {} }: TabProps) => {
 };
 
 interface TabProps {
+  tabId: number;
   title: string;
   isInactive?: boolean;
-  onPress?: () => void;
+  onPress?: (tabId: number) => void;
 }
 
 export default Tab;

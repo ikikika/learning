@@ -4,11 +4,20 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import globalStyle from '../../assets/styles/globalStyle';
 import Header from '../../components/Header/Header';
 import { useAppSelector } from '../../redux/hooks';
-// import { useDispatch } from 'react-redux';
-import { Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
+import {
+  FlatList,
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 // import { resetToInitialState, updateFirstName } from '../../redux/reducers/User';
 import Search from '../../components/Search/Search';
 import style from './style';
+import Tab from '../../components/Tab/Tab';
+import { updateSelectedCategoryId } from '../../redux/reducers/Categories';
 
 const Home = () => {
   // Using the useSelector hook to select the "user" slice of the store
@@ -22,7 +31,7 @@ const Home = () => {
 
   // Using the useDispatch hook to get a reference to the dispatch function
   // This function allows us to dispatch actions to update the store
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   // dispatch(resetToInitialState());
 
   const categories = useAppSelector(state => state.categories);
@@ -63,6 +72,28 @@ const Home = () => {
               resizeMode={'contain'}
             />
           </Pressable>
+          <View style={style.categoryHeader}>
+            <Header title={'Select Category'} type={2} />
+          </View>
+          <View style={style.categories}>
+            <FlatList
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              data={categories.categories}
+              renderItem={({ item }) => (
+                <View style={style.categoryItem} key={item.categoryId}>
+                  <Tab
+                    tabId={item.categoryId}
+                    onPress={value => dispatch(updateSelectedCategoryId(value))}
+                    title={item.name}
+                    isInactive={
+                      item.categoryId !== categories.selectedCategoryId
+                    }
+                  />
+                </View>
+              )}
+            />
+          </View>
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
