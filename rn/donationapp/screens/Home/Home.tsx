@@ -18,6 +18,7 @@ import Search from '../../components/Search/Search';
 import style from './style';
 import Tab from '../../components/Tab/Tab';
 import { updateSelectedCategoryId } from '../../redux/reducers/Categories';
+import { resetDonations } from '../../redux/reducers/Donations';
 
 const Home = () => {
   // Using the useSelector hook to select the "user" slice of the store
@@ -35,7 +36,11 @@ const Home = () => {
   // dispatch(resetToInitialState());
 
   const categories = useAppSelector(state => state.categories);
-  console.log(categories);
+  // console.log(categories);
+
+  const donations = useAppSelector(state => state.donations);
+  // dispatch(resetDonations());
+  console.log('this is our current donations state', donations);
 
   const [categoryPage, setCategoryPage] = useState(1);
   const [categoryList, setCategoryList] = useState<CategoryType[]>([]);

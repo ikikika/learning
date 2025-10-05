@@ -6,7 +6,8 @@ import { configureStore } from '@reduxjs/toolkit';
 
 // Importing the User reducer from the ./reducers/User file
 import UserReducer from './reducers/User';
-import CategoriesReducer from './reducers/Categories'
+import CategoriesReducer from './reducers/Categories';
+import DonationsReducer from './reducers/Donations';
 
 // import { logger } from 'redux-logger';
 // Creating a rootReducer that combines all reducers in the app
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   // Here, we're combining the User reducer and calling it "user"
   user: UserReducer,
   categories: CategoriesReducer,
+  donations: DonationsReducer,
 });
 
 // Configuring the redux-persist library to persist the root reducer with AsyncStorage
@@ -55,3 +57,4 @@ export type RootState = ReturnType<typeof store.getState>;
 
 // exporting the persistor object created with the persistStore function from redux-persist
 export const persistor = persistStore(store);
+// persistor.purge();
