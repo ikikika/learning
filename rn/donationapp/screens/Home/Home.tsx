@@ -19,6 +19,7 @@ import style from './style';
 import Tab from '../../components/Tab/Tab';
 import { updateSelectedCategoryId } from '../../redux/reducers/Categories';
 import { resetDonations } from '../../redux/reducers/Donations';
+import { DonationItemType } from '../../types/donation.type';
 
 const Home = () => {
   // Using the useSelector hook to select the "user" slice of the store
@@ -42,10 +43,20 @@ const Home = () => {
   // dispatch(resetDonations());
   console.log('this is our current donations state', donations);
 
+  const [donationItems, setDonationItems] = useState<DonationItemType[] | []>(
+    [],
+  );
   const [categoryPage, setCategoryPage] = useState(1);
   const [categoryList, setCategoryList] = useState<CategoryType[]>([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(false);
   const categoryPageSize = 4;
+
+  useEffect(() => {
+    const items = donations.items.filter(value =>
+      value.categoryIds.includes(categories.selectedCategoryId),
+    );
+    setDonationItems(items);
+  }, [categories.selectedCategoryId]);
 
   useEffect(() => {
     setIsLoadingCategories(true);
