@@ -20,6 +20,7 @@ import Tab from '../../components/Tab/Tab';
 import { updateSelectedCategoryId } from '../../redux/reducers/Categories';
 import { resetDonations } from '../../redux/reducers/Donations';
 import { DonationItemType } from '../../types/donation.type';
+import SingleDonationItem from '../../components/SingleDonationItem/SingleDonationItem';
 
 const Home = () => {
   // Using the useSelector hook to select the "user" slice of the store
@@ -158,6 +159,25 @@ const Home = () => {
               )}
             />
           </View>
+          {donationItems.length > 0 && (
+            <View style={style.donationItemsContainer}>
+              {donationItems.map(value => (
+                <SingleDonationItem
+                  onPress={selectedDonationId => {}}
+                  donationItemId={value.donationItemId.toString()}
+                  uri={value.image}
+                  donationTitle={value.name}
+                  badgeTitle={
+                    categories.categories.filter(
+                      val => val.categoryId === categories.selectedCategoryId,
+                    )[0].name
+                  }
+                  key={value.donationItemId}
+                  price={parseFloat(value.price)}
+                />
+              ))}
+            </View>
+          )}
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
