@@ -18,11 +18,17 @@ import Search from '../../components/Search/Search';
 import style from './style';
 import Tab from '../../components/Tab/Tab';
 import { updateSelectedCategoryId } from '../../redux/reducers/Categories';
-import { resetDonations } from '../../redux/reducers/Donations';
+import {
+  // resetDonations,
+  updateSelectedDonationId,
+} from '../../redux/reducers/Donations';
 import { DonationItemType } from '../../types/donation.type';
 import SingleDonationItem from '../../components/SingleDonationItem/SingleDonationItem';
+import { NavProp, Routes } from '../../navigation/Routes';
 
-const Home = () => {
+interface HomeProps extends NavProp {}
+
+const Home = ({ navigation }: HomeProps) => {
   // Using the useSelector hook to select the "user" slice of the store
   // This will return the user object containing firstName, lastName and userId fields
   // const user = useSelector(state => state.user);
@@ -167,7 +173,10 @@ const Home = () => {
                   style={style.singleDonationItem}
                 >
                   <SingleDonationItem
-                    onPress={selectedDonationId => {}}
+                    onPress={selectedDonationId => {
+                      dispatch(updateSelectedDonationId(selectedDonationId));
+                      navigation.navigate(Routes.SingleDonation);
+                    }}
                     donationItemId={value.donationItemId}
                     uri={value.image}
                     donationTitle={value.name}
