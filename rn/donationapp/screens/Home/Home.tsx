@@ -17,7 +17,10 @@ import {
 import Search from '../../components/Search/Search';
 import style from './style';
 import Tab from '../../components/Tab/Tab';
-import { updateSelectedCategoryId } from '../../redux/reducers/Categories';
+import {
+  SingleCategory,
+  updateSelectedCategoryId,
+} from '../../redux/reducers/Categories';
 import {
   // resetDonations,
   updateSelectedDonationId,
@@ -167,28 +170,33 @@ const Home = ({ navigation }: HomeProps) => {
           </View>
           {donationItems.length > 0 && (
             <View style={style.donationItemsContainer}>
-              {donationItems.map(value => (
-                <View
-                  key={value.donationItemId}
-                  style={style.singleDonationItem}
-                >
-                  <SingleDonationItem
-                    onPress={selectedDonationId => {
-                      dispatch(updateSelectedDonationId(selectedDonationId));
-                      navigation.navigate(Routes.SingleDonation);
-                    }}
-                    donationItemId={value.donationItemId}
-                    uri={value.image}
-                    donationTitle={value.name}
-                    badgeTitle={
-                      categories.categories.filter(
-                        val => val.categoryId === categories.selectedCategoryId,
-                      )[0].name
-                    }
-                    price={parseFloat(value.price)}
-                  />
-                </View>
-              ))}
+              {donationItems.map(value => {
+                const categoryInformation =
+                  categories.categories.find(
+                    val => val.categoryId === categories.selectedCategoryId,
+                  ) ?? SingleCategory;
+
+                return (
+                  <View
+                    key={value.donationItemId}
+                    style={style.singleDonationItem}
+                  >
+                    <SingleDonationItem
+                      onPress={selectedDonationId => {
+                        dispatch(updateSelectedDonationId(selectedDonationId));
+                        navigation.navigate(Routes.SingleDonation, {
+                          categoryInformation,
+                        });
+                      }}
+                      donationItemId={value.donationItemId}
+                      uri={value.image}
+                      donationTitle={value.name}
+                      badgeTitle={categoryInformation.name}
+                      price={parseFloat(value.price)}
+                    />
+                  </View>
+                );
+              })}
             </View>
           )}
         </ScrollView>

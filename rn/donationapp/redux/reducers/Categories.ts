@@ -1,6 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
+export interface CategoryType {
+  categoryId: number;
+  name: string;
+}
+
+const initialState: {
+  categories: CategoryType[];
+  selectedCategoryId: number;
+} = {
   categories: [
     {
       categoryId: 1,
@@ -70,6 +78,11 @@ const Categories = createSlice({
     },
   },
 });
+
+export const SingleCategory = {
+  categoryId: 0,
+  name: '',
+};
 
 export const { resetCategories, updateSelectedCategoryId } = Categories.actions;
 

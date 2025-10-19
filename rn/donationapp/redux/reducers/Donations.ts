@@ -220,6 +220,15 @@ const initialState: {
   selectedDonationInformation: null,
 };
 
+export const initialDonationItem: DonationItem = {
+  name: '',
+  description: '',
+  image: '',
+  donationItemId: '',
+  categoryIds: [],
+  price: '',
+};
+
 const Donations = createSlice({
   name: 'donations',
   initialState: initialState,
