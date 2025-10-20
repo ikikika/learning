@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList, Routes } from './Routes';
 import Home from '../screens/Home/Home';
 import SingleDonationScreen from '../screens/SingleDonationScreen/SingleDonationScreen';
+import Login from '../screens/Login/Login';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -10,8 +11,9 @@ const MainNavigation = () => {
   return (
     <Stack.Navigator
       screenOptions={{ header: () => null, headerShown: false }}
-      initialRouteName={Routes.Home}
+      initialRouteName={Routes.Login}
     >
+      <Stack.Screen name={Routes.Login} component={Login} />
       <Stack.Screen name={Routes.Home} component={Home} />
       <Stack.Screen
         name={Routes.SingleDonation}

@@ -5,6 +5,7 @@ import { RouteProp } from '@react-navigation/native';
 export const Routes = {
   Home: 'Home',
   SingleDonation: 'SingleDonation',
+  Login: 'Login',
 };
 
 export type RootStackParamList = {
