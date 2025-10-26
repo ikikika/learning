@@ -4,6 +4,7 @@ import { RootStackParamList, Routes } from './Routes';
 import Home from '../screens/Home/Home';
 import SingleDonationScreen from '../screens/SingleDonationScreen/SingleDonationScreen';
 import Login from '../screens/Login/Login';
+import Registration from '../screens/Registration/Registration';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -20,6 +21,7 @@ const MainNavigation = () => {
         // Pass the component directly to let React Navigation handle props
         component={SingleDonationScreen}
       />
+      <Stack.Screen name={Routes.Registration} component={Registration} />
     </Stack.Navigator>
   );
 };

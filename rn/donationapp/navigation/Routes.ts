@@ -6,6 +6,7 @@ export const Routes = {
   Home: 'Home',
   SingleDonation: 'SingleDonation',
   Login: 'Login',
+  Registration: 'Registration',
 };
 
 export type RootStackParamList = {
@@ -25,3 +26,7 @@ export interface SingleDonationScreenProps {
   navigation: RootNavigation;
   route: SingleDonationRouteProp;
 }
+
+export interface LoginScreenProp extends NavProp {}
+
+export interface RegistrationScreenProps extends NavProp {}
