@@ -9,6 +9,7 @@ import Header from '../../components/Header/Header';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import { RegistrationScreenProps } from '../../navigation/Routes';
+import { createUser } from '../../api/user';
 
 const Registration = ({ navigation }: RegistrationScreenProps) => {
   const [fullName, setFullName] = useState('');
@@ -50,7 +51,12 @@ const Registration = ({ navigation }: RegistrationScreenProps) => {
           />
         </View>
         <View style={globalStyle.marginBottom24}>
-          <Button title={'Registration'} />
+          <Button
+            title={'Registration'}
+            onPress={async () =>
+              await createUser({ fullName, email, password })
+            }
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
