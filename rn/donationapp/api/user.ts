@@ -35,13 +35,11 @@ export const createUser = async ({
   } catch (error: any) {
     switch (error.code) {
       case 'auth/email-already-in-use':
-        console.log('That email address is already in use!');
-        break;
+        return { error: 'The email you entered is already in use.' };
       case 'auth/invalid-email':
-        console.log('That email address is invalid!');
-        break;
+        return { error: 'Please enter a valid email address.' };
       default:
-        console.error('Auth error:', error);
+        return { error: 'Something went wrong with your request.' };
     }
   }
 };
