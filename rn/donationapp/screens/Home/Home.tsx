@@ -145,10 +145,10 @@ const Home = ({ navigation }: HomeProps) => {
                 if (isLoadingCategories) {
                   return;
                 }
-                console.log(
-                  'User has reached the end and we are getting more data for page number ',
-                  categoryPage,
-                );
+                // console.log(
+                //   'User has reached the end and we are getting more data for page number ',
+                //   categoryPage,
+                // );
                 setIsLoadingCategories(true);
                 let newData = pagination({
                   items: categories.categories,

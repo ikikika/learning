@@ -53,7 +53,7 @@ const Login = ({ navigation }: LoginScreenProp) => {
               } else {
                 setError('');
                 dispatch(logIn(user.data));
-                navigation.navigate(Routes.Home);
+                // navigation.navigate(Routes.Home); // not needed. navigation happens automatically
               }
             }}
             title={'Login'}

@@ -6,6 +6,8 @@ import {
   signOut,
   updateProfile,
 } from '@react-native-firebase/auth';
+import store from '../redux/store';
+import { updateToken } from '../redux/reducers/User';
 
 let cachedAuth: ReturnType<typeof getAuth> | null = null;
 
@@ -84,6 +86,27 @@ export const loginUser = async ({ email, password }: LoginUserProps) => {
 export const logOut = async () => {
   const auth = getFirebaseAuth();
   await signOut(auth);
+};
+
+export const checkToken = async () => {
+  try {
+    const auth = getFirebaseAuth();
+
+    if (!auth.currentUser) {
+      console.warn('No current user — cannot refresh token.');
+      return null;
+    }
+
+    const newToken = await auth.currentUser.getIdToken(true); // force refresh
+    console.log('We are updating token for you');
+
+    store.dispatch(updateToken(newToken));
+
+    return newToken;
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    return null;
+  }
 };
 
 interface CreateUserProps {

@@ -5,11 +5,12 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   // firstName: 'Nata',
   // lastName: 'Vacheishvili',
-  userId: 1,
+  // userId: 1,
   profileImage:
     'https://cdn.dribbble.com/users/1577045/screenshots/4914645/media/028d394ffb00cb7a4b2ef9915a384fd9.png?compress=1&resize=400x300&vertical=top',
   displayName: '',
   isLoggedIn: false,
+  token: '',
 };
 
 // Creating a new slice of the store named "user" with its own set of reducers
@@ -33,6 +34,9 @@ export const User = createSlice({
       // always set this up once a reducer is created for anything
       return initialState;
     },
+    updateToken: (state, action) => {
+      state.token = action.payload;
+    },
   },
 });
 
@@ -41,6 +45,7 @@ export const User = createSlice({
 export const {
   resetToInitialState,
   logIn,
+  updateToken,
   // updateFirstName,
 } = User.actions;
 
