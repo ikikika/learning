@@ -2,6 +2,7 @@ import { getApp } from '@react-native-firebase/app';
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  signInWithEmailAndPassword,
   updateProfile,
 } from '@react-native-firebase/auth';
 
@@ -44,8 +45,40 @@ export const createUser = async ({
   }
 };
 
+export const loginUser = async ({ email, password }: LoginUserProps) => {
+  try {
+    const app = getApp();
+    const auth = getAuth(app);
+
+    const response = await signInWithEmailAndPassword(auth, email, password);
+    const token = await response.user.getIdToken();
+
+    return {
+      status: true,
+      data: {
+        displayName: response.user.displayName,
+        email: response.user.email,
+        token,
+      },
+    };
+  } catch (error: any) {
+    if (error.code === 'auth/invalid-credential') {
+      return {
+        status: false,
+        error: 'Please check your login details',
+      };
+    }
+    return { status: false, error: 'Something went wrong' };
+  }
+};
+
 interface CreateUserProps {
   fullName: string;
+  email: string;
+  password: string;
+}
+
+interface LoginUserProps {
   email: string;
   password: string;
 }
