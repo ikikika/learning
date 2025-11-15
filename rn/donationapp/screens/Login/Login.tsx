@@ -9,11 +9,14 @@ import Header from '../../components/Header/Header';
 import Button from '../../components/Button/Button';
 import { LoginScreenProp, Routes } from '../../navigation/Routes';
 import { loginUser } from '../../api/user';
+import { useDispatch } from 'react-redux';
+import { logIn } from '../../redux/reducers/User';
 
 const Login = ({ navigation }: LoginScreenProp) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const dispatch = useDispatch();
 
   return (
     <SafeAreaView style={[globalStyle.backgroundWhite, globalStyle.flex]}>
@@ -49,6 +52,7 @@ const Login = ({ navigation }: LoginScreenProp) => {
                 setError(user.error ?? '');
               } else {
                 setError('');
+                dispatch(logIn(user.data));
                 navigation.navigate(Routes.Home);
               }
             }}

@@ -37,9 +37,7 @@ const Home = ({ navigation }: HomeProps) => {
   // const user = useSelector(state => state.user);
 
   // Instead of importing useSelector directly from react-redux, import the typed version:
-  const { firstName, lastName, profileImage } = useAppSelector(
-    state => state.user,
-  );
+  const { displayName, profileImage } = useAppSelector(state => state.user);
 
   // Using the useDispatch hook to get a reference to the dispatch function
   // This function allows us to dispatch actions to update the store
@@ -106,7 +104,7 @@ const Home = ({ navigation }: HomeProps) => {
             <View>
               <Text style={style.headerIntroText}>Hello, </Text>
               <View style={style.username}>
-                <Header title={firstName + ' ' + lastName[0] + '. 👋'} />
+                <Header title={displayName + ' 👋'} />
               </View>
             </View>
             <Image
