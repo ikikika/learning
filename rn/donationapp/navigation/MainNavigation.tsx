@@ -8,22 +8,29 @@ import Registration from '../screens/Registration/Registration';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const MainNavigation = () => {
+export const NonAuthenticated = () => {
   return (
     <Stack.Navigator
-      screenOptions={{ header: () => null, headerShown: false }}
       initialRouteName={Routes.Login}
+      screenOptions={{ header: () => null, headerShown: false }}
     >
       <Stack.Screen name={Routes.Login} component={Login} />
-      <Stack.Screen name={Routes.Home} component={Home} />
-      <Stack.Screen
-        name={Routes.SingleDonation}
-        // Pass the component directly to let React Navigation handle props
-        component={SingleDonationScreen}
-      />
       <Stack.Screen name={Routes.Registration} component={Registration} />
     </Stack.Navigator>
   );
 };
 
-export default MainNavigation;
+export const Authenticated = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName={Routes.Home}
+      screenOptions={{ header: () => null, headerShown: false }}
+    >
+      <Stack.Screen name={Routes.Home} component={Home} />
+      <Stack.Screen
+        name={Routes.SingleDonation}
+        component={SingleDonationScreen}
+      />
+    </Stack.Navigator>
+  );
+};
