@@ -28,6 +28,8 @@ import {
 import { DonationItemType } from '../../types/donation.type';
 import SingleDonationItem from '../../components/SingleDonationItem/SingleDonationItem';
 import { NavProp, Routes } from '../../navigation/Routes';
+import { resetToInitialState } from '../../redux/reducers/User';
+import { logOut } from '../../api/user';
 
 interface HomeProps extends NavProp {}
 
@@ -107,11 +109,21 @@ const Home = ({ navigation }: HomeProps) => {
                 <Header title={displayName + ' 👋'} />
               </View>
             </View>
-            <Image
-              source={{ uri: profileImage }}
-              style={style.profileImage}
-              resizeMode={'contain'}
-            />
+            <View>
+              <Image
+                source={{ uri: profileImage }}
+                style={style.profileImage}
+                resizeMode={'contain'}
+              />
+              <Pressable
+                onPress={async () => {
+                  dispatch(resetToInitialState());
+                  await logOut();
+                }}
+              >
+                <Header type={3} title={'Logout'} color={'#156CF7'} />
+              </Pressable>
+            </View>
           </View>
           <View style={style.searchBox}>
             <Search onSearch={() => null} />

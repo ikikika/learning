@@ -3,8 +3,19 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
+  signOut,
   updateProfile,
 } from '@react-native-firebase/auth';
+
+let cachedAuth: ReturnType<typeof getAuth> | null = null;
+
+export const getFirebaseAuth = () => {
+  if (!cachedAuth) {
+    const app = getApp();
+    cachedAuth = getAuth(app);
+  }
+  return cachedAuth;
+};
 
 export const createUser = async ({
   fullName,
@@ -13,8 +24,7 @@ export const createUser = async ({
 }: CreateUserProps) => {
   try {
     // Get the current Firebase app instance
-    const app = getApp();
-    const auth = getAuth(app);
+    const auth = getFirebaseAuth();
 
     // Create a new user
     await createUserWithEmailAndPassword(auth, email, password);
@@ -47,8 +57,7 @@ export const createUser = async ({
 
 export const loginUser = async ({ email, password }: LoginUserProps) => {
   try {
-    const app = getApp();
-    const auth = getAuth(app);
+    const auth = getFirebaseAuth();
 
     const response = await signInWithEmailAndPassword(auth, email, password);
     const token = await response.user.getIdToken();
@@ -70,6 +79,11 @@ export const loginUser = async ({ email, password }: LoginUserProps) => {
     }
     return { status: false, error: 'Something went wrong' };
   }
+};
+
+export const logOut = async () => {
+  const auth = getFirebaseAuth();
+  await signOut(auth);
 };
 
 interface CreateUserProps {
