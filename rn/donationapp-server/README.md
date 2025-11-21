@@ -12,3 +12,8 @@ This should enable you to use ``localhost:3000`` with any API endpoints that
 are going to be setup in this repository using express
 
 To check out the API endpoints and how they work please download Postman. 
+
+npm i -g firebase-tools
+firebase login
+firebase init
+select firebase functions
