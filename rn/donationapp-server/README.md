@@ -17,3 +17,5 @@ npm i -g firebase-tools
 firebase login
 firebase init
 select firebase functions
+
+https://us-central1-donationapp-connection.cloudfunctions.net/helloWorld
