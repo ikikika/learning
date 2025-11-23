@@ -29,7 +29,8 @@ const Payment = ({ navigation }: PaymentScreenProp) => {
   //Make sure to start your local server with nodemon index.js before running this, otherwise your local server will not receive your requests
   const fetchPaymentIntentClientSecret = async () => {
     const API_BASE_URL =
-      Platform.OS === 'ios' ? 'http://localhost:3000' : 'http://10.0.2.2:3000';
+      'https://us-central1-donationapp-connection.cloudfunctions.net/stripePayment';
+    // Platform.OS === 'ios' ? 'http://localhost:3000' : 'http://10.0.2.2:3000';
 
     const response = await fetch(`${API_BASE_URL}/create-payment-intent`, {
       method: 'POST',
