@@ -5,6 +5,7 @@ import Home from '../screens/Home/Home';
 import SingleDonationScreen from '../screens/SingleDonationScreen/SingleDonationScreen';
 import Login from '../screens/Login/Login';
 import Registration from '../screens/Registration/Registration';
+import Payment from '../screens/Payment/Payment';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -31,6 +32,7 @@ export const Authenticated = () => {
         name={Routes.SingleDonation}
         component={SingleDonationScreen}
       />
+      <Stack.Screen name={Routes.Payment} component={Payment} />
     </Stack.Navigator>
   );
 };

@@ -5,7 +5,7 @@ import globalStyle from '../../assets/styles/globalStyle';
 import style from './style';
 import { ScrollView } from 'react-native-gesture-handler';
 import BackButton from '../../components/BackButton/BackButton';
-import { NavProp, SingleDonationScreenProps } from '../../navigation/Routes';
+import { Routes, SingleDonationScreenProps } from '../../navigation/Routes';
 import { DonationItemType } from '../../types/donation.type';
 import Badge from '../../components/Badge/Badge';
 import Header from '../../components/Header/Header';
@@ -37,15 +37,12 @@ const SingleDonationScreen = ({
         <Header type={1} title={donationItemInformation.name} />
         <Text style={style.description}>
           {donationItemInformation.description}
-          {donationItemInformation.description}
-          {donationItemInformation.description}
-          {donationItemInformation.description}
-          {donationItemInformation.description}
-          {donationItemInformation.description}
-          {donationItemInformation.description}
         </Text>
         <View style={style.button}>
-          <Button title={'Donate'} />
+          <Button
+            title={'Donate'}
+            onPress={() => navigation.navigate(Routes.Payment)}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
