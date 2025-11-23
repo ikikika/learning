@@ -11,6 +11,7 @@ const initialState = {
   displayName: '',
   isLoggedIn: false,
   token: '',
+  email: ''
 };
 
 // Creating a new slice of the store named "user" with its own set of reducers
