@@ -23,6 +23,7 @@
     "@react-navigation/native-stack": "^7.3.28",
     "@react-navigation/stack": "^7.4.8",
     "@reduxjs/toolkit": "^2.9.0",
+    "@stripe/stripe-react-native": "^0.57.0",
     "react": "19.1.0",
     "react-native": "0.81.1",
     "react-native-device-info": "^14.0.4",

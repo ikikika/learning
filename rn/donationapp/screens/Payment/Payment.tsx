@@ -9,6 +9,8 @@ import style from './style';
 import Header from '../../components/Header/Header';
 import { Text, View } from 'react-native';
 import Button from '../../components/Button/Button';
+import { CardForm, StripeProvider } from '@stripe/stripe-react-native';
+import { STRIPE_PUBLISHABLE_KEY } from '../../constants/App';
 
 const Payment = ({ navigation }: PaymentScreenProp) => {
   const donationItemInformation: DonationItemType =
@@ -22,7 +24,11 @@ const Payment = ({ navigation }: PaymentScreenProp) => {
         <Text style={style.donationAmountDescription}>
           You are about to donate {donationItemInformation.price}
         </Text>
-        <View />
+        <View>
+          <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
+            <CardForm style={style.cardForm} />
+          </StripeProvider>
+        </View>
       </ScrollView>
       <View style={style.button}>
         <Button title={'Donate'} />
