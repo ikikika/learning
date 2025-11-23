@@ -11,3 +11,5 @@ in the root of your project
 firebase init
 select Functions: Configure a Cloud Functions directory and its files
 select initialise and provide name for codebase
+
+https://us-central1-donationapp-connection.cloudfunctions.net/stripePayment
