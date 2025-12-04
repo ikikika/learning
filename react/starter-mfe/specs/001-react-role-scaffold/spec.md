@@ -8,6 +8,16 @@
 
 **Input**: User description: "scaffold a react project, with options to set it as either a standalone, shell or remote"
 
+## Clarifications
+
+### Session 2026-07-30
+
+- Q: Scaffold delivery model → A: In-repo starter (this repository or a clone is configured for one role at init; not a separate generator that emits a new project)
+- Q: How repository role is chosen → A: Required CLI/script flag (e.g. `--role=standalone|shell|remote`); no interactive prompt fallback
+- Q: Default remote public entry name → A: `./Demo` (sample/demo feature entry; rename rules documented in project guidance)
+- Q: Shell sample remote slots → A: One sample remote slot aligned with `./Demo`, with user-visible fallback when unavailable
+- Q: Where chosen role is persisted → A: Both a machine-readable role file and a README/project-guidance mention
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Scaffold a standalone app (Priority: P1)
@@ -16,13 +26,13 @@ A developer needs a ready-to-run single application repository for a product tha
 
 **Why this priority**: Standalone is the simplest path and the default learning/MVP path for many teams; it must work without any shell or remote setup.
 
-**Independent Test**: Choose standalone, scaffold, start the app locally, and verify a sample home screen loads without requiring any other repositories.
+**Independent Test**: Run init with `--role=standalone`, start the app locally, and verify a sample home screen loads without requiring any other repositories.
 
 **Acceptance Scenarios**:
 
-1. **Given** the developer starts scaffold, **When** they select role `standalone`, **Then** the result is a single-app repository marked as standalone and runnable on its own.
+1. **Given** the developer runs init with `--role=standalone`, **When** init completes successfully, **Then** the result is a single-app repository marked as standalone and runnable on its own.
 2. **Given** a completed standalone scaffold, **When** the developer starts the app locally, **Then** they see a working sample screen without configuring remote locations or shell settings.
-3. **Given** a completed standalone scaffold, **When** the developer inspects project guidance, **Then** the role is documented as standalone and the layout matches the canonical application structure expected by this starter.
+3. **Given** a completed standalone scaffold, **When** the developer inspects project guidance and the role metadata file, **Then** the role is recorded as standalone in both places and the layout matches the canonical application structure expected by this starter.
 
 ---
 
@@ -32,12 +42,12 @@ A developer needs a host/shell repository that owns navigation and composition o
 
 **Why this priority**: Shell is required for multi-repo microfrontend products; it must not embed remote business logic.
 
-**Independent Test**: Choose shell, scaffold, start the shell locally with no remotes available, and verify the shell still loads and shows the configured fallback for a missing remote.
+**Independent Test**: Run init with `--role=shell`, start the shell locally with no remotes available, and verify the shell still loads and shows the configured fallback for a missing remote.
 
 **Acceptance Scenarios**:
 
-1. **Given** the developer starts scaffold, **When** they select role `shell`, **Then** the result is a single-app repository marked as shell with configuration placeholders for remote locations.
-2. **Given** a completed shell scaffold, **When** a configured remote is unavailable, **Then** the shell remains usable and shows a defined fallback instead of a blank or hard crash.
+1. **Given** the developer runs init with `--role=shell`, **When** init completes successfully, **Then** the result is a single-app repository marked as shell with exactly one sample remote slot configured for a `./Demo` entry and a placeholder remote location.
+2. **Given** a completed shell scaffold, **When** that sample remote is unavailable, **Then** the shell remains usable and shows a defined fallback for that slot instead of a blank or hard crash.
 3. **Given** a completed shell scaffold, **When** the developer reviews the repository contents, **Then** there is no remote feature implementation source—only shell/chrome, routing, and remote loading adapters.
 
 ---
@@ -48,11 +58,11 @@ A developer needs a remote repository that can be developed and tested alone and
 
 **Why this priority**: Remotes complete the multi-repo topology; dual-mode (standalone + federated) is a constitutional requirement.
 
-**Independent Test**: Choose remote, scaffold, start the app standalone and verify the sample capability works; verify documentation (or checklist) states the public expose name and that the same capability is intended for shell consumption.
+**Independent Test**: Run init with `--role=remote`, start the app standalone and verify the sample capability works; verify documentation (or checklist) states the public expose name and that the same capability is intended for shell consumption.
 
 **Acceptance Scenarios**:
 
-1. **Given** the developer starts scaffold, **When** they select role `remote`, **Then** the result is a single-app repository marked as remote with a documented public entry name for shell consumption.
+1. **Given** the developer runs init with `--role=remote`, **When** init completes successfully, **Then** the result is a single-app repository marked as remote with public entry `./Demo` documented for shell consumption.
 2. **Given** a completed remote scaffold, **When** the developer starts it in standalone mode, **Then** the sample capability is usable without a shell.
 3. **Given** a completed remote scaffold, **When** a compatible shell is configured to load that public entry, **Then** the same capability is available inside the shell without forked business logic in the remote.
 
@@ -60,55 +70,62 @@ A developer needs a remote repository that can be developed and tested alone and
 
 ### Edge Cases
 
-- Developer attempts scaffold without choosing a role → scaffold MUST refuse to proceed until exactly one role is selected.
-- Developer provides an unrecognized role value → scaffold MUST reject it with a clear message listing `standalone`, `shell`, and `remote`.
+- Developer runs init without `--role` (or equivalent required flag) → init MUST fail with a clear message that `--role=standalone|shell|remote` is required.
+- Developer provides an unrecognized `--role` value → init MUST reject it with a clear message listing `standalone`, `shell`, and `remote`.
 - Shell starts with empty or invalid remote location configuration → shell MUST still boot and use fallbacks for affected remotes.
-- Remote public entry name conflicts with reserved/invalid naming → scaffold MUST use a documented default sample entry name and state rename rules in project guidance.
+- Remote public entry naming → remote init MUST use default public entry `./Demo` and project guidance MUST state how to rename it safely for real products.
 - Developer expects one repository to be shell and remote at once → out of scope; scaffold produces exactly one role per repository.
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
-- **FR-001**: Scaffold MUST produce exactly one independently buildable and deployable application repository per run.
-- **FR-002**: Scaffold MUST require the developer to choose exactly one repository role: `standalone`, `shell`, or `remote`.
-- **FR-003**: Scaffold MUST persist the chosen role in project guidance so later contributors can see the repository role without guessing.
+- **FR-001**: Scaffold MUST configure **this** application repository (or a clone of this starter) as exactly one independently buildable and deployable app—not generate a separate sibling project directory via an external generator.
+- **FR-002**: Init MUST require an explicit CLI/script flag `--role` (or documented equivalent) whose value is exactly one of `standalone`, `shell`, or `remote`; interactive prompts and silent defaults MUST NOT be used to choose the role.
+- **FR-003**: Init MUST persist the chosen role in (1) a dedicated machine-readable role metadata file at the repository root and (2) human-readable project guidance (README or equivalent) so contributors and scripts can both discover the role without guessing.
 - **FR-004**: Regardless of role, the scaffolded application MUST use the starter’s canonical application layout (app shell areas, features, pages, layouts, shared components, core utilities, app-wide services, styles, and local test utilities).
 - **FR-005**: A `standalone` scaffold MUST run as a complete single application without requiring shell or remote configuration.
-- **FR-006**: A `shell` scaffold MUST include configuration for remote locations and MUST keep remote business logic out of the shell repository.
-- **FR-007**: A `shell` scaffold MUST define user-visible fallback behavior when a configured remote fails to load or is missing.
-- **FR-008**: A `remote` scaffold MUST run in standalone development/demo mode and MUST declare a stable public entry intended for shell consumption.
+- **FR-006**: A `shell` scaffold MUST include configuration for exactly one sample remote location targeting public entry `./Demo`, and MUST keep remote business logic out of the shell repository.
+- **FR-007**: A `shell` scaffold MUST define user-visible fallback behavior when that sample remote fails to load or is missing.
+- **FR-008**: A `remote` scaffold MUST run in standalone development/demo mode and MUST declare stable public entry `./Demo` for shell consumption (documented; rename guidance included).
 - **FR-009**: A `remote` scaffold MUST keep feature/domain logic shared between standalone and federated use (no forked business implementations).
-- **FR-010**: Scaffold MUST include a minimal sample capability sufficient to demonstrate the chosen role (home/demo screen for standalone; shell chrome + remote slot/fallback for shell; exposable sample feature for remote).
+- **FR-010**: Scaffold MUST include a minimal sample capability sufficient to demonstrate the chosen role (home/demo screen for standalone; shell chrome + one `./Demo` remote slot/fallback for shell; exposable `./Demo` sample feature for remote).
 - **FR-011**: Scaffold MUST provide clear local start instructions so a developer can verify the chosen role within one local session.
 - **FR-012**: Changing an existing repository’s role after scaffold (e.g., standalone → remote migration tooling) is out of scope for this feature; developers MUST re-scaffold or amend manually.
+- **FR-013**: A separate multi-project generator CLI (creating new repos from templates outside this tree) is out of scope for this feature.
 
 ### Key Entities
 
-- **Repository Role**: One of `standalone`, `shell`, or `remote`; selected at scaffold time; exactly one per repository.
-- **Scaffold Result**: The generated application repository contents and guidance for the selected role.
-- **Remote Public Entry**: Named, stable surface a shell can load from a remote repository (remote role only).
-- **Remote Location Config**: Shell-side settings that point to where remotes are loaded from (shell role only).
-- **Remote Fallback**: User-visible substitute when a remote cannot be loaded (shell role only).
+- **Repository Role**: One of `standalone`, `shell`, or `remote`; selected only via required `--role` flag at init; exactly one per repository; persisted in a root role metadata file and in project guidance.
+- **Scaffold Result**: This repository after role init—application contents, role metadata file, and guidance for the selected role (in-place configuration of the starter, not a newly emitted external project).
+- **Role Metadata File**: Machine-readable record of the chosen repository role written at init for scripts/CI and contributor tooling.
+- **Remote Public Entry**: Named, stable surface a shell can load from a remote repository (remote role only); default sample name is `./Demo`.
+- **Remote Location Config**: Shell-side settings for where remotes load from (shell role only); v1 includes exactly one sample slot for `./Demo`.
+- **Remote Fallback**: User-visible substitute when the sample remote cannot be loaded (shell role only).
 
 ## Success Criteria *(mandatory)*
 
 ### Measurable Outcomes
 
 - **SC-001**: A developer who knows the intended role can complete scaffold and see a running sample screen for that role in under 15 minutes on a typical developer machine.
-- **SC-002**: 100% of successful scaffold runs result in exactly one selected role recorded in project guidance.
+- **SC-002**: 100% of successful init runs write the selected role to both the role metadata file and project guidance.
 - **SC-003**: For standalone scaffolds, local verification succeeds with no other repositories running.
-- **SC-004**: For shell scaffolds, local verification succeeds even when no remotes are reachable, and the fallback is visible for the sample remote slot.
-- **SC-005**: For remote scaffolds, local standalone verification succeeds, and the public entry name is documented for shell wiring.
+- **SC-004**: For shell scaffolds, local verification succeeds even when no remotes are reachable, and the fallback is visible for the single sample `./Demo` remote slot.
+- **SC-005**: For remote scaffolds, local standalone verification succeeds, and public entry `./Demo` is documented for shell wiring.
 - **SC-006**: In a review of scaffold output against starter rules, reviewers find no remote business logic inside a shell scaffold and no missing dual-mode expectation for a remote scaffold.
 
 ## Assumptions
 
-- This feature scaffolds **one application repository per run** in a multi-repository topology (separate repos for shell and each remote over time).
-- Role selection happens **at scaffold/init time** as a required explicit choice (not inferred silently).
+- This feature is an **in-repo starter**: developers clone or open this repository and choose a role at init so **this** tree becomes the shell, remote, or standalone app.
+- This feature configures **one application repository per init** in a multi-repository topology (separate repos for shell and each remote over time; each repo runs its own role init).
+- Role selection happens **only via a required `--role` CLI/script flag** at init (not interactive prompts, config-first edit, or silent defaults).
+- After successful init, the chosen role is persisted in **both** a root machine-readable role metadata file and human-readable project guidance (README or equivalent).
 - The scaffold targets a **React** single-page application experience consistent with this starter’s constitution; detailed tooling choices are deferred to planning.
-- Sample content is **demo-grade** (enough to prove the role), not a full product domain.
+- For remote role, the default public entry name is **`./Demo`** (demo-grade; rename guidance ships with the scaffold).
 - Shared UI/config/contract packages may be referenced later; v1 scaffold MAY ship without mandatory external shared packages.
-- Developers using the shell role will supply real remote URLs/locations in configuration when integrating real remotes.
+- For shell role, v1 includes **exactly one** sample remote slot wired for `./Demo` (additional remotes are developer-added later).
+- Developers using the shell role will replace the sample remote location with real remote URLs when integrating real remotes.
 - Mobile-native apps, backend APIs, and auth product features are out of scope unless needed as thin placeholders for demo screens.
 - Post-scaffold role migration tooling is out of scope (FR-012).
+- External generator CLIs that emit new projects outside this repository are out of scope (FR-013).
+- Exact on-disk name of the role metadata file is deferred to planning (must be root-level and machine-readable).
