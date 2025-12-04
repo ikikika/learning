@@ -30,18 +30,23 @@ Federation; TanStack Query (optional); shared packages such as
 standalone/shell smoke; contract tests for remote exposes when federation is
 in scope
 
-**Target Platform**: Modern evergreen browsers (SPA); Node for build/CI only
+**Target Platform**: Modern evergreen browsers (SPA) including phone-width
+viewports; PWA-capable (installable + offline app-shell baseline); Node for
+build/CI only
 
 **Project Type**: Single-app React repository — role is one of
 `shell` | `remote` | `standalone` (multi-repo MFE topology)
 
 **Performance Goals**: Keep interactive route usable under ~2s on broadband;
 avoid duplicate `react`/`react-dom`; measure remote `remoteEntry` + chunk load
-cost for federated surfaces
+cost for federated surfaces; keep primary mobile flows usable without
+horizontal scroll
 
 **Constraints**: Webpack Module Federation only; singleton shared peers;
 no secrets in client bundles; remote URLs via config; canonical root `src/`
-layout; remotes must remain runnable standalone
+layout; remotes must remain runnable standalone; UI MUST be mobile-responsive;
+apps MUST ship PWA baseline (manifest, icons, service worker / equivalent)
+with shell-owned install/offline UX when federated
 
 **Scale/Scope**: Pick one role and replace with concrete paths for this plan:
 - Standalone — e.g. `Role: standalone. In: features/auth, pages/LoginPage +
@@ -55,7 +60,7 @@ layout; remotes must remain runnable standalone
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-Derived from `.specify/memory/constitution.md` (Starter MFE Constitution v2+).
+Derived from `.specify/memory/constitution.md` (Starter MFE Constitution v2.1+).
 
 - **Repository Role & Portability**: Repository role is explicit (shell,
   remote, or standalone). Remote feature logic is usable in standalone and
@@ -69,6 +74,10 @@ Derived from `.specify/memory/constitution.md` (Starter MFE Constitution v2+).
 - **Composition-First UI**: Component APIs prefer composition over boolean-prop
   sprawl; presentational UI stays free of transport/host details; no Atomic
   Design folder taxonomy required.
+- **Responsive Experience & PWA Readiness**: Primary flows are mobile-responsive;
+  PWA baseline (manifest, icons, service worker / equivalent) is planned;
+  federated apps prefer shell-owned install/offline UX; remotes remain safe when
+  embedded and PWA-capable in standalone mode.
 - **Multi-Repository Topology**: This repository contains one app at root
   `src/`; it does not embed shell and remote implementations under `apps/`.
   Shared UI/config/contracts come from versioned packages, not copied folders.

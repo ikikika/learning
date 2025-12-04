@@ -38,6 +38,9 @@ description: "Task list template for feature implementation"
 - When federation is in scope, include tasks for contract artifacts, singleton
   shared deps, external contract package compatibility, feature exposes, and
   both standalone and federated verification paths
+- Include responsive verification for primary flows (phone-width) and PWA
+  baseline tasks (manifest, icons, service worker / equivalent) unless
+  Complexity Tracking defers them with a tracked follow-up
 
 <!--
   ============================================================================
@@ -167,6 +170,8 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX [P] Documentation updates in docs/
 - [ ] TXXX Code cleanup and refactoring
 - [ ] TXXX Performance optimization across all stories
+- [ ] TXXX Verify primary flows at phone-width (no horizontal scroll)
+- [ ] TXXX [P] PWA baseline: manifest, icons, service worker / equivalent
 - [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
 - [ ] TXXX Security hardening
 - [ ] TXXX Run quickstart.md validation

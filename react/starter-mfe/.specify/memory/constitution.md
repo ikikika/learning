@@ -1,17 +1,16 @@
 <!--
 Sync Impact Report
-- Version change: 2.0.0 → 2.0.1
-- Modified principles:
-  - IV. Composition-First UI (shared UI path: `components/[Component]`, not `components/ui`)
-- Added sections / material expansions: none
+- Version change: 2.0.1 → 2.1.0
+- Modified principles: none renamed
+- Added sections / material expansions:
+  - VI. Responsive Experience & PWA Readiness (new principle)
+  - Technology Constraints → Styling & a11y expanded for responsive layouts
 - Removed sections: none
-- Clarifications:
-  - Flat shared component folders under `components/`
-  - Feature-local UI remains under `features/`
+- Clarifications: none
 - Templates requiring updates:
-  - .specify/templates/plan-template.md ✅ (flattened components sample)
-  - .specify/templates/tasks-template.md ✅ (path list)
-  - .specify/templates/spec-template.md ⚠ no change required
+  - .specify/templates/plan-template.md ✅ (Constitution Check + Technical Context)
+  - .specify/templates/spec-template.md ✅ (Assumptions guidance)
+  - .specify/templates/tasks-template.md ✅ (polish / verification path note)
   - .cursor/skills/speckit-* ✅ reviewed (no skill edits required)
 - Follow-up TODOs: none deferred
 -->
@@ -104,6 +103,35 @@ Behavior MUST be independently testable at unit, contract, and mode levels.
 Rationale: Isolation that cannot be verified will regress under independent
 remote deploys.
 
+### VI. Responsive Experience & PWA Readiness
+
+Frontend experiences MUST be mobile-responsive and Progressive Web App (PWA)
+capable across repository roles (shell, remote, and standalone).
+
+- Layouts and shared UI MUST remain usable on small viewports (phone-width)
+  without requiring horizontal scrolling for primary tasks, unless a Complexity
+  Tracking entry justifies an exception (e.g., dense data grids with an
+  explicit alternate mobile flow).
+- Touch targets and spacing MUST remain operable on touch devices for primary
+  actions.
+- Responsive behavior MUST not fork business logic by device; adapt presentation
+  through layout/CSS (or equivalent), not duplicated feature implementations.
+- Applications MUST ship PWA baseline capability: a web app manifest, an
+  installable/display identity (name, icons, display mode), and a service worker
+  (or equivalent) that enables at least offline shell/caching for the app shell
+  assets appropriate to the repository role.
+- Shell and remote PWAs MUST NOT assume exclusive control of the browser when
+  composed; remotes MUST remain safe when embedded (no conflicting
+  full-document PWA takeovers that break the shell). Prefer shell-owned
+  install/offline UX when federated; remotes MAY still be PWA-capable in
+  standalone mode.
+- New UI work MUST state responsive and PWA impact in plans/PRs (verified,
+  deferred with follow-up, or N/A with justification).
+
+Rationale: This starter targets real-world multi-repo frontends used on phones
+and desktops; installability and resilient loading are part of product quality,
+not optional polish.
+
 ## Technology Constraints
 
 - **Primary UI**: React with TypeScript for application and shared package code.
@@ -143,9 +171,13 @@ src/
   - Shared helpers MUST live under `core/` — do not add a parallel `lib/` for
     the same role.
   - Root `services/` is for cross-feature infra only, not domain services.
-- **Styling & a11y**: UI MUST meet baseline accessibility expectations (keyboard
-  reachability, semantic structure, discernible names). Visual systems SHOULD
-  avoid one-off snowflake patterns that cannot be shared across remotes.
+- **Styling, a11y & responsive**: UI MUST meet baseline accessibility
+  expectations (keyboard reachability, semantic structure, discernible names)
+  and MUST be mobile-responsive for primary flows. Visual systems SHOULD avoid
+  one-off snowflake patterns that cannot be shared across remotes.
+- **PWA**: Each application repository MUST include manifest + icons + service
+  worker (or equivalent) baseline as required by Principle VI; federated
+  composition MUST prefer shell-owned install/offline UX.
 - **Performance**: Avoid unnecessary waterfalls and duplicate framework weight;
   measure remote load cost when adding new federated surfaces.
 - **Secrets & config**: No secrets in client bundles; environment-specific host
@@ -162,6 +194,8 @@ src/
 - Plans, PRs, and agent implementations MUST state the repository role
   (shell, remote, or standalone). Remote changes MUST state standalone and
   federated impact and MUST NOT silently drop either mode.
+- Plans, PRs, and agent implementations MUST state responsive and PWA impact
+  (verified, deferred with tracked follow-up, or justified N/A).
 - Complexity beyond these principles MUST be recorded in the plan's Complexity
   Tracking table with a simpler alternative that was rejected and why.
 
@@ -187,4 +221,4 @@ Compliance:
 - Runtime guidance may live in README or agent skills; those documents MUST NOT
   contradict this constitution. On conflict, this file wins.
 
-**Version**: 2.0.1 | **Ratified**: 2026-07-30 | **Last Amended**: 2026-07-30
+**Version**: 2.1.0 | **Ratified**: 2026-07-30 | **Last Amended**: 2026-07-31
