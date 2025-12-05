@@ -18,6 +18,13 @@
 - Q: Shell sample remote slots → A: One sample remote slot aligned with `./Demo`, with user-visible fallback when unavailable
 - Q: Where chosen role is persisted → A: Both a machine-readable role file and a README/project-guidance mention
 
+### Session 2026-07-31
+
+- Q: Scaffold scope for responsive + PWA → A: MUST ship mobile-responsive sample UI and PWA baseline (manifest, icons, offline app-shell caching) for all roles
+- Q: PWA ownership when federated → A: Shell owns install/offline UX when federated; remote is fully PWA-capable in standalone mode only (no competing install/SW takeover when embedded)
+- Q: Offline PWA depth / no-network UX → A: When no network is detected, show message "internet connection required" (demo content requires connectivity; not a full offline app)
+- Q: Re-running init after role is set → A: Refuse by default; allow overwrite only with explicit `--force` (plus required `--role`)
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Scaffold a standalone app (Priority: P1)
@@ -31,8 +38,9 @@ A developer needs a ready-to-run single application repository for a product tha
 **Acceptance Scenarios**:
 
 1. **Given** the developer runs init with `--role=standalone`, **When** init completes successfully, **Then** the result is a single-app repository marked as standalone and runnable on its own.
-2. **Given** a completed standalone scaffold, **When** the developer starts the app locally, **Then** they see a working sample screen without configuring remote locations or shell settings.
-3. **Given** a completed standalone scaffold, **When** the developer inspects project guidance and the role metadata file, **Then** the role is recorded as standalone in both places and the layout matches the canonical application structure expected by this starter.
+2. **Given** a completed standalone scaffold, **When** the developer starts the app locally on a phone-width viewport, **Then** they see a working sample screen usable without horizontal scrolling for the primary demo content, without configuring remote locations or shell settings.
+3. **Given** a completed standalone scaffold, **When** the developer inspects project guidance and the role metadata file, **Then** the role is recorded as standalone in both places, the layout matches the canonical application structure, and PWA baseline artifacts (manifest, icons, service worker / equivalent) are present.
+4. **Given** a completed standalone scaffold with no network connectivity, **When** the developer opens the app, **Then** they see a clear "internet connection required" (or equivalent) message.
 
 ---
 
@@ -48,7 +56,7 @@ A developer needs a host/shell repository that owns navigation and composition o
 
 1. **Given** the developer runs init with `--role=shell`, **When** init completes successfully, **Then** the result is a single-app repository marked as shell with exactly one sample remote slot configured for a `./Demo` entry and a placeholder remote location.
 2. **Given** a completed shell scaffold, **When** that sample remote is unavailable, **Then** the shell remains usable and shows a defined fallback for that slot instead of a blank or hard crash.
-3. **Given** a completed shell scaffold, **When** the developer reviews the repository contents, **Then** there is no remote feature implementation source—only shell/chrome, routing, and remote loading adapters.
+3. **Given** a completed shell scaffold, **When** the developer reviews the repository contents, **Then** there is no remote feature implementation source—only shell/chrome, routing, and remote loading adapters—and the shell owns install/offline PWA UX for the composed experience.
 
 ---
 
@@ -63,8 +71,8 @@ A developer needs a remote repository that can be developed and tested alone and
 **Acceptance Scenarios**:
 
 1. **Given** the developer runs init with `--role=remote`, **When** init completes successfully, **Then** the result is a single-app repository marked as remote with public entry `./Demo` documented for shell consumption.
-2. **Given** a completed remote scaffold, **When** the developer starts it in standalone mode, **Then** the sample capability is usable without a shell.
-3. **Given** a completed remote scaffold, **When** a compatible shell is configured to load that public entry, **Then** the same capability is available inside the shell without forked business logic in the remote.
+2. **Given** a completed remote scaffold, **When** the developer starts it in standalone mode, **Then** the sample capability is usable without a shell and the remote’s installable PWA baseline is available.
+3. **Given** a completed remote scaffold, **When** a compatible shell is configured to load that public entry, **Then** the same capability is available inside the shell without forked business logic in the remote, and the remote does not take over shell install/offline PWA UX.
 
 ---
 
@@ -72,9 +80,15 @@ A developer needs a remote repository that can be developed and tested alone and
 
 - Developer runs init without `--role` (or equivalent required flag) → init MUST fail with a clear message that `--role=standalone|shell|remote` is required.
 - Developer provides an unrecognized `--role` value → init MUST reject it with a clear message listing `standalone`, `shell`, and `remote`.
+- Developer runs init again when role metadata already exists, without `--force` → init MUST fail with a clear message that re-init requires `--force`.
+- Developer runs init with `--force` and a valid `--role` when role metadata exists → init MAY overwrite role configuration for the new role.
 - Shell starts with empty or invalid remote location configuration → shell MUST still boot and use fallbacks for affected remotes.
 - Remote public entry naming → remote init MUST use default public entry `./Demo` and project guidance MUST state how to rename it safely for real products.
 - Developer expects one repository to be shell and remote at once → out of scope; scaffold produces exactly one role per repository.
+- Primary demo content overflows horizontally at phone-width → constitution/scaffold violation; layouts MUST adapt without device-forked business logic.
+- PWA baseline artifacts missing after successful init → constitution/scaffold violation for all roles.
+- Embedded remote registers a competing full-document PWA install/offline takeover → constitution/scaffold violation.
+- No network detected and no "internet connection required" (or equivalent) message shown → scaffold violation; full offline demo content is out of scope.
 
 ## Requirements *(mandatory)*
 
@@ -91,8 +105,13 @@ A developer needs a remote repository that can be developed and tested alone and
 - **FR-009**: A `remote` scaffold MUST keep feature/domain logic shared between standalone and federated use (no forked business implementations).
 - **FR-010**: Scaffold MUST include a minimal sample capability sufficient to demonstrate the chosen role (home/demo screen for standalone; shell chrome + one `./Demo` remote slot/fallback for shell; exposable `./Demo` sample feature for remote).
 - **FR-011**: Scaffold MUST provide clear local start instructions so a developer can verify the chosen role within one local session.
-- **FR-012**: Changing an existing repository’s role after scaffold (e.g., standalone → remote migration tooling) is out of scope for this feature; developers MUST re-scaffold or amend manually.
+- **FR-012**: Dedicated role-migration tooling beyond init is out of scope. Changing role after first init MUST use init again with both `--role` and an explicit `--force` flag (or manual amend); init without `--force` MUST NOT overwrite an existing role metadata file.
 - **FR-013**: A separate multi-project generator CLI (creating new repos from templates outside this tree) is out of scope for this feature.
+- **FR-014**: Regardless of role, scaffold output MUST be mobile-responsive for primary demo flows (usable at phone-width without horizontal scrolling for primary content) and MUST NOT fork demo business logic by device.
+- **FR-015**: Regardless of role, scaffold output MUST include Progressive Web App baseline capability: web app manifest, installable/display identity (name, icons, display mode), and a service worker (or equivalent) supporting app-shell asset handling as needed for installability.
+- **FR-016**: When role is `shell`, the shell MUST own install/offline PWA UX for the composed experience. When role is `remote`, full installable PWA behavior MUST apply in standalone mode; when the remote is embedded in a shell, it MUST NOT register a competing full-document install/offline takeover that breaks the shell.
+- **FR-017**: When the application detects no network connectivity, it MUST show a clear user-visible message exactly conveying that an internet connection is required (wording: "internet connection required" or equivalent clear phrasing). Full offline use of demo/product content is out of scope for v1.
+- **FR-018**: If role metadata already exists, init MUST refuse to proceed unless `--force` is provided together with a valid `--role`.
 
 ### Key Entities
 
@@ -113,6 +132,11 @@ A developer needs a remote repository that can be developed and tested alone and
 - **SC-004**: For shell scaffolds, local verification succeeds even when no remotes are reachable, and the fallback is visible for the single sample `./Demo` remote slot.
 - **SC-005**: For remote scaffolds, local standalone verification succeeds, and public entry `./Demo` is documented for shell wiring.
 - **SC-006**: In a review of scaffold output against starter rules, reviewers find no remote business logic inside a shell scaffold and no missing dual-mode expectation for a remote scaffold.
+- **SC-007**: For every role, primary demo content remains usable at phone-width without horizontal scrolling.
+- **SC-008**: For every role, scaffold output includes a web app manifest, icons, and PWA baseline (service worker / equivalent) that can be verified in a local session.
+- **SC-009**: In a composed shell+remote review, install/offline PWA UX is owned by the shell; the embedded remote does not present a competing install/offline takeover.
+- **SC-010**: When network connectivity is unavailable, users see a clear "internet connection required" (or equivalent) message rather than a silent failure or blank screen.
+- **SC-011**: Re-running init when role metadata exists fails without `--force`, and succeeds in overwriting role configuration when `--force` and a valid `--role` are provided.
 
 ## Assumptions
 
@@ -123,9 +147,12 @@ A developer needs a remote repository that can be developed and tested alone and
 - The scaffold targets a **React** single-page application experience consistent with this starter’s constitution; detailed tooling choices are deferred to planning.
 - For remote role, the default public entry name is **`./Demo`** (demo-grade; rename guidance ships with the scaffold).
 - Shared UI/config/contract packages may be referenced later; v1 scaffold MAY ship without mandatory external shared packages.
+- Scaffold v1 MUST ship **mobile-responsive** sample UI and **PWA baseline** (manifest, icons, service worker / equivalent) for all roles, consistent with the project constitution.
+- When federated, **shell owns install/offline PWA UX**; remotes are fully PWA-capable in standalone mode and MUST NOT take over the shell’s install/offline experience when embedded.
+- When offline / no network is detected, the app MUST show **"internet connection required"** (or equivalent clear phrasing); full offline demo/product content is out of scope for v1.
 - For shell role, v1 includes **exactly one** sample remote slot wired for `./Demo` (additional remotes are developer-added later).
 - Developers using the shell role will replace the sample remote location with real remote URLs when integrating real remotes.
 - Mobile-native apps, backend APIs, and auth product features are out of scope unless needed as thin placeholders for demo screens.
-- Post-scaffold role migration tooling is out of scope (FR-012).
+- Post-scaffold dedicated migration tooling is out of scope; changing role uses `init --role=… --force` (or manual amend) (FR-012, FR-018).
 - External generator CLIs that emit new projects outside this repository are out of scope (FR-013).
 - Exact on-disk name of the role metadata file is deferred to planning (must be root-level and machine-readable).
