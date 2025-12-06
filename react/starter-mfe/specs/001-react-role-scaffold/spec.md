@@ -24,6 +24,9 @@
 - Q: PWA ownership when federated → A: Shell owns install/offline UX when federated; remote is fully PWA-capable in standalone mode only (no competing install/SW takeover when embedded)
 - Q: Offline PWA depth / no-network UX → A: When no network is detected, show message "internet connection required" (demo content requires connectivity; not a full offline app)
 - Q: Re-running init after role is set → A: Refuse by default; allow overwrite only with explicit `--force` (plus required `--role`)
+- Q: Design tokens / theming / component libraries in scaffold v1 → A: MUST ship CSS-variable tokens + ThemeProvider with `data-theme="light|dark"`, a demo toggle, and no third-party component library in v1
+- Q: First-visit theme default and persistence → A: On first visit follow `prefers-color-scheme` (fallback `light`); after toggle, persist choice and ignore system until cleared
+- Q: Theme ownership when shell + remote are composed → A: Shell owns document `data-theme` when federated; remote ThemeProvider + toggle apply in standalone only (no competing document-theme takeover when embedded)
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -41,6 +44,7 @@ A developer needs a ready-to-run single application repository for a product tha
 2. **Given** a completed standalone scaffold, **When** the developer starts the app locally on a phone-width viewport, **Then** they see a working sample screen usable without horizontal scrolling for the primary demo content, without configuring remote locations or shell settings.
 3. **Given** a completed standalone scaffold, **When** the developer inspects project guidance and the role metadata file, **Then** the role is recorded as standalone in both places, the layout matches the canonical application structure, and PWA baseline artifacts (manifest, icons, service worker / equivalent) are present.
 4. **Given** a completed standalone scaffold with no network connectivity, **When** the developer opens the app, **Then** they see a clear "internet connection required" (or equivalent) message.
+5. **Given** a completed standalone scaffold, **When** the developer uses the demo theme toggle, **Then** the document root reflects `data-theme="dark"` or `data-theme="light"` and primary demo surfaces update via CSS-variable tokens (no third-party component library).
 
 ---
 
@@ -72,7 +76,7 @@ A developer needs a remote repository that can be developed and tested alone and
 
 1. **Given** the developer runs init with `--role=remote`, **When** init completes successfully, **Then** the result is a single-app repository marked as remote with public entry `./Demo` documented for shell consumption.
 2. **Given** a completed remote scaffold, **When** the developer starts it in standalone mode, **Then** the sample capability is usable without a shell and the remote’s installable PWA baseline is available.
-3. **Given** a completed remote scaffold, **When** a compatible shell is configured to load that public entry, **Then** the same capability is available inside the shell without forked business logic in the remote, and the remote does not take over shell install/offline PWA UX.
+3. **Given** a completed remote scaffold, **When** a compatible shell is configured to load that public entry, **Then** the same capability is available inside the shell without forked business logic in the remote, and the remote does not take over shell install/offline PWA UX or document-level `data-theme` ownership.
 
 ---
 
@@ -88,7 +92,12 @@ A developer needs a remote repository that can be developed and tested alone and
 - Primary demo content overflows horizontally at phone-width → constitution/scaffold violation; layouts MUST adapt without device-forked business logic.
 - PWA baseline artifacts missing after successful init → constitution/scaffold violation for all roles.
 - Embedded remote registers a competing full-document PWA install/offline takeover → constitution/scaffold violation.
+- Embedded remote applies competing document-level `data-theme` / ThemeProvider takeover against the shell → constitution/scaffold violation.
 - No network detected and no "internet connection required" (or equivalent) message shown → scaffold violation; full offline demo content is out of scope.
+- Theme toggle missing or `data-theme` not applied on the document root → scaffold violation for all roles.
+- First visit ignores OS `prefers-color-scheme` when no persisted theme exists (or fails to fall back to `light`) → scaffold violation.
+- After a theme toggle, subsequent visits do not restore the persisted choice → scaffold violation.
+- Scaffold depends on a third-party component library (e.g. MUI, Chakra, Ant, shadcn as a required kit) for the sample UI → out of scope / violation for v1.
 
 ## Requirements *(mandatory)*
 
@@ -112,6 +121,10 @@ A developer needs a remote repository that can be developed and tested alone and
 - **FR-016**: When role is `shell`, the shell MUST own install/offline PWA UX for the composed experience. When role is `remote`, full installable PWA behavior MUST apply in standalone mode; when the remote is embedded in a shell, it MUST NOT register a competing full-document install/offline takeover that breaks the shell.
 - **FR-017**: When the application detects no network connectivity, it MUST show a clear user-visible message exactly conveying that an internet connection is required (wording: "internet connection required" or equivalent clear phrasing). Full offline use of demo/product content is out of scope for v1.
 - **FR-018**: If role metadata already exists, init MUST refuse to proceed unless `--force` is provided together with a valid `--role`.
+- **FR-019**: Regardless of role, scaffold output MUST include design tokens as CSS variables (under the canonical styles area) and MUST NOT require a third-party component library for the sample UI in v1.
+- **FR-020**: Regardless of role, scaffold output MUST include ThemeProvider machinery that applies `data-theme="light"` or `data-theme="dark"` on the document root and MUST expose a demo control to switch themes so the behavior is verifiable in a local session.
+- **FR-021**: Theme selection MUST follow this lifecycle: on first visit (no persisted choice), use the OS `prefers-color-scheme` preference with fallback to `light`; after the user toggles theme, persist that choice and use it on subsequent visits (ignoring system preference until the persisted choice is cleared).
+- **FR-022**: When role is `shell`, the shell MUST own document-level `data-theme` / ThemeProvider UX for the composed experience. When role is `remote`, full ThemeProvider + demo toggle behavior MUST apply in standalone mode; when the remote is embedded in a shell, it MUST NOT apply a competing document-level theme takeover that overrides the shell.
 
 ### Key Entities
 
@@ -121,6 +134,7 @@ A developer needs a remote repository that can be developed and tested alone and
 - **Remote Public Entry**: Named, stable surface a shell can load from a remote repository (remote role only); default sample name is `./Demo`.
 - **Remote Location Config**: Shell-side settings for where remotes load from (shell role only); v1 includes exactly one sample slot for `./Demo`.
 - **Remote Fallback**: User-visible substitute when the sample remote cannot be loaded (shell role only).
+- **Theme**: `light` or `dark`; applied via `data-theme` on the document root; driven by ThemeProvider and CSS-variable tokens; first visit uses `prefers-color-scheme` (fallback `light`); after toggle, choice is persisted and preferred over system until cleared; demo toggle required; when federated, shell owns document theme; remote theme machinery is for standalone; third-party UI kits out of scope for v1.
 
 ## Success Criteria *(mandatory)*
 
@@ -137,6 +151,9 @@ A developer needs a remote repository that can be developed and tested alone and
 - **SC-009**: In a composed shell+remote review, install/offline PWA UX is owned by the shell; the embedded remote does not present a competing install/offline takeover.
 - **SC-010**: When network connectivity is unavailable, users see a clear "internet connection required" (or equivalent) message rather than a silent failure or blank screen.
 - **SC-011**: Re-running init when role metadata exists fails without `--force`, and succeeds in overwriting role configuration when `--force` and a valid `--role` are provided.
+- **SC-012**: For every role, a developer can toggle light/dark theme in the sample UI and observe `data-theme` change on the document root with token-driven visual update, without installing a third-party component library.
+- **SC-013**: With no persisted theme, first load respects `prefers-color-scheme` (or `light` if unavailable); after a toggle, a reload restores the persisted theme rather than reverting to system preference.
+- **SC-014**: In a composed shell+remote review, document-level `data-theme` is owned by the shell; the embedded remote does not present a competing theme takeover.
 
 ## Assumptions
 
@@ -156,3 +173,7 @@ A developer needs a remote repository that can be developed and tested alone and
 - Post-scaffold dedicated migration tooling is out of scope; changing role uses `init --role=… --force` (or manual amend) (FR-012, FR-018).
 - External generator CLIs that emit new projects outside this repository are out of scope (FR-013).
 - Exact on-disk name of the role metadata file is deferred to planning (must be root-level and machine-readable).
+- Scaffold v1 MUST ship **CSS-variable design tokens**, **ThemeProvider** with **`data-theme="light|dark"`**, and a **demo theme toggle**; **no third-party component library** is required or shipped as the sample UI foundation in v1.
+- Theme default: first visit follows **`prefers-color-scheme`** (fallback **`light`**); after toggle, the choice is **persisted** and used on later visits until cleared.
+- When federated, **shell owns document-level `data-theme` / ThemeProvider UX**; remotes provide full theme toggle behavior in standalone mode and MUST NOT take over the shell’s document theme when embedded.
+- Cross-repo shared theme-sync packages are out of scope for v1.

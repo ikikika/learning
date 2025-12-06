@@ -26,9 +26,9 @@ Federation; TanStack Query (optional); shared packages such as
 
 **Storage**: N/A for pure UI apps (or remote API / browser storage if in scope)
 
-**Testing**: Jest + React Testing Library; Playwright for
-standalone/shell smoke; contract tests for remote exposes when federation is
-in scope
+**Testing**: Jest + React Testing Library with unit/component tests co-located
+beside source modules; Playwright for standalone/shell smoke; root `tests/`
+reserved for cross-cutting integration and remote contract suites
 
 **Target Platform**: Modern evergreen browsers (SPA) including phone-width
 viewports; PWA-capable (installable + offline app-shell baseline); Node for
@@ -135,16 +135,17 @@ src/
 │   └── [Component]/
 │       ├── index.tsx                # component export
 │       ├── [Component].tsx          # implementation
+│       ├── [Component].test.tsx     # co-located unit/component test
 │       ├── [Component].module.scss  # styles (or co-located CSS)
 │       └── types.ts                 # props / public types
 ├── core/                 # constants, hooks, types, utils (no parallel lib/)
 ├── services/             # app-wide infra only (e.g. httpClient.ts, logger.ts,
                             analytics.ts, localStorage.ts, realtimeClient.ts)
-├── styles/
-└── test/                 # app test utils / setup
+├── styles/               # tokens.css (CSS variables) + global styles; ThemeProvider
+                            sets data-theme on documentElement when theming is in scope
+└── test/                 # shared app test utils / setup only
 
 tests/
-├── unit/
 ├── integration/
 └── contract/
 
@@ -157,9 +158,14 @@ tests/
 **Repository Role**: [shell | remote | standalone — choose exactly one]
 
 **Structure Decision**: [Reference the concrete root `src/` paths used by this
-feature. For a remote, state the standalone entry and federated expose(s). For
-a shell, state remote configuration/fallback ownership. List shared package
-names and compatible versions, or N/A.]
+feature. Co-locate unit/component tests beside the source module; reserve
+`src/test/` for shared setup/utilities and root `tests/` for cross-cutting
+integration/contract suites. Prefer CSS-variable tokens under `src/styles/` and
+local components over a third-party UI kit unless justified; if theming is in
+scope, state ThemeProvider + `data-theme` behavior. For a remote, state the
+standalone entry and federated expose(s). For a shell, state remote
+configuration/fallback ownership. List shared package names and compatible
+versions, or N/A.]
 
 ## Complexity Tracking
 

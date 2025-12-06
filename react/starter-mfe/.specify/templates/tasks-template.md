@@ -172,7 +172,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX Performance optimization across all stories
 - [ ] TXXX Verify primary flows at phone-width (no horizontal scroll)
 - [ ] TXXX [P] PWA baseline: manifest, icons, service worker / equivalent
-- [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
+- [ ] TXXX [P] Additional unit/component tests (if requested), co-located beside the source modules they verify
 - [ ] TXXX Security hardening
 - [ ] TXXX Run quickstart.md validation
 
