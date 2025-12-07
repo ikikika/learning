@@ -87,15 +87,24 @@
   values; adopting a UI kit day one (rejected — locks look, adds weight, and
   complicates federated sharing before `@scope/shared-ui` exists).
 
-## Decision: `ThemeProvider` + `data-theme="dark"` machinery
+## Decision: `ThemeProvider` + `data-theme` + preference lifecycle
 
-- **Rationale**: Product direction for the starter includes light/dark switching.
-  `ThemeProvider` (under `app/providers/`) owns theme state, writes
-  `data-theme="light"|"dark"` on `document.documentElement`, and persists the
-  choice (e.g. `localStorage`). Token file defines `:root` (light) and
-  `[data-theme="dark"]` overrides. Demo UI includes a theme toggle so the
-  machinery is exercisable in every role.
-- **Alternatives considered**: Single static theme only (simpler, rejected per
-  product ask); CSS `prefers-color-scheme` alone without provider (no explicit
-  user override); CSS-in-JS theme objects (heavier, less aligned with SCSS
-  modules). Shell→remote theme sync via shared package remains out of v1.
+- **Rationale**: Spec FR-019–022. `ThemeProvider` (under `app/providers/`) owns
+  theme state and writes `data-theme="light"|"dark"` on
+  `document.documentElement`. Token file defines `:root` (light) and
+  `[data-theme="dark"]` overrides. **First visit** (no persisted choice): follow
+  `prefers-color-scheme`, fallback `light`. **After toggle**: persist in
+  `localStorage` and ignore system until cleared. Demo `ThemeToggle` makes this
+  verifiable in every role’s standalone experience.
+- **Alternatives considered**: Always-default-light (rejected); system-only with
+  no persistence (rejected); CSS-in-JS theme objects (heavier).
+
+## Decision: Shell-owned document theme when federated
+
+- **Rationale**: Spec FR-022 / SC-014 — mirrors PWA ownership. Shell owns
+  document-level `data-theme` / ThemeProvider UX when composed. Remote runs full
+  ThemeProvider + toggle in **standalone only**; when embedded, skip competing
+  document-theme registration (same guard pattern as `SKIP_PWA` / federated
+  remote entry).
+- **Alternatives considered**: Last-writer-wins dual providers (racey); required
+  shared theme-sync package in v1 (out of scope).

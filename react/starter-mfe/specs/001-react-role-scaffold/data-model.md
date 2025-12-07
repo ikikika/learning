@@ -85,9 +85,19 @@
 |-------|------|-------|
 | value | enum | `light` \| `dark` |
 | attribute | — | Applied as `data-theme` on `document.documentElement` |
-| persistence | string | Stored in `localStorage` (key owned by ThemeProvider) |
+| firstVisit | — | No persisted value → use `prefers-color-scheme`, else `light` |
+| persistence | string | After explicit toggle, store in `localStorage`; prefer over system until cleared |
 | tokens | — | CSS variables in `src/styles/tokens.css` (`:root` + `[data-theme="dark"]`) |
-| UI | — | Demo includes a toggle; no third-party component library |
+| UI | — | Demo `ThemeToggle`; no third-party component library |
+| federatedOwnership | — | Shell owns document theme when composed; remote ThemeProvider only in standalone |
+
+**State transitions**:
+
+```text
+[no persisted] --load--> [system preference or light]
+[any] --user toggle--> [persisted light|dark] --reload--> [same persisted]
+[persisted] --cleared--> [no persisted] (then system/light again)
+```
 
 ## Role → sample capability mapping
 

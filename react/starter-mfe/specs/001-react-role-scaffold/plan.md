@@ -13,10 +13,12 @@ multi-app monorepo).
 Deliver an in-repo React starter that developers initialize with a required
 `--role` flag. Init writes role metadata + README, shapes Webpack Module
 Federation config for the chosen role, scaffolds the canonical `src/` layout
-with a responsive demo surface, and ships PWA baseline (manifest, icons,
-service worker) with shell-owned install/offline UX when federated. Offline
-demo content is out of scope: show **"internet connection required"** when
-offline. Re-init requires `--force`.
+with a responsive demo surface, CSS-variable tokens + ThemeProvider
+(`data-theme` light/dark), and ships PWA baseline (manifest, icons, service
+worker) with shell-owned install/offline **and** document-theme UX when
+federated. Offline demo content is out of scope: show **"internet connection
+required"** when offline. Re-init requires `--force`. No third-party component
+library in v1.
 
 ## Technical Context
 
@@ -29,12 +31,14 @@ packages in v1 (`@scope/*` deferred).
 
 **Storage**: Role metadata file at repo root (`starter.role.json`); browser
 `navigator.onLine` / online events for connectivity UX; theme preference in
-`localStorage` (via ThemeProvider); no app database.
+`localStorage` after first explicit toggle (first visit uses
+`prefers-color-scheme`, fallback `light`); no app database.
 
 **Testing**: Jest + React Testing Library with unit/component tests co-located
 beside their source modules; root `tests/` is reserved for cross-cutting
 integration and federation/init contracts; Playwright smoke for each role
-(responsive viewport + offline message + shell fallback).
+(responsive viewport + offline message + shell fallback + theme toggle /
+`data-theme`).
 
 **Target Platform**: Modern evergreen browsers including phone-width viewports;
 PWA-capable; Node 20+ for build/CI/init scripts.
@@ -49,7 +53,8 @@ horizontal scroll.
 **Constraints**: Webpack Module Federation only; singleton shared peers for
 federation; no secrets in client bundles; remote URLs via config; canonical
 root `src/`; remotes runnable standalone; mobile-responsive primary demo; PWA
-baseline for all roles; shell owns install/offline UX when composed; offline
+baseline for all roles; shell owns install/offline **and** document `data-theme`
+UX when composed; remotes run full ThemeProvider only in standalone; offline
 → connection-required message (not full offline app); init requires `--role`;
 re-init requires `--force`; styling via `src/styles/tokens` CSS variables +
 local SCSS modules — **no third-party component library in v1**.
@@ -61,10 +66,12 @@ can produce any one role per repository clone.
   (`./Demo` expose for remote), shell remote slot + fallback, PWA assets,
   offline connection banner, responsive layouts, `src/styles/tokens` (CSS
   variables), `ThemeProvider` with `data-theme="light"|"dark"` on the document
-  root, demo theme toggle.
+  root (first visit: `prefers-color-scheme` → fallback `light`; then persist
+  toggle), demo theme toggle, role-gated theme registration (shell owns when
+  federated).
 - Out: external multi-repo generator CLI; dedicated migration tooling beyond
   `--force` init; shared `@scope/*` packages; third-party UI kits (MUI/Chakra/
-  etc.); multi-brand theme packs; shell→remote theme sync package; full offline
+  etc.); multi-brand theme packs; cross-repo theme-sync package; full offline
   demo/API; auth/backend product features.
 
 ## Constitution Check
@@ -81,12 +88,14 @@ Derived from `.specify/memory/constitution.md` (Starter MFE Constitution v2.1+).
 - **Explicit Host/Remote Contracts**: PASS — `./Demo` documented; shell sample
   slot + fallback; contracts under `specs/.../contracts/`.
 - **Composition-First UI**: PASS — flat `components/[Component]`; feature
-  public `index.ts`; no Atomic Design taxonomy.
+  public `index.ts`; no Atomic Design taxonomy; no third-party UI kit in v1;
+  tokens + ThemeProvider for sample theming.
 - **Responsive Experience & PWA Readiness**: PASS — responsive demo required;
   PWA baseline for all roles; shell-owned install/offline when federated;
   remote PWA in standalone; offline UX = connection-required message (app-shell
   SW for installability; full offline content out of scope — see Complexity
-  Tracking note).
+  Tracking note). Document theme ownership mirrors PWA: shell owns when
+  federated; remote ThemeProvider in standalone only.
 - **Multi-Repository Topology**: PASS — one app per clone; no `apps/` wrapper.
 - **Application Layout**: PASS — canonical root `src/` as below.
 - **Verifiable Isolation**: PASS — unit tests without live host; Playwright per
@@ -142,11 +151,12 @@ src/
 │   └── MainLayout/
 ├── components/
 │   ├── Button/            # includes Button.test.tsx
+│   ├── ThemeToggle/       # demo light/dark control
 │   ├── RemoteFallback/
 │   └── ConnectionRequired/  # "internet connection required"
 ├── core/
 │   ├── constants/
-│   ├── hooks/            # e.g. useOnlineStatus
+│   ├── hooks/            # e.g. useOnlineStatus, useTheme helpers
 │   └── types/
 ├── services/             # app-wide infra as needed
 ├── styles/
@@ -166,13 +176,17 @@ exactly one role after `init --role=…`.
 tests are co-located with the component, hook, service, or feature they verify;
 `src/test/` contains shared test setup/utilities only. Root `tests/` contains
 cross-cutting integration and contract suites. Styling: CSS variables in
-`src/styles/tokens.css` (no third-party component library); `ThemeProvider`
-under `app/providers/` sets `data-theme="light"|"dark"` on `document.documentElement`
-and persists preference; components consume tokens via CSS variables / SCSS
-modules. Role differences are configuration and thin adapters (Webpack
-`exposes`/`remotes`, shell remote slot page, PWA registration strategy)—not
-forked feature trees. Shared npm packages: N/A for v1. Remote public entry:
-`./Demo` → `features/demo`.
+`src/styles/tokens.css` (no third-party component library). `ThemeProvider`
+under `app/providers/` sets `data-theme="light"|"dark"` on
+`document.documentElement`: first visit follows `prefers-color-scheme`
+(fallback `light`); after toggle, persist in `localStorage` and prefer that
+over system until cleared. Shell owns document theme when federated; remote
+registers ThemeProvider / demo toggle in standalone only (no competing
+document-theme takeover when embedded)—same pattern as PWA registration.
+Components consume tokens via CSS variables / SCSS modules. Role differences
+are configuration and thin adapters (Webpack `exposes`/`remotes`, shell remote
+slot page, PWA/theme registration strategy)—not forked feature trees. Shared
+npm packages: N/A for v1. Remote public entry: `./Demo` → `features/demo`.
 
 ## Complexity Tracking
 

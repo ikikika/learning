@@ -16,6 +16,8 @@ Applies when repository role is `remote` (and when a shell consumes this remote)
 - Federated load MUST use the same feature module (no forked business implementation).
 - When embedded in a shell, remote MUST NOT register a competing full-document
   install/offline PWA takeover.
+- When embedded in a shell, remote MUST NOT apply a competing document-level
+  `data-theme` / ThemeProvider takeover (shell owns document theme).
 
 ## Shell sample slot (shell role)
 
