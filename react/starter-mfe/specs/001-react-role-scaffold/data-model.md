@@ -7,102 +7,120 @@
 | Field | Type | Rules |
 |-------|------|-------|
 | value | enum | Exactly one of `standalone`, `shell`, `remote` |
-| selectedVia | — | Only via required init `--role` (not prompt/default) |
+| selectedVia | — | Only via required init `--role` |
 | cardinality | — | Exactly one per repository after successful init |
-
-**Relationships**: Persisted by Role Metadata File; mirrored in project guidance
-(README).
 
 ### Role Metadata File
 
 | Field | Type | Rules |
 |-------|------|-------|
-| path | string | Repository root: `starter.role.json` |
+| path | string | `starter.role.json` at repo root |
 | role | enum | Same as Repository Role |
-| version | number/string | Schema version for tooling (e.g. `1`) |
-| updatedAt | ISO-8601 string | Optional; written on successful init |
-| forceRequired | — | File existence blocks init unless `--force` |
-
-**Validation**:
-- Init without `--role` → fail
-- Invalid `--role` → fail listing allowed values
-- File exists and no `--force` → fail
-- File exists with `--force` + valid `--role` → overwrite allowed
+| version | integer | Schema version (`1`) |
+| updatedAt | ISO-8601 | Optional |
+| forceRequired | — | Exists → init needs `--force` |
 
 **State transitions**:
 
 ```text
 [absent] --init --role=R--> [present: R]
-[present: R] --init --role=R2 (no force)--> [error: refuse]
-[present: R] --init --role=R2 --force--> [present: R2]
+[present: R] --init (no force)--> [error]
+[present: R] --init --role=R2 --force--> [present: R2] (+ symmetric prune/restore)
 ```
+
+### Role Asset Templates
+
+| Field | Type | Rules |
+|-------|------|-------|
+| demoPath | string | `templates/role-assets/demo/` |
+| shellPath | string | `templates/role-assets/shell/` |
+| layout | — | Mirrors live `src/` relative paths (straight copy restore) |
+| demoContents | — | e.g. `features/demo/`, `pages/HomePage/` |
+| shellContents | — | `pages/ShellHomePage/`, `app/remotes/loadDemoRemote.tsx`, `app/routes/shellRoutes.tsx` |
+| neverDeleted | — | Init MUST NOT delete templates buckets |
 
 ### Scaffold Result
 
 | Field | Type | Rules |
 |-------|------|-------|
-| role | Repository Role | From successful init |
-| layout | — | Canonical root `src/` present |
-| sampleCapability | — | Role-appropriate demo (see below) |
-| pwaBaseline | — | Manifest + icons + SW/equivalent present |
-| guidance | — | README role + local start instructions |
+| role | Repository Role | From init |
+| layout | — | Canonical `src/` |
+| shellLive | — | If shell: no live demo/HomePage; has ShellHomePage + remotes adapters |
+| demoLive | — | If standalone\|remote: has demo + HomePage; no live shell-only sample assets |
+| pwaBaseline | — | Manifest + icons + SW |
+| a11yCi | — | WCAG 2.2 AA tooling in CI |
+| guidance | — | README role + start + contract version |
 
-### Remote Public Entry (remote role)
-
-| Field | Type | Rules |
-|-------|------|-------|
-| name | string | Default `./Demo` |
-| module | path | Maps to `features/demo` public API |
-| dualMode | — | Same feature used standalone and federated |
-
-### Remote Location Config (shell role)
+### Remote Public Entry (remote)
 
 | Field | Type | Rules |
 |-------|------|-------|
-| slotId | string | One sample slot in v1 |
-| entry | string | Targets `./Demo` |
-| remoteUrl | string | Placeholder URL/config (not hard-coded prod) |
-| fallback | Remote Fallback | Required when load fails |
+| name | string | `./Demo` |
+| module | path | `features/demo` |
+| publicTypes | — | Exported props/types |
+| embedded | `boolean?` | Optional prop `embedded?: boolean`; shell passes `true`; omit/`false` = standalone |
+| suppressionLocus | — | When `embedded===true`, **Demo module** suppresses document PWA/`data-theme` |
+| contractVersion | string | `1.0.0` documented |
+| dualMode | — | Same module standalone + federated |
+| publishedPackage | — | Not required in v1 (Complexity Tracking) |
 
-### Remote Fallback (shell role)
+### Remote Location Config (shell)
 
 | Field | Type | Rules |
 |-------|------|-------|
-| visibility | — | User-visible (not blank/crash) |
-| content | — | Clear unavailable-remote message/UI |
+| slotId | string | One sample slot |
+| entry | string | `./Demo` |
+| remoteUrl | string | Placeholder; empty/invalid → fallback |
+| mountProps | — | Shell passes `embedded={true}` |
+| fallback | Remote Fallback | Required for missing, unreachable, empty/invalid |
+
+### Remote Fallback (shell)
+
+| Field | Type | Rules |
+|-------|------|-------|
+| visibility | — | User-visible |
+| content | — | Unavailable-remote UI |
+| triggers | — | Missing remote; load failure; empty/invalid URL; missing remotes map entry |
 
 ### Connectivity Banner
 
 | Field | Type | Rules |
 |-------|------|-------|
-| trigger | — | No network / offline detected |
-| message | string | "internet connection required" (or equivalent clear phrasing) |
-| scope | — | All roles; not a full offline data product |
+| trigger | — | Offline / no network |
+| message | string | "internet connection required" (or equivalent) |
 
 ### Theme
 
 | Field | Type | Rules |
 |-------|------|-------|
 | value | enum | `light` \| `dark` |
-| attribute | — | Applied as `data-theme` on `document.documentElement` |
-| firstVisit | — | No persisted value → use `prefers-color-scheme`, else `light` |
-| persistence | string | After explicit toggle, store in `localStorage`; prefer over system until cleared |
-| tokens | — | CSS variables in `src/styles/tokens.css` (`:root` + `[data-theme="dark"]`) |
-| UI | — | Demo `ThemeToggle`; no third-party component library |
-| federatedOwnership | — | Shell owns document theme when composed; remote ThemeProvider only in standalone |
+| attribute | — | `data-theme` on `documentElement` |
+| firstVisit | — | `prefers-color-scheme` → `light` |
+| persistence | — | After light/dark toggle → `localStorage` |
+| clearControl | — | “Use system theme” |
+| federatedOwnership | — | Shell owns when composed |
+| perRoleSmoke | — | First visit + toggle + **reload persistence** + use-system for standalone, shell, remote-standalone |
 
 **State transitions**:
 
 ```text
-[no persisted] --load--> [system preference or light]
-[any] --user toggle--> [persisted light|dark] --reload--> [same persisted]
-[persisted] --cleared--> [no persisted] (then system/light again)
+[no persisted] --load--> [system or light]
+[any] --toggle--> [persisted] --reload--> [same]
+[persisted] --“Use system theme”--> [no persisted]
 ```
 
-## Role → sample capability mapping
+### Compose Harness Run
 
-| Role | Sample capability |
-|------|-------------------|
-| standalone | Home/demo page; no remotes |
-| shell | Chrome + one `./Demo` remote slot + fallback; no remote domain source |
-| remote | `features/demo` exposable as `./Demo`; standalone runnable |
+| Field | Type | Rules |
+|-------|------|-------|
+| workspaces | 2 | Temp copy/clone each |
+| inits | — | One `shell`, one `remote` |
+| assert | — | Shell owns PWA + `data-theme`; no remote takeover |
+
+## Role → sample capability
+
+| Role | Live sample | Pruned live |
+|------|-------------|-------------|
+| standalone | `features/demo` + `HomePage` | shell-only assets |
+| shell | `ShellHomePage` + remote slot | `features/demo` + `HomePage` |
+| remote | `features/demo` + `HomePage`; expose `./Demo` | shell-only assets |

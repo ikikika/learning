@@ -21,90 +21,119 @@
 - **Alternatives considered**: Three webpack configs copied by init (more
   drift); runtime-only role switching (violates one-role-per-repo clarity).
 
-## Decision: Init as Node script `scripts/init.mjs`
+## Decision: Init as Node script with symmetric prune/restore
 
 - **Rationale**: Required `--role`, optional `--force`; no interactive prompts;
-  works on Windows/macOS/Linux with Node 20+. Writes `starter.role.json` and
-  patches README role section.
-- **Alternatives considered**: Interactive prompts (rejected by clarify);
-  Yeoman/Plop generator emitting new repos (out of scope).
+  writes `starter.role.json` + README. **Symmetric** FR-025:
+  - Shell: prune live demo + `HomePage`; restore shell assets from
+    `templates/role-assets/shell/`.
+  - Standalone/remote: prune live shell-only assets; restore demo + `HomePage`
+    from `templates/role-assets/demo/`.
+  Templates **mirror `src/` relative paths**; restore is a straight copy
+  (not git checkout alone).
+- **Alternatives considered**: Interactive prompts; external generators; git
+  restore only; leave dormant opposite-role assets on disk; flat templates with
+  remap tables (all rejected).
 
 ## Decision: Role metadata filename `starter.role.json`
 
-- **Rationale**: Explicit, root-level, machine-readable; easy for CI/scripts;
-  does not overload `package.json`.
-- **Alternatives considered**: `.starter-role`, `package.json#starterRole`
-  (less visible / more coupling).
+- **Rationale**: Explicit, root-level, machine-readable.
+- **Alternatives considered**: `.starter-role`, `package.json#starterRole`.
 
-## Decision: Jest + React Testing Library + Playwright
+## Decision: Jest + RTL + Playwright + axe (WCAG 2.2 AA CI)
 
-- **Rationale**: Plan template default; RTL for components; Playwright for
-  role smoke (viewport, offline message, shell fallback). Contract tests as
-  Node assertions on init CLI + webpack expose map / docs.
-- **Alternatives considered**: Vitest (excellent DX; switch later if desired).
+- **Rationale**: Unit/contract; per-role Playwright for **first visit (cleared
+  storage) → system/`light`**, **theme toggle** (SC-012), and **toggle →
+  reload → same `data-theme`** (SC-013) for standalone, shell, and
+  remote-standalone; shell smoke also covers **empty/invalid remote URL**
+  fallback (SC-004 / FR-007); compose smoke; **FR-026 WCAG 2.2 AA** via axe
+  (or equivalent) failing CI on primary demo routes.
+- **Alternatives considered**: Vitest; unit-only for SC-013 first-visit/reload;
+  unreachable-only shell fallback; manual compose; no AA tooling (rejected).
 
 ## Decision: Workbox via `workbox-webpack-plugin` for PWA SW
 
-- **Rationale**: Mature Webpack integration; precache app-shell assets for
-  installability; runtime strategy can still surface online-required UX for
-  navigation/demo routes.
-- **Alternatives considered**: Hand-rolled SW (more error-prone); vite-plugin-pwa
-  (wrong bundler).
+- **Rationale**: Webpack-native precache for installability.
+- **Alternatives considered**: Hand-rolled SW; vite-plugin-pwa.
 
 ## Decision: PWA registration strategy by role
 
-- **Rationale**: Clarify + constitution: shell registers install/offline UX for
-  composed apps; remote registers full PWA only in standalone builds; when
-  built as federated remote entry, skip competing full-document SW registration
-  (or no-op guard when `window` is under shell control / `SKIP_PWA` define).
-- **Alternatives considered**: Always register SW in remotes (conflicts with
-  shell ownership).
+- **Rationale**: Shell owns composed install/offline; remote full PWA in
+  **standalone entry** only. When `./Demo` is mounted with `embedded={true}`,
+  the Demo module must not take over document SW; remote bootstrap
+  `registerPwa` is not the federated control point.
+- **Alternatives considered**: Always register SW in remotes; remote bootstrap
+  checks a shell global (rejected).
 
-## Decision: Connectivity UX via `navigator.onLine` + online/offline events
+## Decision: Connectivity UX via `navigator.onLine` + events
 
-- **Rationale**: Spec requires "internet connection required" message when no
-  network; simple, testable; not a full offline data layer.
-- **Alternatives considered**: Full offline demo with mocked APIs (out of scope).
+- **Rationale**: Show "internet connection required"; no full offline product.
+- **Alternatives considered**: Full offline demo APIs.
 
-## Decision: Sample feature `features/demo` exposed as `./Demo`
+## Decision: Sample feature `./Demo` with `embedded?: boolean`
 
-- **Rationale**: Clarify default public entry; rename guidance in README.
-- **Alternatives considered**: `./App`, `./RemoteApp`, required `--expose`.
+- **Rationale**: FR-024 — public types + contract version **`1.0.0`** +
+  optional boolean **`embedded?: boolean`** (shell passes `embedded={true}`;
+  omit/`false` = standalone). When `embedded` is `true`, the **`./Demo` module
+  itself** suppresses full-document PWA and `data-theme` ownership. Published
+  npm package deferred (Complexity Tracking).
+- **Alternatives considered**: Docs-only expose; published npm contracts in v1;
+  `hostContext` object; `mode` enum; `window` globals; MF container sniffing;
+  suppression only in remote bootstrap ThemeProvider (rejected — MF may load
+  only the expose).
 
 ## Decision: No shared `@scope/*` packages in v1
 
-- **Rationale**: Spec allows deferral; reduce bootstrap complexity.
-- **Alternatives considered**: Immediate private registry packages (heavier).
+- **Rationale**: Reduce bootstrap complexity; Principle III still met via
+  in-repo typed/versioned API. Recorded in Complexity Tracking.
+- **Alternatives considered**: Immediate private registry packages.
 
-## Decision: CSS variable tokens in `src/styles/tokens` + SCSS modules
+## Decision: CSS variable tokens + SCSS modules
 
-- **Rationale**: Constitution lists `styles/` as the tokens entry; CSS
-  variables give a single source for color/spacing/type/breakpoints without a
-  published design-token package. SCSS modules keep component styles local and
-  responsive. **No third-party component library in v1** (MUI, Chakra, Ant,
-  shadcn, etc.) so the starter stays lean and role/MF-focused.
-- **Alternatives considered**: Tailwind-only tokens; CSS Modules with hard-coded
-  values; adopting a UI kit day one (rejected — locks look, adds weight, and
-  complicates federated sharing before `@scope/shared-ui` exists).
+- **Rationale**: No third-party UI kit in v1.
+- **Alternatives considered**: Tailwind-only; UI kit day one.
 
-## Decision: `ThemeProvider` + `data-theme` + preference lifecycle
+## Decision: `ThemeProvider` + preference lifecycle
 
-- **Rationale**: Spec FR-019–022. `ThemeProvider` (under `app/providers/`) owns
-  theme state and writes `data-theme="light"|"dark"` on
-  `document.documentElement`. Token file defines `:root` (light) and
-  `[data-theme="dark"]` overrides. **First visit** (no persisted choice): follow
-  `prefers-color-scheme`, fallback `light`. **After toggle**: persist in
-  `localStorage` and ignore system until cleared. Demo `ThemeToggle` makes this
-  verifiable in every role’s standalone experience.
-- **Alternatives considered**: Always-default-light (rejected); system-only with
-  no persistence (rejected); CSS-in-JS theme objects (heavier).
+- **Rationale**: First visit system preference; toggle persists; “Use system
+  theme” clears (FR-021). Per-role e2e asserts first visit + reload (SC-013).
+  Standalone/shell (and remote-standalone) entry mounts ThemeProvider; federated
+  Demo with `embedded={true}` does not own document theme.
+- **Alternatives considered**: Always-light; no clear control; unit-only first
+  visit/reload.
 
 ## Decision: Shell-owned document theme when federated
 
-- **Rationale**: Spec FR-022 / SC-014 — mirrors PWA ownership. Shell owns
-  document-level `data-theme` / ThemeProvider UX when composed. Remote runs full
-  ThemeProvider + toggle in **standalone only**; when embedded, skip competing
-  document-theme registration (same guard pattern as `SKIP_PWA` / federated
-  remote entry).
-- **Alternatives considered**: Last-writer-wins dual providers (racey); required
-  shared theme-sync package in v1 (out of scope).
+- **Rationale**: FR-022 / SC-014; mirrors PWA ownership; driven by
+  `embedded={true}` on Demo.
+- **Alternatives considered**: Last-writer-wins; shared theme sync package;
+  remote bootstrap ThemeProvider always mounts and reads shell context
+  (rejected).
+
+## Decision: Shell fallback for unreachable and empty/invalid remotes
+
+- **Rationale**: FR-007 / SC-004 — `RemoteFallback` for missing/failing remotes
+  and for empty/invalid remote URL (or missing remotes map entry); automated
+  shell smoke covers both.
+- **Alternatives considered**: Unreachable-only smoke; docs-only empty URL.
+
+## Decision: Automated compose smoke via two temporary workspaces
+
+- **Rationale**: FR-023 / SC-015 / SC-019. Harness copies/clones into two temp
+  dirs, `init --role=shell` and `init --role=remote`, starts both, Playwright
+  asserts ownership. Product tree stays one role per init.
+- **Alternatives considered**: Single-tree dual-role build; manual-only clones
+  without harness automation (rejected).
+
+## Decision: Shell always removes `HomePage`; standalone/remote remove shell assets
+
+- **Rationale**: Clarify FR-006 / FR-025. Shell uses **`ShellHomePage` only**;
+  standalone/remote must not leave live shell-only sample assets on disk.
+- **Alternatives considered**: Keep unused opposite-role pages; prune HomePage
+  only without shell templates (rejected).
+
+## Decision: Interactive ~2s is aspirational only
+
+- **Rationale**: Clarify — document as plan performance goal; **no hard CI
+  perf gate** in v1.
+- **Alternatives considered**: Fail CI on >2s LCP/TTI (deferred).

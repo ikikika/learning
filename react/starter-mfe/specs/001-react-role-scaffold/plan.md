@@ -10,98 +10,84 @@ multi-app monorepo).
 
 ## Summary
 
-Deliver an in-repo React starter that developers initialize with a required
-`--role` flag. Init writes role metadata + README, shapes Webpack Module
-Federation config for the chosen role, scaffolds the canonical `src/` layout
-with a responsive demo surface, CSS-variable tokens + ThemeProvider
-(`data-theme` light/dark), and ships PWA baseline (manifest, icons, service
-worker) with shell-owned install/offline **and** document-theme UX when
-federated. Offline demo content is out of scope: show **"internet connection
-required"** when offline. Re-init requires `--force`. No third-party component
-library in v1.
+Deliver an in-repo React starter initialized with required `--role`. Init writes
+`starter.role.json` + README, shapes Webpack MF, and uses **symmetric**
+prune/restore via templates that **mirror `src/` relative paths**:
+`templates/role-assets/demo/` and `templates/role-assets/shell/`. Shell prunes
+live demo + `HomePage` and restores shell assets; standalone/remote prune
+shell-only live assets and restore demo + `HomePage`. Tokens + ThemeProvider
+with light/dark + “Use system theme”. Shell mounts `./Demo` with
+**`embedded={true}`**; the **Demo module** suppresses document PWA/theme when
+embedded (remote bootstrap ThemeProvider/`registerPwa` are standalone-entry
+only). **Compose smoke**: two temp workspaces. **WCAG 2.2 AA CI**. Per-role
+smoke: first visit (cleared storage) → system/`light`, toggle, **toggle →
+reload → same `data-theme`**, use-system. Shell smoke also covers
+**empty/invalid remote URL**. Offline: **"internet connection required"**.
+In-repo typed `./Demo` + `1.0.0` (published package deferred). ~2s interactive
+is **aspirational**.
 
 ## Technical Context
 
 **Language/Version**: TypeScript 5.x + React 19
 
 **Primary Dependencies**: React, React DOM, React Router; Webpack 5 + Module
-Federation; Workbox (via `workbox-webpack-plugin`) for service worker;
-Jest + React Testing Library; Playwright for smoke. No mandatory shared npm
-packages in v1 (`@scope/*` deferred).
+Federation; Workbox (`workbox-webpack-plugin`); Jest + RTL; Playwright
+(per-role + compose); axe (or equivalent) for **WCAG 2.2 AA** CI audits.
+No mandatory published shared contract packages in v1.
 
-**Storage**: Role metadata file at repo root (`starter.role.json`); browser
-`navigator.onLine` / online events for connectivity UX; theme preference in
-`localStorage` after first explicit toggle (first visit uses
-`prefers-color-scheme`, fallback `light`); no app database.
+**Storage**: `starter.role.json`; `navigator.onLine`; theme in `localStorage`
+after light/dark toggle (first visit: `prefers-color-scheme` → `light`;
+“Use system theme” clears); pristine role assets under
+`templates/role-assets/demo/` and `templates/role-assets/shell/` (mirror
+`src/` relative paths).
 
-**Testing**: Jest + React Testing Library with unit/component tests co-located
-beside their source modules; root `tests/` is reserved for cross-cutting
-integration and federation/init contracts; Playwright smoke for each role
-(responsive viewport + offline message + shell fallback + theme toggle /
-`data-theme`).
+**Testing**: Co-located unit tests; `tests/contract/`; Playwright per-role
+(viewport, offline, shell fallback incl. **empty/invalid remote URL**, theme
+**first visit** + toggle + **reload persistence** + use-system for
+standalone/shell/remote-standalone); compose harness (two temp workspaces);
+WCAG 2.2 AA CI gate on primary routes.
 
-**Target Platform**: Modern evergreen browsers including phone-width viewports;
-PWA-capable; Node 20+ for build/CI/init scripts.
+**Target Platform**: Evergreen browsers incl. phone-width; PWA-capable; Node 20+.
 
-**Project Type**: Single-app React repository template — role selected at init
-(`shell` | `remote` | `standalone`); multi-repo topology across separate clones.
+**Project Type**: Single-app React template — one role per clone after init.
 
-**Performance Goals**: Interactive demo route usable under ~2s on broadband;
-singleton `react`/`react-dom` when federated; primary mobile demo without
-horizontal scroll.
+**Performance Goals**: **Aspirational** interactive demo under ~2s on broadband
+(not a hard CI failure); singleton `react`/`react-dom` when federated; no
+primary horizontal scroll at phone-width.
 
-**Constraints**: Webpack Module Federation only; singleton shared peers for
-federation; no secrets in client bundles; remote URLs via config; canonical
-root `src/`; remotes runnable standalone; mobile-responsive primary demo; PWA
-baseline for all roles; shell owns install/offline **and** document `data-theme`
-UX when composed; remotes run full ThemeProvider only in standalone; offline
-→ connection-required message (not full offline app); init requires `--role`;
-re-init requires `--force`; styling via `src/styles/tokens` CSS variables +
-local SCSS modules — **no third-party component library in v1**.
+**Constraints**: Webpack MF only; singleton shared peers; no secrets in bundles;
+canonical `src/`; symmetric templates prune/restore; typed `./Demo` with
+`embedded?: boolean` + version `1.0.0`; Demo-module suppression when embedded;
+compose via two workspaces; WCAG 2.2 AA CI; no third-party UI kit; `--role`
+required; `--force` to re-init.
 
-**Scale/Scope**: This plan delivers the **starter template + init tooling** that
-can produce any one role per repository clone.
-- In: `scripts/init` (or equivalent), `starter.role.json`, README role section,
-  role-conditioned Webpack MF config, canonical `src/` with `features/demo`
-  (`./Demo` expose for remote), shell remote slot + fallback, PWA assets,
-  offline connection banner, responsive layouts, `src/styles/tokens` (CSS
-  variables), `ThemeProvider` with `data-theme="light"|"dark"` on the document
-  root (first visit: `prefers-color-scheme` → fallback `light`; then persist
-  toggle), demo theme toggle, role-gated theme registration (shell owns when
-  federated).
-- Out: external multi-repo generator CLI; dedicated migration tooling beyond
-  `--force` init; shared `@scope/*` packages; third-party UI kits (MUI/Chakra/
-  etc.); multi-brand theme packs; cross-repo theme-sync package; full offline
-  demo/API; auth/backend product features.
+**Scale/Scope**:
+- In: init + symmetric templates, MF roles, demo/typed contract + `embedded`
+  prop, shell slot/fallback (incl. empty/invalid URL), PWA, theming, compose
+  smoke, per-role theme first-visit/reload smoke, axe CI.
+- Out: external generators; separate migration CLI (FR-012); `@scope/*`; UI
+  kits; published remote-contracts package (deferred); hard CI perf budget;
+  full offline app; auth/backend.
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-Derived from `.specify/memory/constitution.md` (Starter MFE Constitution v2.1+).
-
-- **Repository Role & Portability**: PASS — init selects exactly one role;
-  remote keeps dual-mode via shared `features/demo` + expose `./Demo`; shell
-  has adapters only.
-- **Shared Runtime Singletons**: PASS — Webpack `shared` marks `react` /
-  `react-dom` as singleton for shell/remote roles; standalone omits remotes.
-- **Explicit Host/Remote Contracts**: PASS — `./Demo` documented; shell sample
-  slot + fallback; contracts under `specs/.../contracts/`.
-- **Composition-First UI**: PASS — flat `components/[Component]`; feature
-  public `index.ts`; no Atomic Design taxonomy; no third-party UI kit in v1;
-  tokens + ThemeProvider for sample theming.
-- **Responsive Experience & PWA Readiness**: PASS — responsive demo required;
-  PWA baseline for all roles; shell-owned install/offline when federated;
-  remote PWA in standalone; offline UX = connection-required message (app-shell
-  SW for installability; full offline content out of scope — see Complexity
-  Tracking note). Document theme ownership mirrors PWA: shell owns when
-  federated; remote ThemeProvider in standalone only.
-- **Multi-Repository Topology**: PASS — one app per clone; no `apps/` wrapper.
-- **Application Layout**: PASS — canonical root `src/` as below.
-- **Verifiable Isolation**: PASS — unit tests without live host; Playwright per
-  role; contract tests for init + expose.
-- **Complexity Tracking**: See note below (offline UX vs full offline shell
-  content).
+- **Repository Role & Portability**: PASS — one role; symmetric prune/restore;
+  remote dual-mode.
+- **Shared Runtime Singletons**: PASS — MF `shared` singletons.
+- **Explicit Host/Remote Contracts**: PASS — typed `./Demo` + `1.0.0` +
+  `embedded?: boolean` (Principle III). Published package deferred via
+  Complexity Tracking.
+- **Composition-First UI**: PASS — flat components; no UI kit.
+- **Responsive Experience & PWA Readiness**: PASS — responsive + PWA; shell
+  owns federated PWA/theme; Demo suppresses when `embedded={true}`; WCAG AA CI.
+- **Multi-Repository Topology**: PASS — one app/clone; compose uses temp copies.
+- **Application Layout**: PASS — canonical `src/` + mirrored templates.
+- **Verifiable Isolation**: PASS — unit/contract; per-role (first-visit +
+  reload) + empty-remote fallback + compose smoke; AA CI.
+- **Complexity Tracking**: Offline UX; aspirational perf; deferred published
+  contract package.
 
 ## Project Structure
 
@@ -114,85 +100,71 @@ specs/001-react-role-scaffold/
 ├── data-model.md
 ├── quickstart.md
 ├── contracts/
-└── tasks.md             # /speckit-tasks — not created by /speckit-plan
+└── tasks.md             # regenerate via /speckit-tasks
 ```
 
 ### Source Code (repository root)
 
 ```text
-starter.role.json         # machine-readable role (written by init)
-README.md                 # human-readable role + start instructions
+starter.role.json
+README.md
 package.json
-webpack.config.js         # role-conditioned MF + Workbox
+webpack.config.js
 public/
 ├── manifest.webmanifest
-├── icons/
-└── offline messaging is app-driven (online detection)
+└── icons/
+templates/
+└── role-assets/
+    ├── demo/             # mirrors src/: features/demo/, pages/HomePage/
+    └── shell/            # mirrors src/: pages/ShellHomePage/, app/remotes/loadDemoRemote.tsx, app/routes/shellRoutes.tsx
 scripts/
-└── init.mjs              # --role=… [--force]
+├── init.mjs              # symmetric prune/restore; --role [--force]
+└── compose-harness.mjs   # two temp workspaces for test:compose
 src/
 ├── main.tsx
 ├── bootstrap.tsx
 ├── app/
 │   ├── App.tsx
-│   ├── providers/        # ThemeProvider, connectivity, PWA registration
+│   ├── providers/        # ThemeProvider + registerPwa: standalone/shell entry
+│   ├── remotes/          # shell loaders pass embedded={true} to ./Demo
 │   └── routes/
 ├── features/
-│   └── demo/             # sample capability; remote exposes ./Demo
-│       ├── hooks/
-│       ├── services/
-│       ├── types/
-│       ├── Demo.test.tsx  # co-located feature test
-│       └── index.ts
+│   └── demo/             # ./Demo; honors embedded?: boolean (suppress when true)
 ├── pages/
-│   ├── HomePage/         # standalone / remote standalone
-│   └── ShellHomePage/    # shell chrome + remote slot
-├── layouts/
-│   └── MainLayout/
+│   ├── HomePage/
+│   └── ShellHomePage/
+├── layouts/MainLayout/
 ├── components/
-│   ├── Button/            # includes Button.test.tsx
-│   ├── ThemeToggle/       # demo light/dark control
+│   ├── Button/
+│   ├── ThemeToggle/
 │   ├── RemoteFallback/
-│   └── ConnectionRequired/  # "internet connection required"
+│   └── ConnectionRequired/
 ├── core/
-│   ├── constants/
-│   ├── hooks/            # e.g. useOnlineStatus, useTheme helpers
-│   └── types/
-├── services/             # app-wide infra as needed
+├── services/
 ├── styles/
-│   ├── tokens.css        # CSS variables for light + [data-theme="dark"]
-│   └── global.scss       # global resets / base using tokens
-├── sw/                   # service worker source if not fully Workbox-generated
-└── test/                 # shared test setup/utilities only
+│   ├── tokens.css
+│   └── global.scss
+└── test/
 tests/
 ├── integration/
 └── contract/
 ```
 
-**Repository Role**: Template supports all three; each clone is configured to
-exactly one role after `init --role=…`.
+**Repository Role**: One of three after `init --role=…`.
 
-**Structure Decision**: Single root `src/` canonical layout. Unit/component
-tests are co-located with the component, hook, service, or feature they verify;
-`src/test/` contains shared test setup/utilities only. Root `tests/` contains
-cross-cutting integration and contract suites. Styling: CSS variables in
-`src/styles/tokens.css` (no third-party component library). `ThemeProvider`
-under `app/providers/` sets `data-theme="light"|"dark"` on
-`document.documentElement`: first visit follows `prefers-color-scheme`
-(fallback `light`); after toggle, persist in `localStorage` and prefer that
-over system until cleared. Shell owns document theme when federated; remote
-registers ThemeProvider / demo toggle in standalone only (no competing
-document-theme takeover when embedded)—same pattern as PWA registration.
-Components consume tokens via CSS variables / SCSS modules. Role differences
-are configuration and thin adapters (Webpack `exposes`/`remotes`, shell remote
-slot page, PWA/theme registration strategy)—not forked feature trees. Shared
-npm packages: N/A for v1. Remote public entry: `./Demo` → `features/demo`.
+**Structure Decision**: Live app under `src/`. Templates mirror `src/` under
+`demo/` and `shell/`. Shell mounts `./Demo` with `embedded={true}`; Demo module
+suppresses document PWA/theme; remote bootstrap providers are standalone-entry
+only. Per-role smoke covers first visit + reload; shell smoke covers
+empty/invalid remote URL. Perf ~2s aspirational only.
 
 ## Complexity Tracking
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |-----------|------------|-------------------------------------|
-| Full offline demo content not shipped; offline shows connection-required message | Spec clarification: connectivity required for demo content | Serving full offline demo exceeds v1 scope and conflicts with clarified UX; SW still supports installability / asset baseline per constitution intent |
+| Full offline demo not shipped; show connection-required | Spec clarification | Conflicts with clarified UX; SW still for installability |
+| Interactive ~2s not a hard CI gate | Clarify: aspirational plan goal | Hard perf CI premature for v1 scaffold; still document target |
+| Published shared contract package deferred; in-repo typed `./Demo` + `1.0.0` only | Clarify / constitution Tech Constraints exception | Registry packaging mid-scaffold adds bootstrap complexity; Principle III still met via typed, versioned in-repo public API + `embedded?: boolean` |
 
 ## Phase 0 / Phase 1 outputs
 
@@ -203,5 +175,7 @@ npm packages: N/A for v1. Remote public entry: `./Demo` → `features/demo`.
 
 ## Post-design Constitution Check
 
-Re-evaluated after Phase 1 artifacts: all gates remain PASS with the Complexity
-Tracking note above. No unjustified MUST violations.
+Re-evaluated after Phase 1 (`embedded?: boolean`, Demo-module suppression,
+first-visit + empty-remote smoke, Complexity Tracking for deferred published
+contracts): all gates PASS with Complexity Tracking notes. No unjustified MUST
+violations.

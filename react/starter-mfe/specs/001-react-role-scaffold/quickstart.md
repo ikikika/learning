@@ -6,94 +6,117 @@ Validation guide for `001-react-role-scaffold`. Implementation details live in
 ## Prerequisites
 
 - Node 20+
-- Clean clone of this repository (or reset role metadata for re-runs)
-- No mandatory shared `@scope/*` packages for v1
-- No third-party component library required for sample UI
+- Clean clone (or reset role metadata for re-runs)
+- No mandatory published `@scope/*` contract package; no third-party UI kit
+- Compose harness can create two temp workspaces and run two inits
 
 ## Contracts & model references
 
 - Init CLI: [contracts/init-cli.md](./contracts/init-cli.md)
-- Role file schema: [contracts/role-metadata.schema.json](./contracts/role-metadata.schema.json)
-- `./Demo` expose: [contracts/remote-demo.md](./contracts/remote-demo.md)
-- PWA / offline UX: [contracts/pwa-connectivity.md](./contracts/pwa-connectivity.md)
-- Theming / tokens: [contracts/theming.md](./contracts/theming.md)
+- Role file: [contracts/role-metadata.schema.json](./contracts/role-metadata.schema.json)
+- `./Demo`: [contracts/remote-demo.md](./contracts/remote-demo.md)
+- PWA / offline: [contracts/pwa-connectivity.md](./contracts/pwa-connectivity.md)
+- Theming: [contracts/theming.md](./contracts/theming.md)
+- A11y CI: [contracts/a11y-wcag.md](./contracts/a11y-wcag.md)
 - Entities: [data-model.md](./data-model.md)
 
 ## Setup (per role)
 
 ```bash
-# From repository root — choose one role per clone/session
 npm install
 npm run init -- --role=standalone   # or shell | remote
-# Re-init only when needed:
 # npm run init -- --role=shell --force
 ```
 
 Expected after success:
 
-- `starter.role.json` exists with matching `role`
-- README states the same role and local start steps
-- Canonical `src/` layout present
-- `src/styles/tokens.css` (or equivalent) present
+- `starter.role.json` + README role match
+- Canonical `src/` + `src/styles/tokens.css`
+- `templates/role-assets/demo/` and `templates/role-assets/shell/` present
+  (mirror `src/` paths; never deleted by init)
+- If `shell`: live `src/features/demo` and `src/pages/HomePage` **absent**;
+  `ShellHomePage` + remotes adapters present (from shell templates)
+- If `standalone`|`remote`: live demo + `HomePage` present; live shell-only
+  sample assets **absent**
+- If `remote`: `./Demo` types + **`embedded?: boolean`** + contract version
+  **`1.0.0`** documented
 
 ## Local run
 
 ```bash
-npm start   # or documented equivalent
+npm start
 ```
-
-Open the app URL from the start script output.
 
 ## Validation scenarios
 
 ### V1 — Standalone (P1)
 
-1. Init with `--role=standalone` (no other repos).
-2. `npm start` → sample home/demo loads.
-3. Phone-width viewport (~375px): primary content usable without horizontal scroll.
-4. Confirm `public/manifest.webmanifest` (or equivalent), icons, and SW registration path.
-5. Simulate offline (DevTools) → message conveys **internet connection required**.
-6. With cleared theme storage: first load respects `prefers-color-scheme` (or `light`).
-7. Toggle theme → `document.documentElement` has `data-theme="dark"` (or light);
-   reload restores persisted choice; demo surfaces update via CSS variables.
+1. Init `--role=standalone`.
+2. Home loads; phone-width OK; PWA artifacts present; no live `ShellHomePage`.
+3. Offline → **internet connection required**.
+4. Theme: cleared storage → system/`light`; toggle persists across **reload**;
+   **Use system theme** clears.
+5. CI axe (or local) AA on primary route passes or fails closed.
 
-### V2 — Shell without remotes (P2)
+### V2 — Shell (P2)
 
-1. Init with `--role=shell` (use `--force` if metadata already exists).
-2. Start with sample remote unreachable.
-3. Shell boots; sample `./Demo` slot shows **user-visible fallback** (no blank crash).
-4. Confirm shell owns PWA install/offline UX and document theme toggle; responsive
-   chrome OK at phone-width.
+1. Init `--role=shell` (`--force` if needed).
+2. Confirm live demo + `HomePage` gone; shell templates restored; demo
+   templates intact.
+3. Remote unreachable → fallback; **empty/invalid remote URL** → fallback.
+4. Shell theme: first visit + toggle + reload persistence + use-system.
 5. Offline → connection-required message.
+6. AA audit on shell primary route in CI.
 
-### V3 — Remote dual-mode (P3)
+### V3 — Remote (P3)
 
-1. Init with `--role=remote`.
-2. Standalone start: demo capability works; PWA baseline + theme toggle available.
-3. Confirm docs/Webpack expose list public entry `./Demo` → `features/demo`.
-4. (Optional compose) Point a shell slot at this remote’s `remoteEntry`; same demo
-   loads inside shell; remote does not take over install/offline UX or document
-   `data-theme`.
-5. Offline (standalone) → connection-required message.
+1. Init `--role=remote`.
+2. Standalone demo + PWA + theme; `./Demo` exports `embedded?: boolean` +
+   `1.0.0`.
+3. Offline message; AA on remote standalone primary route.
+4. Confirm no live shell-only sample assets.
 
-### V4 — Init guardrails
+### V4 — Init guardrails + symmetric restore
 
-1. Init without `--role` → non-zero exit + clear required-flag message.
-2. Init with `--role=invalid` → non-zero + lists allowed roles.
-3. Second init without `--force` → refuse.
-4. Second init with `--force --role=…` → overwrites metadata/config for new role.
+1. Missing/invalid `--role` → fail.
+2. Re-init without `--force` → refuse.
+3. `--force --role=shell` then `--force --role=remote` → demo + HomePage from
+   `templates/role-assets/demo/`; shell-only live assets gone.
+4. `--force --role=shell` again → shell assets from
+   `templates/role-assets/shell/`; demo live paths gone.
 
-### V5 — Automated smoke (when implemented)
+### V5 — Per-role automated smoke
 
 ```bash
-npm test                 # unit + contract (co-located unit tests under src/)
-npx playwright test      # or npm run test:e2e — per-role smoke
+npm test
+npm run test:e2e   # or npx playwright test
 ```
 
-Expected: unit/contract green; Playwright covers viewport, offline message,
-shell fallback, and theme/`data-theme` behavior for the roles under test.
+Expected: for **standalone, shell, and remote-standalone** — **first visit
+(cleared storage) → system/`light`**, theme toggle/`data-theme`, **toggle →
+reload → same `data-theme`**, use-system, viewport, offline; shell also
+**empty/invalid remote URL → RemoteFallback**.
+
+### V6 — Compose smoke (required)
+
+```bash
+npm run test:compose
+```
+
+Harness creates **two temp workspaces**, inits shell + remote, starts both.
+
+Expected (SC-009/014/015/019): demo in shell with `embedded={true}`; shell owns
+PWA + `data-theme`; Demo does not take over.
+
+### V7 — WCAG 2.2 AA CI
+
+```bash
+npm run test:a11y   # or CI job wiring axe against primary routes
+```
+
+Expected (SC-020): pipeline fails on AA violations.
 
 ## Done when
 
-- SC-001…SC-014 from [spec.md](./spec.md) can be demonstrated via the scenarios
-  above in one local session per role (compose optional for SC-009 / SC-014).
+- SC-001…SC-020 from [spec.md](./spec.md) demonstrable via V1–V7
+  (~2s interactive remains aspirational; not a hard fail).
