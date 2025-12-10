@@ -1,5 +1,5 @@
 declare module '@active-routes' {
-  import type { RouteObject } from 'react-router-dom';
+  import type { RouteObject } from 'react-router';
   export const routes: RouteObject[];
 }
 

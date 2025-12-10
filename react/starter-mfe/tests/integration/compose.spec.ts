@@ -1,20 +1,13 @@
-import { createRequire } from 'node:module';
 import { test, expect } from '@playwright/test';
-
-const require = createRequire(import.meta.url);
-const { getPorts, getDevHost } = require('../../scripts/load-env.cjs');
-
-const host = getDevHost();
-const ports = getPorts();
 
 /**
  * Compose smoke — expects shell at PLAYWRIGHT_SHELL_URL and remote at PLAYWRIGHT_REMOTE_URL
- * (set by scripts/compose-harness.mjs).
+ * (set by scripts/compose-harness.mjs). Fallback ports match .env defaults.
  */
 const SHELL_URL =
-  process.env.PLAYWRIGHT_SHELL_URL || `http://${host}:${ports.shell}`;
+  process.env.PLAYWRIGHT_SHELL_URL || 'http://127.0.0.1:3001';
 const REMOTE_URL =
-  process.env.PLAYWRIGHT_REMOTE_URL || `http://${host}:${ports.remote}`;
+  process.env.PLAYWRIGHT_REMOTE_URL || 'http://127.0.0.1:3002';
 
 test.describe('compose smoke (two workspaces)', () => {
   test('shell owns document theme; embedded demo does not take over', async ({

@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 import { ThemeProvider } from './ThemeProvider';
 import { registerPwa } from './registerPwa';
 

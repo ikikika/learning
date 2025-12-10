@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router';
 import { ThemeToggle } from '../../components/ThemeToggle';
 import { ConnectionRequired } from '../../components/ConnectionRequired';
 import { useOnlineStatus } from '../../core/hooks/useOnlineStatus';

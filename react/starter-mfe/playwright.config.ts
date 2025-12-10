@@ -1,16 +1,44 @@
-import { createRequire } from 'node:module';
+import fs from 'node:fs';
+import path from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 
-const require = createRequire(import.meta.url);
-const { getPorts, getDevHost } = require('./scripts/load-env.cjs');
+/** Minimal .env reader (avoids import.meta / createRequire — Playwright may load this as CJS). */
+function loadDotEnv() {
+  const filePath = path.join(process.cwd(), '.env');
+  if (!fs.existsSync(filePath)) return;
+  for (const raw of fs.readFileSync(filePath, 'utf8').split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) continue;
+    const eq = line.indexOf('=');
+    if (eq <= 0) continue;
+    const key = line.slice(0, eq).trim();
+    let value = line.slice(eq + 1).trim();
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    if (process.env[key] === undefined) {
+      process.env[key] = value;
+    }
+  }
+}
 
-const ports = getPorts();
-const host = getDevHost();
+loadDotEnv();
+
+function num(name: string, fallback: number): number {
+  const raw = process.env[name];
+  const n = raw ? Number(raw) : NaN;
+  return Number.isFinite(n) ? n : fallback;
+}
+
+const host = process.env.DEV_HOST || '127.0.0.1';
+const standalonePort = num('PORT_STANDALONE', 3000);
 const PORT = process.env.PLAYWRIGHT_PORT
   ? Number(process.env.PLAYWRIGHT_PORT)
-  : ports.standalone;
-const BASE =
-  process.env.PLAYWRIGHT_BASE_URL || `http://${host}:${PORT}`;
+  : standalonePort;
+const BASE = process.env.PLAYWRIGHT_BASE_URL || `http://${host}:${PORT}`;
 
 export default defineConfig({
   testDir: './tests/integration',

@@ -3,7 +3,7 @@
 In-repo React starter initialized as exactly one of `standalone` | `shell` | `remote` (Webpack Module Federation). Multi-repo topology: one role per clone.
 
 <!-- ROLE:START -->
-**Active role:** `standalone`
+**Active role:** `remote`
 
 Start: `npm start` (after `npm install`)
 <!-- ROLE:END -->
@@ -68,6 +68,12 @@ Update Webpack `exposes`, shell remotes map, docs, exported types, `embedded?: b
 | `npm run test:e2e` | Per-role Playwright |
 | `npm run test:compose` | Two-workspace shell+remote compose smoke |
 | `npm run test:a11y` | WCAG 2.2 AA (axe); fails on violations |
+
+If Playwright fails with “Executable doesn't exist” / “Looks like Playwright was just installed”, download browsers once:
+
+```bash
+npx playwright install chromium
+```
 
 ## Responsive
 

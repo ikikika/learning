@@ -16,9 +16,9 @@
     "test:a11y": "node scripts/run-a11y.mjs"
   },
   "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router-dom": "^7.1.0"
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-router": "^8.3.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.1",
@@ -43,6 +43,13 @@
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.0",
-    "workbox-webpack-plugin": "^7.3.0"
+    "workbox-webpack-plugin": "^7.4.1"
+  },
+  "overrides": {
+    "brace-expansion": "5.0.9",
+    "minimatch": "10.2.6",
+    "uuid": "11.1.1",
+    "ejs": "6.0.1",
+    "serialize-javascript": "7.0.7"
   }
 }
