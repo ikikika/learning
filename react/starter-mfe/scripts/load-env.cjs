@@ -66,6 +66,10 @@ function getDemoRemoteUrl() {
   return `http://${getDevHost()}:${ports.remote}/remoteEntry.js`;
 }
 
+function getApiBaseUrl() {
+  return process.env.API_BASE_URL || '';
+}
+
 module.exports = {
   ROOT,
   loadEnvFile,
@@ -73,4 +77,5 @@ module.exports = {
   getPortForRole,
   getDevHost,
   getDemoRemoteUrl,
+  getApiBaseUrl,
 };

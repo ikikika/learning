@@ -7,6 +7,7 @@ const { GenerateSW } = require('workbox-webpack-plugin');
 const {
   getPortForRole,
   getDemoRemoteUrl,
+  getApiBaseUrl,
 } = require('./scripts/load-env.cjs');
 
 const ROOT = __dirname;
@@ -70,6 +71,7 @@ module.exports = (env, argv) => {
   const role = readRole();
   const port = getPortForRole(role);
   const demoRemoteUrl = getDemoRemoteUrl();
+  const apiBaseUrl = getApiBaseUrl();
 
   const plugins = [
       new HtmlWebpackPlugin({
@@ -78,6 +80,7 @@ module.exports = (env, argv) => {
       new webpack.DefinePlugin({
         __STARTER_ROLE__: JSON.stringify(role),
         __STARTER_DEMO_REMOTE_URL_DEFAULT__: JSON.stringify(demoRemoteUrl),
+        'process.env.API_BASE_URL': JSON.stringify(apiBaseUrl),
       }),
       new ModuleFederationPlugin(federationOptions(role)),
     ];

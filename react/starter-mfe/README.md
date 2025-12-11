@@ -2,6 +2,10 @@
 
 In-repo React starter initialized as exactly one of `standalone` | `shell` | `remote` (Webpack Module Federation). Multi-repo topology: one role per clone.
 
+Coding conventions for contributors and agents: [docs/conventions.md](./docs/conventions.md) (see also [AGENTS.md](./AGENTS.md)).
+
+After a design or coding session that locks new conventions, update those files (e.g. ask the agent: “Update `docs/conventions.md` and `AGENTS.md` with the decisions from this session.”).
+
 <!-- ROLE:START -->
 **Active role:** `remote`
 
@@ -17,7 +21,7 @@ npm run init -- --role=standalone
 npm start
 ```
 
-Ports come from `.env` (`PORT_STANDALONE` / `PORT_SHELL` / `PORT_REMOTE`). Defaults: 3000 / 3001 / 3002. Optional `PORT` overrides the current role’s port; `DEMO_REMOTE_URL` overrides the shell remote entry URL.
+Ports come from `.env` (`PORT_STANDALONE` / `PORT_SHELL` / `PORT_REMOTE`). Defaults: 3000 / 3001 / 3002. Optional `PORT` overrides the current role’s port; `DEMO_REMOTE_URL` overrides the shell remote entry URL. `API_BASE_URL` is injected into the app for HTTP calls (`src/core/constants/app.ts`).
 
 Re-init: `npm run init -- --role=shell --force` (requires `--force` when `starter.role.json` exists).
 

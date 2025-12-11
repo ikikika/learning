@@ -6,6 +6,12 @@ declare module '@active-routes' {
 declare const __STARTER_ROLE__: 'standalone' | 'shell' | 'remote' | undefined;
 declare const __STARTER_DEMO_REMOTE_URL_DEFAULT__: string | undefined;
 
+declare namespace NodeJS {
+  interface ProcessEnv {
+    API_BASE_URL?: string;
+  }
+}
+
 declare module '*.module.scss' {
   const classes: { readonly [key: string]: string };
   export default classes;

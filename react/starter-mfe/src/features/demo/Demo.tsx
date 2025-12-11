@@ -1,3 +1,4 @@
+import { usePost } from './hooks/usePost';
 import styles from './Demo.module.scss';
 import type { DemoProps } from './types';
 
@@ -9,6 +10,8 @@ export function Demo({
   embedded = false,
   title = 'Demo feature',
 }: DemoProps) {
+  const { text } = usePost(1);
+
   // Explicit no-op guards: never apply document theme / SW when embedded
   if (embedded) {
     // Federated path: presentational only — host owns document chrome
@@ -31,6 +34,9 @@ export function Demo({
         ) : (
           <span className={styles.badge}>Standalone mode</span>
         )}
+        <pre className={styles.result} data-testid="demo-post">
+          {text}
+        </pre>
       </div>
     </section>
   );

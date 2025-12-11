@@ -28,3 +28,18 @@
   font-size: 0.8125rem;
   color: var(--color-accent);
 }
+
+.result {
+  margin: var(--space-4) 0 0;
+  padding: var(--space-3);
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
