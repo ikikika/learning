@@ -11,6 +11,26 @@
       "enum": ["standalone", "shell", "remote"],
       "description": "Exactly one repository role after init"
     },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "App / package name set via init --name (defaults by role when omitted)"
+    },
+    "federationName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Module Federation container name derived from name"
+    },
+    "remoteName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Shell only: remote app name (init --remote-name); must match the remote repo federation name"
+    },
+    "remoteFederationName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Shell only: Module Federation container name for the loaded remote"
+    },
     "version": {
       "type": "integer",
       "const": 1,

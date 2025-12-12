@@ -24,13 +24,32 @@ Start: `npm start` (after `npm install`)
 ```bash
 cp .env.example .env   # if needed
 npm install
-npm run init -- --role=standalone
+npm run init -- --role=standalone --name=my-app
 npm start
 ```
 
 Ports come from `.env` (`PORT_STANDALONE` / `PORT_SHELL` / `PORT_REMOTE`). Defaults: 3000 / 3001 / 3002. Optional `PORT` overrides the current role’s port; `DEMO_REMOTE_URL` overrides the shell remote entry URL. `API_BASE_URL` is injected into the app for HTTP calls (`src/core/constants/app.ts`).
 
-Re-init: `npm run init -- --role=shell --force` (requires `--force` when `starter.role.json` exists).
+Init flags:
+
+| Flag | Purpose |
+|------|---------|
+| `--role` | `standalone` \| `shell` \| `remote` (required) |
+| `--name` | App name → `starter.role.json`, Module Federation container name, and (when set) `package.json` `"name"`. Defaults by role: `standalone` / `shell` / `demoRemote` |
+| `--remote-name` | Shell only: remote’s federation name (must match the remote repo’s `--name`). Default `demoRemote` |
+| `--force` | Required to re-init when `starter.role.json` exists |
+
+Example multi-repo naming:
+
+```bash
+# remote clone
+npm run init -- --role=remote --name=checkout
+
+# shell clone (remote federation name must match)
+npm run init -- --role=shell --name=host --remote-name=checkout
+```
+
+Re-init: `npm run init -- --role=shell --name=host --force` (requires `--force` when `starter.role.json` exists).
 
 ## Roles
 

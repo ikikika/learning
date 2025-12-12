@@ -9,23 +9,40 @@ const {
   getDemoRemoteUrl,
   getApiBaseUrl,
 } = require('./scripts/load-env.cjs');
+const {
+  defaultNameForRole,
+  DEFAULT_REMOTE_NAME,
+  toFederationName,
+} = require('./scripts/app-name.cjs');
 
 const ROOT = __dirname;
 
-function readRole() {
+function readMeta() {
   const metaPath = path.join(ROOT, 'starter.role.json');
   if (!fs.existsSync(metaPath)) {
-    return 'standalone';
+    return { role: 'standalone' };
   }
   try {
-    const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
-    return meta.role || 'standalone';
+    return JSON.parse(fs.readFileSync(metaPath, 'utf8'));
   } catch {
-    return 'standalone';
+    return { role: 'standalone' };
   }
 }
 
-function federationOptions(role) {
+function resolveFederationName(meta) {
+  const role = meta.role || 'standalone';
+  if (meta.federationName) return meta.federationName;
+  if (meta.name) return toFederationName(meta.name);
+  return toFederationName(defaultNameForRole(role));
+}
+
+function resolveRemoteFederationName(meta) {
+  if (meta.remoteFederationName) return meta.remoteFederationName;
+  if (meta.remoteName) return toFederationName(meta.remoteName);
+  return toFederationName(DEFAULT_REMOTE_NAME);
+}
+
+function federationOptions(role, federationName, remoteFederationName) {
   const shared = {
     react: { singleton: true, requiredVersion: false, eager: false },
     'react-dom': { singleton: true, requiredVersion: false, eager: false },
@@ -34,10 +51,11 @@ function federationOptions(role) {
   if (role === 'shell') {
     const remoteUrl = getDemoRemoteUrl();
     return {
-      name: 'shell',
+      name: federationName,
       filename: 'remoteEntry.js',
       remotes: {
-        demoRemote: `demoRemote@${remoteUrl}`,
+        // Import alias stays `demoRemote` (see loadDemoRemote.tsx).
+        demoRemote: `${remoteFederationName}@${remoteUrl}`,
       },
       exposes: {},
       shared,
@@ -46,7 +64,7 @@ function federationOptions(role) {
 
   if (role === 'remote') {
     return {
-      name: 'demoRemote',
+      name: federationName,
       filename: 'remoteEntry.js',
       exposes: {
         './Demo': './src/features/demo',
@@ -58,7 +76,7 @@ function federationOptions(role) {
 
   // standalone: no remotes / exposes
   return {
-    name: 'standalone',
+    name: federationName,
     filename: 'remoteEntry.js',
     remotes: {},
     exposes: {},
@@ -68,7 +86,11 @@ function federationOptions(role) {
 
 module.exports = (env, argv) => {
   const isProd = argv.mode === 'production';
-  const role = readRole();
+  const meta = readMeta();
+  const role = meta.role || 'standalone';
+  const federationName = resolveFederationName(meta);
+  const remoteFederationName = resolveRemoteFederationName(meta);
+  const appTitle = meta.name || defaultNameForRole(role);
   const port = getPortForRole(role);
   const demoRemoteUrl = getDemoRemoteUrl();
   const apiBaseUrl = getApiBaseUrl();
@@ -76,13 +98,16 @@ module.exports = (env, argv) => {
   const plugins = [
       new HtmlWebpackPlugin({
         template: path.join(ROOT, 'public/index.html'),
+        title: appTitle,
       }),
       new webpack.DefinePlugin({
         __STARTER_ROLE__: JSON.stringify(role),
         __STARTER_DEMO_REMOTE_URL_DEFAULT__: JSON.stringify(demoRemoteUrl),
         'process.env.API_BASE_URL': JSON.stringify(apiBaseUrl),
       }),
-      new ModuleFederationPlugin(federationOptions(role)),
+      new ModuleFederationPlugin(
+        federationOptions(role, federationName, remoteFederationName),
+      ),
     ];
 
     if (isProd) {

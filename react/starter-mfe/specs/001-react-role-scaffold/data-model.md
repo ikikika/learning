@@ -16,6 +16,10 @@
 |-------|------|-------|
 | path | string | `starter.role.json` at repo root |
 | role | enum | Same as Repository Role |
+| name | string | App name from `--name` (defaults by role) |
+| federationName | string | MF container name derived from `name` |
+| remoteName | string | Shell only: from `--remote-name` (default `demoRemote`) |
+| remoteFederationName | string | Shell only: MF container name for the remote |
 | version | integer | Schema version (`1`) |
 | updatedAt | ISO-8601 | Optional |
 | forceRequired | — | Exists → init needs `--force` |

@@ -5,7 +5,16 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+
+const require = createRequire(import.meta.url);
+const {
+  DEFAULT_REMOTE_NAME,
+  defaultNameForRole,
+  isValidPackageName,
+  toFederationName,
+} = require('./app-name.cjs');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -26,25 +35,38 @@ const SHELL_LIVE = [
   'app/routes/shellRoutes.tsx',
 ];
 
-function parseArgs(argv) {
-  const out = { role: null, force: false };
-  for (const arg of argv) {
-    if (arg === '--force') out.force = true;
-    else if (arg.startsWith('--role=')) out.role = arg.slice('--role='.length);
-    else if (arg === '--role') {
-      /* next token handled below */
+function parseFlagValue(argv, longName) {
+  const eq = `--${longName}=`;
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg.startsWith(eq)) return arg.slice(eq.length);
+    if (arg === `--${longName}` && argv[i + 1] && !argv[i + 1].startsWith('--')) {
+      return argv[i + 1];
     }
   }
-  const roleIdx = argv.indexOf('--role');
-  if (roleIdx !== -1 && argv[roleIdx + 1] && !argv[roleIdx + 1].startsWith('--')) {
-    out.role = argv[roleIdx + 1];
-  }
-  return out;
+  return null;
+}
+
+function parseArgs(argv) {
+  return {
+    role: parseFlagValue(argv, 'role'),
+    name: parseFlagValue(argv, 'name'),
+    remoteName: parseFlagValue(argv, 'remote-name'),
+    force: argv.includes('--force'),
+  };
 }
 
 function fail(message, code = 1) {
   console.error(message);
   process.exit(code);
+}
+
+function assertValidName(label, value) {
+  if (!isValidPackageName(value)) {
+    fail(
+      `Invalid ${label}. Use a camelCase identifier or lowercase npm-style name (e.g. myApp, my-app, or @scope/my-app)`,
+    );
+  }
 }
 
 function rmLive(relFromSrc) {
@@ -95,12 +117,18 @@ function neverDeleteTemplates() {
   }
 }
 
-function writeMetadata(role) {
+function writeMetadata({ role, name, remoteName }) {
   const meta = {
     role,
+    name,
+    federationName: toFederationName(name),
     version: 1,
     updatedAt: new Date().toISOString(),
   };
+  if (role === 'shell') {
+    meta.remoteName = remoteName;
+    meta.remoteFederationName = toFederationName(remoteName);
+  }
   fs.writeFileSync(
     path.join(ROOT, 'starter.role.json'),
     `${JSON.stringify(meta, null, 2)}\n`,
@@ -108,12 +136,20 @@ function writeMetadata(role) {
   );
 }
 
-function patchReadme(role) {
+function patchPackageName(name) {
+  const pkgPath = path.join(ROOT, 'package.json');
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+  if (pkg.name === name) return;
+  pkg.name = name;
+  fs.writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`, 'utf8');
+}
+
+function patchReadme(role, name) {
   const readmePath = path.join(ROOT, 'README.md');
   let text = fs.existsSync(readmePath)
     ? fs.readFileSync(readmePath, 'utf8')
     : '# Starter MFE\n\n';
-  const roleBlock = `<!-- ROLE:START -->\n**Active role:** \`${role}\`\n\nStart: \`npm start\` (after \`npm install\`)\n<!-- ROLE:END -->`;
+  const roleBlock = `<!-- ROLE:START -->\n**Active role:** \`${role}\`\n\n**App name:** \`${name}\`\n\nStart: \`npm start\` (after \`npm install\`)\n<!-- ROLE:END -->`;
   if (text.includes('<!-- ROLE:START -->')) {
     text = text.replace(
       /<!-- ROLE:START -->[\s\S]*?<!-- ROLE:END -->/,
@@ -125,7 +161,7 @@ function patchReadme(role) {
   fs.writeFileSync(readmePath, text, 'utf8');
 }
 
-function initStandaloneOrRemote(role) {
+function initStandaloneOrRemote() {
   for (const rel of SHELL_LIVE) {
     rmLive(rel);
   }
@@ -140,13 +176,26 @@ function initShell() {
 }
 
 function main() {
-  const { role, force } = parseArgs(process.argv.slice(2));
+  const { role, name: nameArg, remoteName: remoteNameArg, force } = parseArgs(
+    process.argv.slice(2),
+  );
 
   if (!role) {
     fail('--role=standalone|shell|remote required');
   }
   if (!ALLOWED_ROLES.has(role)) {
     fail(`Invalid --role. Allowed: standalone, shell, remote`);
+  }
+
+  const name = nameArg ?? defaultNameForRole(role);
+  assertValidName('--name', name);
+
+  let remoteName = DEFAULT_REMOTE_NAME;
+  if (role === 'shell') {
+    remoteName = remoteNameArg ?? DEFAULT_REMOTE_NAME;
+    assertValidName('--remote-name', remoteName);
+  } else if (remoteNameArg) {
+    fail('--remote-name is only valid with --role=shell');
   }
 
   const metaPath = path.join(ROOT, 'starter.role.json');
@@ -159,12 +208,21 @@ function main() {
   if (role === 'shell') {
     initShell();
   } else {
-    initStandaloneOrRemote(role);
+    initStandaloneOrRemote();
   }
 
-  writeMetadata(role);
-  patchReadme(role);
-  console.log(`Initialized role: ${role}`);
+  writeMetadata({ role, name, remoteName });
+  if (nameArg) {
+    patchPackageName(name);
+  }
+  patchReadme(role, name);
+  const fed = toFederationName(name);
+  console.log(`Initialized role: ${role}, name: ${name} (federation: ${fed})`);
+  if (role === 'shell') {
+    console.log(
+      `Shell remote container: ${toFederationName(remoteName)} (import alias: demoRemote)`,
+    );
+  }
 }
 
 main();

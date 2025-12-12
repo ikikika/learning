@@ -75,5 +75,58 @@ test('success writes starter.role.json', () => {
       fs.readFileSync(path.join(tmp, 'starter.role.json'), 'utf8'),
     );
     assert.equal(meta.role, 'standalone');
+    assert.equal(meta.name, 'standalone');
+    assert.equal(meta.federationName, 'standalone');
+  });
+});
+
+test('--name writes metadata, package.json, and federationName', () => {
+  withTempCopy((tmp) => {
+    const r = init(tmp, ['--role=remote', '--name=my-checkout']);
+    assert.equal(r.status, 0, r.stderr);
+    const meta = JSON.parse(
+      fs.readFileSync(path.join(tmp, 'starter.role.json'), 'utf8'),
+    );
+    assert.equal(meta.role, 'remote');
+    assert.equal(meta.name, 'my-checkout');
+    assert.equal(meta.federationName, 'myCheckout');
+    const pkg = JSON.parse(
+      fs.readFileSync(path.join(tmp, 'package.json'), 'utf8'),
+    );
+    assert.equal(pkg.name, 'my-checkout');
+  });
+});
+
+test('shell --remote-name stores remote federation fields', () => {
+  withTempCopy((tmp) => {
+    const r = init(tmp, [
+      '--role=shell',
+      '--name=host-app',
+      '--remote-name=my-checkout',
+    ]);
+    assert.equal(r.status, 0, r.stderr);
+    const meta = JSON.parse(
+      fs.readFileSync(path.join(tmp, 'starter.role.json'), 'utf8'),
+    );
+    assert.equal(meta.name, 'host-app');
+    assert.equal(meta.federationName, 'hostApp');
+    assert.equal(meta.remoteName, 'my-checkout');
+    assert.equal(meta.remoteFederationName, 'myCheckout');
+  });
+});
+
+test('--remote-name rejected for non-shell roles', () => {
+  withTempCopy((tmp) => {
+    const r = init(tmp, ['--role=standalone', '--remote-name=x']);
+    assert.notEqual(r.status, 0);
+    assert.match(r.stderr, /only valid with --role=shell/);
+  });
+});
+
+test('invalid --name exits non-zero', () => {
+  withTempCopy((tmp) => {
+    const r = init(tmp, ['--role=standalone', '--name=BAD NAME']);
+    assert.notEqual(r.status, 0);
+    assert.match(r.stderr, /Invalid --name/);
   });
 });
