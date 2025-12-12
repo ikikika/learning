@@ -2,9 +2,16 @@
 
 In-repo React starter initialized as exactly one of `standalone` | `shell` | `remote` (Webpack Module Federation). Multi-repo topology: one role per clone.
 
-Coding conventions for contributors and agents: [docs/conventions.md](./docs/conventions.md) (see also [AGENTS.md](./AGENTS.md)).
+**Docs**
 
-After a design or coding session that locks new conventions, update those files (e.g. ask the agent: “Update `docs/conventions.md` and `AGENTS.md` with the decisions from this session.”).
+| Doc | Role |
+|-----|------|
+| [docs/project-overview.md](./docs/project-overview.md) | Product what / who / flows / out of scope |
+| [docs/coding-conventions.md](./docs/coding-conventions.md) | Code structure & data-fetching conventions |
+| [docs/ui-context.md](./docs/ui-context.md) | Tokens, theming, component & UI guidance |
+| [AGENTS.md](./AGENTS.md) | Short checklist for AI agents |
+
+After a design or coding session that locks new decisions, update the matching docs (e.g. ask the agent: “Update `docs/coding-conventions.md`, `docs/ui-context.md`, `docs/project-overview.md`, and/or `AGENTS.md` with the decisions from this session.”).
 
 <!-- ROLE:START -->
 **Active role:** `remote`
