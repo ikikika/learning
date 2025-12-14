@@ -6,6 +6,7 @@ const { ModuleFederationPlugin } = require('webpack').container;
 const { GenerateSW } = require('workbox-webpack-plugin');
 const {
   getPortForRole,
+  getDevHost,
   getDemoRemoteUrl,
   getApiBaseUrl,
 } = require('./scripts/load-env.cjs');
@@ -132,7 +133,14 @@ module.exports = (env, argv) => {
     output: {
       path: path.join(ROOT, 'dist'),
       filename: isProd ? '[name].[contenthash].js' : '[name].js',
-      publicPath: 'auto',
+      // Shell/host: keep relative/`auto` so assets match the page origin.
+      // Remotes need an absolute publicPath because remoteEntry is injected via a
+      // dynamic <script> where document.currentScript is null.
+      publicPath:
+        process.env.PUBLIC_PATH ||
+        (role === 'remote' && !isProd
+          ? `http://${getDevHost()}:${port}/`
+          : 'auto'),
       clean: true,
     },
     resolve: {
@@ -190,6 +198,7 @@ module.exports = (env, argv) => {
       port,
       historyApiFallback: true,
       hot: true,
+      allowedHosts: 'all',
       client: {
         overlay: false,
       },
