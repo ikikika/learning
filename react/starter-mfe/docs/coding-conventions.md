@@ -36,7 +36,9 @@ src/features/<name>/
 ## Environment & ports
 
 - Ports and remote URLs: `.env` / `.env.example` (`PORT_*`, `DEV_HOST`,
-  `DEMO_REMOTE_URL`, `API_BASE_URL`).
+  per-remote `*_REMOTE_URL` / `urlEnv`, `API_BASE_URL`).
+- Shell remotes: `starter.role.json` → `remotes[]`; see `src/core/constants/remotes.ts`
+  and `src/app/remotes/loadRemote.tsx`.
 - Loader: `scripts/load-env.cjs` (used by webpack and Node scripts).
 
 ## Module Federation / roles

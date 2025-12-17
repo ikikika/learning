@@ -10,11 +10,15 @@ import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
 const {
-  DEFAULT_REMOTE_NAME,
   defaultNameForRole,
   isValidPackageName,
   toFederationName,
 } = require('./app-name.cjs');
+const {
+  defaultDemoRemote,
+  generateLoadersSource,
+  parseRemoteFlag,
+} = require('./remotes-config.cjs');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -32,6 +36,8 @@ const DEMO_LIVE = [
 const SHELL_LIVE = [
   'pages/ShellHomePage',
   'app/remotes/loadDemoRemote.tsx',
+  'app/remotes/loadRemote.tsx',
+  'app/remotes/loaders.generated.ts',
   'app/routes/shellRoutes.tsx',
 ];
 
@@ -47,11 +53,29 @@ function parseFlagValue(argv, longName) {
   return null;
 }
 
+function parseFlagValues(argv, longName) {
+  const eq = `--${longName}=`;
+  const out = [];
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg.startsWith(eq)) out.push(arg.slice(eq.length));
+    else if (
+      arg === `--${longName}` &&
+      argv[i + 1] &&
+      !argv[i + 1].startsWith('--')
+    ) {
+      out.push(argv[i + 1]);
+    }
+  }
+  return out;
+}
+
 function parseArgs(argv) {
   return {
     role: parseFlagValue(argv, 'role'),
     name: parseFlagValue(argv, 'name'),
     remoteName: parseFlagValue(argv, 'remote-name'),
+    remotes: parseFlagValues(argv, 'remote'),
     force: argv.includes('--force'),
   };
 }
@@ -111,13 +135,47 @@ function restoreFromTemplate(templateRoot, relativePaths) {
 }
 
 function neverDeleteTemplates() {
-  // Intentional no-op guard: callers must not rm templates/role-assets/*
   if (!fs.existsSync(DEMO_TEMPLATE) || !fs.existsSync(SHELL_TEMPLATE)) {
     fail('templates/role-assets/{demo,shell} must exist and are never deleted');
   }
 }
 
-function writeMetadata({ role, name, remoteName }) {
+function buildShellRemotes({ remoteNameArg, remoteFlags }) {
+  if (remoteFlags.length && remoteNameArg) {
+    fail('Use either --remote (repeatable) or --remote-name, not both');
+  }
+
+  let remotes;
+  if (remoteFlags.length) {
+    try {
+      remotes = remoteFlags.map((spec) => parseRemoteFlag(spec));
+    } catch (err) {
+      fail(err instanceof Error ? err.message : String(err));
+    }
+  } else if (remoteNameArg) {
+    assertValidName('--remote-name', remoteNameArg);
+    remotes = [defaultDemoRemote(remoteNameArg)];
+  } else {
+    remotes = [defaultDemoRemote()];
+  }
+
+  const aliases = new Set();
+  for (const r of remotes) {
+    if (aliases.has(r.alias)) {
+      fail(`Duplicate remote alias: ${r.alias}`);
+    }
+    aliases.add(r.alias);
+  }
+  return remotes;
+}
+
+function writeLoadersGenerated(remotes) {
+  const dest = path.join(ROOT, 'src/app/remotes/loaders.generated.ts');
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.writeFileSync(dest, generateLoadersSource(remotes), 'utf8');
+}
+
+function writeMetadata({ role, name, remotes }) {
   const meta = {
     role,
     name,
@@ -126,8 +184,7 @@ function writeMetadata({ role, name, remoteName }) {
     updatedAt: new Date().toISOString(),
   };
   if (role === 'shell') {
-    meta.remoteName = remoteName;
-    meta.remoteFederationName = toFederationName(remoteName);
+    meta.remotes = remotes;
   }
   fs.writeFileSync(
     path.join(ROOT, 'starter.role.json'),
@@ -176,9 +233,13 @@ function initShell() {
 }
 
 function main() {
-  const { role, name: nameArg, remoteName: remoteNameArg, force } = parseArgs(
-    process.argv.slice(2),
-  );
+  const {
+    role,
+    name: nameArg,
+    remoteName: remoteNameArg,
+    remotes: remoteFlags,
+    force,
+  } = parseArgs(process.argv.slice(2));
 
   if (!role) {
     fail('--role=standalone|shell|remote required');
@@ -190,12 +251,11 @@ function main() {
   const name = nameArg ?? defaultNameForRole(role);
   assertValidName('--name', name);
 
-  let remoteName = DEFAULT_REMOTE_NAME;
+  let remotes = [];
   if (role === 'shell') {
-    remoteName = remoteNameArg ?? DEFAULT_REMOTE_NAME;
-    assertValidName('--remote-name', remoteName);
-  } else if (remoteNameArg) {
-    fail('--remote-name is only valid with --role=shell');
+    remotes = buildShellRemotes({ remoteNameArg, remoteFlags });
+  } else if (remoteNameArg || remoteFlags.length) {
+    fail('--remote / --remote-name are only valid with --role=shell');
   }
 
   const metaPath = path.join(ROOT, 'starter.role.json');
@@ -207,11 +267,12 @@ function main() {
 
   if (role === 'shell') {
     initShell();
+    writeLoadersGenerated(remotes);
   } else {
     initStandaloneOrRemote();
   }
 
-  writeMetadata({ role, name, remoteName });
+  writeMetadata({ role, name, remotes });
   if (nameArg) {
     patchPackageName(name);
   }
@@ -219,9 +280,11 @@ function main() {
   const fed = toFederationName(name);
   console.log(`Initialized role: ${role}, name: ${name} (federation: ${fed})`);
   if (role === 'shell') {
-    console.log(
-      `Shell remote container: ${toFederationName(remoteName)} (import alias: demoRemote)`,
-    );
+    for (const r of remotes) {
+      console.log(
+        `Remote: alias=${r.alias} federation=${r.federationName} expose=${r.expose} urlEnv=${r.urlEnv}`,
+      );
+    }
   }
 }
 

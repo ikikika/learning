@@ -54,6 +54,14 @@ test('shell then --force remote restores demo and prunes shell-only', () => {
       fs.existsSync(path.join(tmp, 'src/app/remotes/loadDemoRemote.tsx')),
       false,
     );
+    assert.equal(
+      fs.existsSync(path.join(tmp, 'src/app/remotes/loadRemote.tsx')),
+      false,
+    );
+    assert.equal(
+      fs.existsSync(path.join(tmp, 'src/app/remotes/loaders.generated.ts')),
+      false,
+    );
   });
 });
 

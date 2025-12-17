@@ -18,8 +18,8 @@
 | role | enum | Same as Repository Role |
 | name | string | App name from `--name` (defaults by role) |
 | federationName | string | MF container name derived from `name` |
-| remoteName | string | Shell only: from `--remote-name` (default `demoRemote`) |
-| remoteFederationName | string | Shell only: MF container name for the remote |
+| remotes | array | Shell only: `{ alias, name, federationName, expose, urlEnv }[]` |
+| remoteName / remoteFederationName | string | Deprecated legacy single-remote fields (still read if `remotes` absent) |
 | version | integer | Schema version (`1`) |
 | updatedAt | ISO-8601 | Optional |
 | forceRequired | — | Exists → init needs `--force` |
@@ -40,7 +40,7 @@
 | shellPath | string | `templates/role-assets/shell/` |
 | layout | — | Mirrors live `src/` relative paths (straight copy restore) |
 | demoContents | — | e.g. `features/demo/`, `pages/HomePage/` |
-| shellContents | — | `pages/ShellHomePage/`, `app/remotes/loadDemoRemote.tsx`, `app/routes/shellRoutes.tsx` |
+| shellContents | — | `pages/ShellHomePage/`, `app/remotes/` (loaders + LoadRemote), `app/routes/shellRoutes.tsx` |
 | neverDeleted | — | Init MUST NOT delete templates buckets |
 
 ### Scaffold Result

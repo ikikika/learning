@@ -3,18 +3,19 @@
 ## Command
 
 ```bash
-node scripts/init.mjs --role=<standalone|shell|remote> [--name=<appName>] [--remote-name=<remoteAppName>] [--force]
+node scripts/init.mjs --role=<standalone|shell|remote> [--name=<appName>] [--remote=alias:name[:expose[:urlEnv]]]... [--remote-name=<remoteAppName>] [--force]
 ```
 
-npm equivalent (e.g. `npm run init -- --role=standalone --name=my-app`) MUST pass through flags.
+npm equivalent (e.g. `npm run init -- --role=shell --remote=demoRemote:checkout`) MUST pass through flags.
 
-## Required flags
+## Flags
 
 | Flag | Values | Required |
 |------|--------|----------|
 | `--role` | `standalone`, `shell`, `remote` | Yes |
-| `--name` | camelCase identifier or lowercase npm-style name (`myApp`, `my-app`, `@scope/my-app`) | No — defaults: `standalone` / `shell` / `demoRemote` by role |
-| `--remote-name` | same rules as `--name` | No — **shell only**; defaults to `demoRemote`. Must match the remote repo’s federation name |
+| `--name` | camelCase identifier or lowercase npm-style name | No — defaults by role |
+| `--remote` | `alias:name[:expose[:urlEnv]]` (repeatable) | No — **shell only**. Default: one `demoRemote:demoRemote:./Demo:DEMO_REMOTE_URL` |
+| `--remote-name` | same rules as `--name` | No — **shell only**; shorthand for a single `demoRemote:<name>` entry. Mutually exclusive with `--remote` |
 | `--force` | presence | When `starter.role.json` already exists |
 
 ## Exit behavior
@@ -23,31 +24,33 @@ npm equivalent (e.g. `npm run init -- --role=standalone --name=my-app`) MUST pas
 |-----------|------|---------------------|
 | Missing `--role` | non-zero | `--role=standalone\|shell\|remote` required |
 | Invalid `--role` | non-zero | Lists allowed values |
-| Invalid `--name` / `--remote-name` | non-zero | Valid name format required |
-| `--remote-name` without `--role=shell` | non-zero | Only valid with shell |
+| Invalid `--name` / `--remote` / `--remote-name` | non-zero | Valid format required |
+| `--remote` / `--remote-name` without `--role=shell` | non-zero | Only valid with shell |
+| Both `--remote` and `--remote-name` | non-zero | Use one or the other |
+| Duplicate remote alias | non-zero | Duplicate alias |
 | Metadata exists, no `--force` | non-zero | Re-init requires `--force` |
 | Success | 0 | Writes metadata; updates README; prune/restore as needed |
 
 ## Side effects on success
 
-1. Write/overwrite `starter.role.json` ([role-metadata.schema.json](./role-metadata.schema.json)), including `name`, `federationName`, and (shell) `remoteName` / `remoteFederationName`.
+1. Write/overwrite `starter.role.json` ([role-metadata.schema.json](./role-metadata.schema.json)), including `name`, `federationName`, and (shell) `remotes[]`.
 2. Update README role + app name + start instructions.
 3. When `--name` is provided, set `package.json` `"name"` to that value.
-4. Webpack reads metadata for Module Federation `name` (and shell remotes RHS). Import alias for the sample remote stays `demoRemote`.
-5. **Never delete** `templates/role-assets/demo/` or `templates/role-assets/shell/`.
-6. Templates **mirror `src/` relative paths**; restore is a **straight copy**
+4. Webpack reads `remotes[]` for Module Federation `remotes` map and injects config into the app.
+5. Shell init generates `src/app/remotes/loaders.generated.ts` with a static `import()` per remote alias.
+6. **Never delete** `templates/role-assets/demo/` or `templates/role-assets/shell/`.
+7. Templates **mirror `src/` relative paths**; restore is a **straight copy**
    into matching `src/` destinations (git checkout alone is **not** sufficient).
-7. **`--role=shell`**:
+8. **`--role=shell`**:
    - Delete live `src/features/demo` and `src/pages/HomePage`.
    - Restore shell-only live paths from `templates/role-assets/shell/` mirroring:
      - `pages/ShellHomePage/` → `src/pages/ShellHomePage/`
-     - `app/remotes/loadDemoRemote.tsx` → `src/app/remotes/loadDemoRemote.tsx`
+     - `app/remotes/*` → `src/app/remotes/*`
      - `app/routes/shellRoutes.tsx` → `src/app/routes/shellRoutes.tsx`
-8. **`--role=standalone` or `remote`** (including after prior shell with
+9. **`--role=standalone` or `remote`** (including after prior shell with
    `--force`):
-   - Delete live shell-only sample assets at
-     `src/pages/ShellHomePage/`, `src/app/remotes/loadDemoRemote.tsx`, and
-     `src/app/routes/shellRoutes.tsx` (and any other shell-only adapters under
-     those mirrored paths).
+   - Delete live shell-only sample assets under
+     `src/pages/ShellHomePage/`, `src/app/remotes/`, and
+     `src/app/routes/shellRoutes.tsx`.
    - Restore live `src/features/demo` and `src/pages/HomePage` from
      `templates/role-assets/demo/`.

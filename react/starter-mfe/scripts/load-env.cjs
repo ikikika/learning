@@ -60,10 +60,35 @@ function getDevHost() {
   return process.env.DEV_HOST || '127.0.0.1';
 }
 
+const DEMO_URL_ENV = 'DEMO_REMOTE_URL';
+
 function getDemoRemoteUrl() {
-  if (process.env.DEMO_REMOTE_URL) return process.env.DEMO_REMOTE_URL;
-  const ports = getPorts();
-  return `http://${getDevHost()}:${ports.remote}/remoteEntry.js`;
+  return getRemoteUrl(DEMO_URL_ENV);
+}
+
+/**
+ * Resolve a remote entry URL from env (urlEnv key).
+ * DEMO_REMOTE_URL defaults to local PORT_REMOTE; other keys default to "".
+ */
+function getRemoteUrl(urlEnv = 'DEMO_REMOTE_URL') {
+  if (process.env[urlEnv]) return process.env[urlEnv];
+  if (urlEnv === 'DEMO_REMOTE_URL') {
+    const ports = getPorts();
+    return `http://${getDevHost()}:${ports.remote}/remoteEntry.js`;
+  }
+  return '';
+}
+
+/**
+ * @param {Array<{ alias: string, urlEnv: string }>} remotes
+ * @returns {Record<string, string>}
+ */
+function getRemoteUrlsByAlias(remotes) {
+  const out = {};
+  for (const r of remotes) {
+    out[r.alias] = getRemoteUrl(r.urlEnv);
+  }
+  return out;
 }
 
 function getApiBaseUrl() {
@@ -77,5 +102,7 @@ module.exports = {
   getPortForRole,
   getDevHost,
   getDemoRemoteUrl,
+  getRemoteUrl,
+  getRemoteUrlsByAlias,
   getApiBaseUrl,
 };

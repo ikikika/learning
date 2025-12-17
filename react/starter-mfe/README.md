@@ -28,15 +28,16 @@ npm run init -- --role=standalone --name=my-app
 npm start
 ```
 
-Ports come from `.env` (`PORT_STANDALONE` / `PORT_SHELL` / `PORT_REMOTE`). Defaults: 3000 / 3001 / 3002. Optional `PORT` overrides the current role’s port; `DEMO_REMOTE_URL` overrides the shell remote entry URL. `API_BASE_URL` is injected into the app for HTTP calls (`src/core/constants/app.ts`).
+Ports come from `.env` (`PORT_STANDALONE` / `PORT_SHELL` / `PORT_REMOTE`). Defaults: 3000 / 3001 / 3002. Optional `PORT` overrides the current role’s port. Each shell remote uses its `urlEnv` (sample: `DEMO_REMOTE_URL`). `API_BASE_URL` is injected into the app for HTTP calls (`src/core/constants/app.ts`).
 
 Init flags:
 
 | Flag | Purpose |
 |------|---------|
 | `--role` | `standalone` \| `shell` \| `remote` (required) |
-| `--name` | App name → `starter.role.json`, Module Federation container name, and (when set) `package.json` `"name"`. Defaults by role: `standalone` / `shell` / `demoRemote` |
-| `--remote-name` | Shell only: remote’s federation name (must match the remote repo’s `--name`). Default `demoRemote` |
+| `--name` | App name → metadata, MF container name, and (when set) `package.json` `"name"` |
+| `--remote` | Shell only, repeatable: `alias:name[:expose[:urlEnv]]`. Builds `remotes[]` in `starter.role.json` |
+| `--remote-name` | Shell only shorthand for one `demoRemote:<name>` entry (not with `--remote`) |
 | `--force` | Required to re-init when `starter.role.json` exists |
 
 Example multi-repo naming:
@@ -45,9 +46,13 @@ Example multi-repo naming:
 # remote clone
 npm run init -- --role=remote --name=checkout
 
-# shell clone (remote federation name must match)
-npm run init -- --role=shell --name=host --remote-name=checkout
+# shell clone — one or more remotes
+npm run init -- --role=shell --name=host \
+  --remote=demoRemote:checkout \
+  --remote=billingRemote:billing:./Billing:BILLING_REMOTE_URL
 ```
+
+`starter.role.json` then contains a `remotes[]` array. Webpack registers each alias; `src/app/remotes/loaders.generated.ts` gets a static import per alias. Mount extras with `<LoadRemote alias="billingRemote" />` (sample home still uses `demoRemote` via `LoadDemoRemote`).
 
 Re-init: `npm run init -- --role=shell --name=host --force` (requires `--force` when `starter.role.json` exists).
 

@@ -21,15 +21,46 @@
       "minLength": 1,
       "description": "Module Federation container name derived from name"
     },
+    "remotes": {
+      "type": "array",
+      "description": "Shell only: federated remotes loaded by this host",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["alias", "name", "federationName", "expose", "urlEnv"],
+        "properties": {
+          "alias": {
+            "type": "string",
+            "description": "Webpack remotes map key / import alias (e.g. demoRemote)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Remote app / package name"
+          },
+          "federationName": {
+            "type": "string",
+            "description": "Remote Module Federation container name"
+          },
+          "expose": {
+            "type": "string",
+            "description": "Exposed module path (e.g. ./Demo)"
+          },
+          "urlEnv": {
+            "type": "string",
+            "description": "Env var holding remoteEntry.js URL (e.g. DEMO_REMOTE_URL)"
+          }
+        }
+      }
+    },
     "remoteName": {
       "type": "string",
       "minLength": 1,
-      "description": "Shell only: remote app name (init --remote-name); must match the remote repo federation name"
+      "description": "Deprecated: use remotes[]. Still read for backward compatibility"
     },
     "remoteFederationName": {
       "type": "string",
       "minLength": 1,
-      "description": "Shell only: Module Federation container name for the loaded remote"
+      "description": "Deprecated: use remotes[]. Still read for backward compatibility"
     },
     "version": {
       "type": "integer",

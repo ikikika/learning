@@ -48,6 +48,14 @@ test('shell init prunes demo+HomePage, restores shell, keeps templates', () => {
       fs.existsSync(path.join(tmp, 'src/app/remotes/loadDemoRemote.tsx')),
       true,
     );
+    assert.equal(
+      fs.existsSync(path.join(tmp, 'src/app/remotes/loadRemote.tsx')),
+      true,
+    );
+    assert.equal(
+      fs.existsSync(path.join(tmp, 'src/app/remotes/loaders.generated.ts')),
+      true,
+    );
     assert.equal(fs.existsSync(path.join(tmp, 'templates/role-assets/demo')), true);
     assert.equal(fs.existsSync(path.join(tmp, 'templates/role-assets/shell')), true);
   });

@@ -8,13 +8,14 @@ const {
   getPortForRole,
   getDevHost,
   getDemoRemoteUrl,
+  getRemoteUrlsByAlias,
   getApiBaseUrl,
 } = require('./scripts/load-env.cjs');
 const {
   defaultNameForRole,
-  DEFAULT_REMOTE_NAME,
   toFederationName,
 } = require('./scripts/app-name.cjs');
+const { remotesFromMeta } = require('./scripts/remotes-config.cjs');
 
 const ROOT = __dirname;
 
@@ -37,27 +38,26 @@ function resolveFederationName(meta) {
   return toFederationName(defaultNameForRole(role));
 }
 
-function resolveRemoteFederationName(meta) {
-  if (meta.remoteFederationName) return meta.remoteFederationName;
-  if (meta.remoteName) return toFederationName(meta.remoteName);
-  return toFederationName(DEFAULT_REMOTE_NAME);
+function buildRemotesMap(remoteEntries, urlsByAlias) {
+  const remotes = {};
+  for (const r of remoteEntries) {
+    const url = urlsByAlias[r.alias] || '';
+    remotes[r.alias] = `${r.federationName}@${url}`;
+  }
+  return remotes;
 }
 
-function federationOptions(role, federationName, remoteFederationName) {
+function federationOptions(role, federationName, remoteEntries, urlsByAlias) {
   const shared = {
     react: { singleton: true, requiredVersion: false, eager: false },
     'react-dom': { singleton: true, requiredVersion: false, eager: false },
   };
 
   if (role === 'shell') {
-    const remoteUrl = getDemoRemoteUrl();
     return {
       name: federationName,
       filename: 'remoteEntry.js',
-      remotes: {
-        // Import alias stays `demoRemote` (see loadDemoRemote.tsx).
-        demoRemote: `${remoteFederationName}@${remoteUrl}`,
-      },
+      remotes: buildRemotesMap(remoteEntries, urlsByAlias),
       exposes: {},
       shared,
     };
@@ -90,7 +90,8 @@ module.exports = (env, argv) => {
   const meta = readMeta();
   const role = meta.role || 'standalone';
   const federationName = resolveFederationName(meta);
-  const remoteFederationName = resolveRemoteFederationName(meta);
+  const remoteEntries = role === 'shell' ? remotesFromMeta(meta) : [];
+  const urlsByAlias = getRemoteUrlsByAlias(remoteEntries);
   const appTitle = meta.name || defaultNameForRole(role);
   const port = getPortForRole(role);
   const demoRemoteUrl = getDemoRemoteUrl();
@@ -104,10 +105,20 @@ module.exports = (env, argv) => {
       new webpack.DefinePlugin({
         __STARTER_ROLE__: JSON.stringify(role),
         __STARTER_DEMO_REMOTE_URL_DEFAULT__: JSON.stringify(demoRemoteUrl),
+        __STARTER_REMOTES_CONFIG__: JSON.stringify(
+          remoteEntries.map(({ alias, name, federationName: fed, expose, urlEnv }) => ({
+            alias,
+            name,
+            federationName: fed,
+            expose,
+            urlEnv,
+          })),
+        ),
+        __STARTER_REMOTES_URLS__: JSON.stringify(urlsByAlias),
         'process.env.API_BASE_URL': JSON.stringify(apiBaseUrl),
       }),
       new ModuleFederationPlugin(
-        federationOptions(role, federationName, remoteFederationName),
+        federationOptions(role, federationName, remoteEntries, urlsByAlias),
       ),
     ];
 

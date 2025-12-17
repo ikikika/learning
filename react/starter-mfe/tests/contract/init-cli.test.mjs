@@ -97,7 +97,7 @@ test('--name writes metadata, package.json, and federationName', () => {
   });
 });
 
-test('shell --remote-name stores remote federation fields', () => {
+test('shell --remote-name writes remotes[] with demoRemote alias', () => {
   withTempCopy((tmp) => {
     const r = init(tmp, [
       '--role=shell',
@@ -110,8 +110,47 @@ test('shell --remote-name stores remote federation fields', () => {
     );
     assert.equal(meta.name, 'host-app');
     assert.equal(meta.federationName, 'hostApp');
-    assert.equal(meta.remoteName, 'my-checkout');
-    assert.equal(meta.remoteFederationName, 'myCheckout');
+    assert.equal(meta.remotes.length, 1);
+    assert.equal(meta.remotes[0].alias, 'demoRemote');
+    assert.equal(meta.remotes[0].name, 'my-checkout');
+    assert.equal(meta.remotes[0].federationName, 'myCheckout');
+    assert.equal(meta.remotes[0].expose, './Demo');
+    assert.equal(meta.remotes[0].urlEnv, 'DEMO_REMOTE_URL');
+    assert.match(
+      fs.readFileSync(
+        path.join(tmp, 'src/app/remotes/loaders.generated.ts'),
+        'utf8',
+      ),
+      /demoRemote/,
+    );
+  });
+});
+
+test('shell accepts multiple --remote flags', () => {
+  withTempCopy((tmp) => {
+    const r = init(tmp, [
+      '--role=shell',
+      '--name=host',
+      '--remote=demoRemote:checkout',
+      '--remote=billingRemote:billing:./Billing:BILLING_REMOTE_URL',
+    ]);
+    assert.equal(r.status, 0, r.stderr);
+    const meta = JSON.parse(
+      fs.readFileSync(path.join(tmp, 'starter.role.json'), 'utf8'),
+    );
+    assert.equal(meta.remotes.length, 2);
+    assert.equal(meta.remotes[0].alias, 'demoRemote');
+    assert.equal(meta.remotes[0].federationName, 'checkout');
+    assert.equal(meta.remotes[1].alias, 'billingRemote');
+    assert.equal(meta.remotes[1].expose, './Billing');
+    assert.equal(meta.remotes[1].urlEnv, 'BILLING_REMOTE_URL');
+    const loaders = fs.readFileSync(
+      path.join(tmp, 'src/app/remotes/loaders.generated.ts'),
+      'utf8',
+    );
+    assert.match(loaders, /demoRemote/);
+    assert.match(loaders, /billingRemote/);
+    assert.match(loaders, /billingRemote\/Billing/);
   });
 });
 
