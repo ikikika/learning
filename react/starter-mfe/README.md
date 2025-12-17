@@ -45,6 +45,7 @@ Example multi-repo naming:
 ```bash
 # remote clone
 npm run init -- --role=remote --name=checkout
+# prints a remotes[] object + --remote=… flag to paste into the shell
 
 # shell clone — one or more remotes
 npm run init -- --role=shell --name=host \

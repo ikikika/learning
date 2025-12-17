@@ -18,6 +18,7 @@ const {
   defaultDemoRemote,
   generateLoadersSource,
   parseRemoteFlag,
+  shellRemoteSnippetForApp,
 } = require('./remotes-config.cjs');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -285,6 +286,17 @@ function main() {
         `Remote: alias=${r.alias} federation=${r.federationName} expose=${r.expose} urlEnv=${r.urlEnv}`,
       );
     }
+  }
+  if (role === 'remote') {
+    const snippet = shellRemoteSnippetForApp(name);
+    console.log('');
+    console.log('Copy into shell starter.role.json → remotes[]:');
+    console.log('---');
+    console.log(JSON.stringify(snippet, null, 2));
+    console.log('---');
+    console.log(
+      `Or re-init shell with: --remote=${snippet.alias}:${snippet.name}:${snippet.expose}:${snippet.urlEnv}`,
+    );
   }
 }
 

@@ -45,6 +45,22 @@ function defaultDemoRemote(name = DEFAULT_REMOTE_NAME) {
 }
 
 /**
+ * Suggested shell remotes[] entry for a remote repo after init --role=remote.
+ * Alias defaults to the federation container name so it is unique per remote.
+ */
+function shellRemoteSnippetForApp(name, expose = DEFAULT_EXPOSE) {
+  const federationName = toFederationName(name);
+  const alias = federationName;
+  return normalizeRemoteEntry({
+    alias,
+    name,
+    federationName,
+    expose,
+    urlEnv: aliasToUrlEnv(alias),
+  });
+}
+
+/**
  * Normalize one remote entry (fills federationName / defaults).
  * @param {object} entry
  */
@@ -182,6 +198,7 @@ module.exports = {
   DEFAULT_EXPOSE,
   aliasToUrlEnv,
   defaultDemoRemote,
+  shellRemoteSnippetForApp,
   normalizeRemoteEntry,
   remotesFromMeta,
   parseRemoteFlag,

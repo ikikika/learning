@@ -94,6 +94,14 @@ test('--name writes metadata, package.json, and federationName', () => {
       fs.readFileSync(path.join(tmp, 'package.json'), 'utf8'),
     );
     assert.equal(pkg.name, 'my-checkout');
+    assert.match(r.stdout, /Copy into shell starter\.role\.json/);
+    assert.match(r.stdout, /"alias": "myCheckout"/);
+    assert.match(r.stdout, /"federationName": "myCheckout"/);
+    assert.match(r.stdout, /"urlEnv": "MY_CHECKOUT_URL"/);
+    assert.match(
+      r.stdout,
+      /--remote=myCheckout:my-checkout:\.\/Demo:MY_CHECKOUT_URL/,
+    );
   });
 });
 
