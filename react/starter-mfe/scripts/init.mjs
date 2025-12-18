@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
  * Init CLI — configures this repository as exactly one role.
+ * Does not prune/restore src files (no templates). Role is metadata + webpack.
  * @see specs/001-react-role-scaffold/contracts/init-cli.md
  */
 import fs from 'node:fs';
@@ -25,22 +26,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 
 const ALLOWED_ROLES = new Set(['standalone', 'shell', 'remote']);
-
-const DEMO_TEMPLATE = path.join(ROOT, 'templates/role-assets/demo');
-const SHELL_TEMPLATE = path.join(ROOT, 'templates/role-assets/shell');
-
-const DEMO_LIVE = [
-  'features/demo',
-  'pages/HomePage',
-];
-
-const SHELL_LIVE = [
-  'pages/ShellHomePage',
-  'app/remotes/loadDemoRemote.tsx',
-  'app/remotes/loadRemote.tsx',
-  'app/remotes/loaders.generated.ts',
-  'app/routes/shellRoutes.tsx',
-];
 
 function parseFlagValue(argv, longName) {
   const eq = `--${longName}=`;
@@ -91,53 +76,6 @@ function assertValidName(label, value) {
     fail(
       `Invalid ${label}. Use a camelCase identifier or lowercase npm-style name (e.g. myApp, my-app, or @scope/my-app)`,
     );
-  }
-}
-
-function rmLive(relFromSrc) {
-  const target = path.join(ROOT, 'src', relFromSrc);
-  if (fs.existsSync(target)) {
-    fs.rmSync(target, { recursive: true, force: true });
-  }
-}
-
-function copyDir(src, dest) {
-  fs.mkdirSync(dest, { recursive: true });
-  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
-    if (entry.name === '.gitkeep') continue;
-    const from = path.join(src, entry.name);
-    const to = path.join(dest, entry.name);
-    if (entry.isDirectory()) {
-      copyDir(from, to);
-    } else {
-      fs.mkdirSync(path.dirname(to), { recursive: true });
-      fs.copyFileSync(from, to);
-    }
-  }
-}
-
-/** Straight-copy restore: templates mirror src/ relative paths under demo|shell */
-function restoreFromTemplate(templateRoot, relativePaths) {
-  for (const rel of relativePaths) {
-    const from = path.join(templateRoot, rel);
-    const to = path.join(ROOT, 'src', rel);
-    if (!fs.existsSync(from)) {
-      console.warn(`Warning: template missing ${from}`);
-      continue;
-    }
-    if (fs.statSync(from).isDirectory()) {
-      fs.rmSync(to, { recursive: true, force: true });
-      copyDir(from, to);
-    } else {
-      fs.mkdirSync(path.dirname(to), { recursive: true });
-      fs.copyFileSync(from, to);
-    }
-  }
-}
-
-function neverDeleteTemplates() {
-  if (!fs.existsSync(DEMO_TEMPLATE) || !fs.existsSync(SHELL_TEMPLATE)) {
-    fail('templates/role-assets/{demo,shell} must exist and are never deleted');
   }
 }
 
@@ -219,20 +157,6 @@ function patchReadme(role, name) {
   fs.writeFileSync(readmePath, text, 'utf8');
 }
 
-function initStandaloneOrRemote() {
-  for (const rel of SHELL_LIVE) {
-    rmLive(rel);
-  }
-  restoreFromTemplate(DEMO_TEMPLATE, DEMO_LIVE);
-}
-
-function initShell() {
-  for (const rel of DEMO_LIVE) {
-    rmLive(rel);
-  }
-  restoreFromTemplate(SHELL_TEMPLATE, SHELL_LIVE);
-}
-
 function main() {
   const {
     role,
@@ -264,13 +188,10 @@ function main() {
     fail('starter.role.json already exists; re-init requires --force');
   }
 
-  neverDeleteTemplates();
-
+  // Role selection is metadata + webpack only. Live src/ keeps all sample
+  // assets; do not prune/restore. Prefer one role per clone and avoid switching.
   if (role === 'shell') {
-    initShell();
     writeLoadersGenerated(remotes);
-  } else {
-    initStandaloneOrRemote();
   }
 
   writeMetadata({ role, name, remotes });

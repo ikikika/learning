@@ -29,28 +29,21 @@ npm equivalent (e.g. `npm run init -- --role=shell --remote=demoRemote:checkout`
 | Both `--remote` and `--remote-name` | non-zero | Use one or the other |
 | Duplicate remote alias | non-zero | Duplicate alias |
 | Metadata exists, no `--force` | non-zero | Re-init requires `--force` |
-| Success | 0 | Writes metadata; updates README; prune/restore as needed |
+| Success | 0 | Writes metadata; updates README; shell regenerates loaders |
 
 ## Side effects on success
 
 1. Write/overwrite `starter.role.json` ([role-metadata.schema.json](./role-metadata.schema.json)), including `name`, `federationName`, and (shell) `remotes[]`.
 2. Update README role + app name + start instructions.
 3. When `--name` is provided, set `package.json` `"name"` to that value.
-4. Webpack reads `remotes[]` for Module Federation `remotes` map and injects config into the app.
-5. Shell init generates `src/app/remotes/loaders.generated.ts` with a static `import()` per remote alias.
-6. **Never delete** `templates/role-assets/demo/` or `templates/role-assets/shell/`.
-7. Templates **mirror `src/` relative paths**; restore is a **straight copy**
-   into matching `src/` destinations (git checkout alone is **not** sufficient).
-8. **`--role=shell`**:
-   - Delete live `src/features/demo` and `src/pages/HomePage`.
-   - Restore shell-only live paths from `templates/role-assets/shell/` mirroring:
-     - `pages/ShellHomePage/` → `src/pages/ShellHomePage/`
-     - `app/remotes/*` → `src/app/remotes/*`
-     - `app/routes/shellRoutes.tsx` → `src/app/routes/shellRoutes.tsx`
-9. **`--role=standalone` or `remote`** (including after prior shell with
-   `--force`):
-   - Delete live shell-only sample assets under
-     `src/pages/ShellHomePage/`, `src/app/remotes/`, and
-     `src/app/routes/shellRoutes.tsx`.
-   - Restore live `src/features/demo` and `src/pages/HomePage` from
-     `templates/role-assets/demo/`.
+4. Webpack reads role / `remotes[]` from metadata (no src file prune).
+5. Shell init regenerates `src/app/remotes/loaders.generated.ts` with a static `import()` per remote alias.
+6. **Does not** delete or restore live `src/` trees. Sample assets for all roles live under `src/` permanently; prefer one role per clone and avoid switching.
+
+## Role behavior (runtime)
+
+| Role | Effect |
+|------|--------|
+| `standalone` | Webpack: no remotes/exposes; routes → standalone |
+| `shell` | Webpack remotes from `remotes[]`; routes → shell; loaders generated |
+| `remote` | Webpack exposes `./Demo`; routes → remote; prints shell `remotes[]` snippet |

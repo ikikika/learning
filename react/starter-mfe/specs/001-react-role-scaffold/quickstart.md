@@ -31,15 +31,11 @@ npm run init -- --role=standalone   # or shell | remote
 Expected after success:
 
 - `starter.role.json` + README role match
-- Canonical `src/` + `src/styles/tokens.css`
-- `templates/role-assets/demo/` and `templates/role-assets/shell/` present
-  (mirror `src/` paths; never deleted by init)
-- If `shell`: live `src/features/demo` and `src/pages/HomePage` **absent**;
-  `ShellHomePage` + remotes adapters present (from shell templates)
-- If `standalone`|`remote`: live demo + `HomePage` present; live shell-only
-  sample assets **absent**
+- Canonical `src/` (demo, HomePage, ShellHomePage, and remotes adapters may all
+  coexist; init does not prune)
+- If `shell`: `loaders.generated.ts` regenerated; remotes map from metadata
 - If `remote`: `./Demo` types + **`embedded?: boolean`** + contract version
-  **`1.0.0`** documented
+  **`1.0.0`** documented; shell `remotes[]` snippet printed
 
 ## Local run
 
@@ -76,14 +72,12 @@ npm start
 3. Offline message; AA on remote standalone primary route.
 4. Confirm no live shell-only sample assets.
 
-### V4 — Init guardrails + symmetric restore
+### V4 — Init guardrails (no src prune)
 
 1. Missing/invalid `--role` → fail.
 2. Re-init without `--force` → refuse.
-3. `--force --role=shell` then `--force --role=remote` → demo + HomePage from
-   `templates/role-assets/demo/`; shell-only live assets gone.
-4. `--force --role=shell` again → shell assets from
-   `templates/role-assets/shell/`; demo live paths gone.
+3. `--force` to another role updates metadata (and shell loaders) but does **not**
+   delete demo/shell sample paths under `src/`.
 
 ### V5 — Per-role automated smoke
 

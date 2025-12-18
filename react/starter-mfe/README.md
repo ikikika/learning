@@ -62,15 +62,10 @@ Re-init: `npm run init -- --role=shell --name=host --force` (requires `--force` 
 | Role | Behavior |
 |------|----------|
 | `standalone` | Single app; demo home; no MF remotes/exposes |
-| `shell` | Host; one `./Demo` slot with `embedded={true}`; remotes map; prunes live demo + HomePage |
+| `shell` | Host; remote slot(s) with `embedded={true}`; remotes map + generated loaders |
 | `remote` | Dual-mode: standalone demo + federated `./Demo` expose |
 
-## Symmetric prune / restore
-
-Templates mirror `src/` under `templates/role-assets/demo/` and `templates/role-assets/shell/`. Init never deletes templates. Restore is a straight copy into matching `src/` paths (git checkout alone is not sufficient).
-
-- **shell**: prune `src/features/demo`, `src/pages/HomePage`; restore shell assets from `templates/role-assets/shell/`
-- **standalone / remote**: prune shell-only live assets; restore demo + HomePage from `templates/role-assets/demo/`
+Init only writes `starter.role.json`, README, optional `package.json` name, and (shell) `loaders.generated.ts`. It does **not** prune or restore `src/` — keep one role per clone; avoid switching.
 
 ## Public `./Demo` API
 

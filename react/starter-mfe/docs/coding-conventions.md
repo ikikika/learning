@@ -46,8 +46,8 @@ src/features/<name>/
 - One role per clone after `npm run init -- --role=…`.
 - Federated `./Demo` uses `embedded?: boolean`; when `embedded={true}`, Demo
   must not take over document theme or service worker registration.
-- Symmetric prune/restore via `templates/role-assets/{demo,shell}/` — never
-  delete templates from init.
+- Init does not prune/restore `src/`; sample assets for shell and demo coexist
+  under `src/`. Prefer not switching roles on the same clone.
 
 ## Styling & UI
 

@@ -3,8 +3,6 @@
 ## Scope
 
 Applies when role is `remote` (and when a shell consumes this remote).
-When role is `shell`, live sample source for this entry MUST be pruned
-(see Symmetric prune).
 
 ## Expose
 
@@ -41,14 +39,11 @@ When role is `shell`, live sample source for this entry MUST be pruned
 | Mount | Pass `embedded={true}` |
 | Failure | User-visible `RemoteFallback` for missing, unreachable, **empty/invalid URL**, or missing remotes map entry |
 
-## Symmetric prune (FR-025)
+## Source layout
 
-| Role | Pruned live paths | Restored from |
-|------|-------------------|---------------|
-| shell | `src/features/demo`, `src/pages/HomePage` | `templates/role-assets/shell/` → `pages/ShellHomePage/`, `app/remotes/loadDemoRemote.tsx`, `app/routes/shellRoutes.tsx` |
-| standalone \| remote | live shell-only sample assets | `templates/role-assets/demo/` → demo + HomePage |
-
-Templates mirror `src/` relative paths; never deleted by init.
+Demo and shell sample assets both live under `src/` permanently. Init does not
+prune demo source when the role is shell (webpack/routes select the active
+surface). Prefer one role per clone.
 
 ## Compose smoke (FR-023 / SC-015 / SC-019)
 

@@ -22,7 +22,7 @@ const SKIP = new Set([
 ]);
 
 function withTempCopy(fn) {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'starter-init-restore-'));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'starter-init-noprune-'));
   fs.cpSync(ROOT, tmp, {
     recursive: true,
     filter: (src) => !SKIP.has(path.basename(src)),
@@ -41,39 +41,30 @@ function init(cwd, args) {
   });
 }
 
-test('shell then --force remote restores demo and prunes shell-only', () => {
+test('init does not prune demo or shell sample assets', () => {
   withTempCopy((tmp) => {
-    assert.equal(init(tmp, ['--role=shell']).status, 0);
-    assert.equal(fs.existsSync(path.join(tmp, 'src/features/demo')), false);
-    const r = init(tmp, ['--role=remote', '--force']);
-    assert.equal(r.status, 0, r.stderr);
     assert.equal(fs.existsSync(path.join(tmp, 'src/features/demo')), true);
     assert.equal(fs.existsSync(path.join(tmp, 'src/pages/HomePage')), true);
-    assert.equal(fs.existsSync(path.join(tmp, 'src/pages/ShellHomePage')), false);
-    assert.equal(
-      fs.existsSync(path.join(tmp, 'src/app/remotes/loadDemoRemote.tsx')),
-      false,
-    );
-    assert.equal(
-      fs.existsSync(path.join(tmp, 'src/app/remotes/loadRemote.tsx')),
-      false,
-    );
-    assert.equal(
-      fs.existsSync(path.join(tmp, 'src/app/remotes/loaders.generated.ts')),
-      false,
-    );
-  });
-});
-
-test('--force shell restores shell templates', () => {
-  withTempCopy((tmp) => {
-    assert.equal(init(tmp, ['--role=standalone']).status, 0);
-    const r = init(tmp, ['--role=shell', '--force']);
-    assert.equal(r.status, 0, r.stderr);
     assert.equal(fs.existsSync(path.join(tmp, 'src/pages/ShellHomePage')), true);
     assert.equal(
-      fs.existsSync(path.join(tmp, 'src/app/routes/shellRoutes.tsx')),
+      fs.existsSync(path.join(tmp, 'src/app/remotes/loadRemote.tsx')),
       true,
     );
+
+    const shell = init(tmp, ['--role=shell']);
+    assert.equal(shell.status, 0, shell.stderr);
+    assert.equal(fs.existsSync(path.join(tmp, 'src/features/demo')), true);
+    assert.equal(fs.existsSync(path.join(tmp, 'src/pages/HomePage')), true);
+    assert.equal(fs.existsSync(path.join(tmp, 'src/pages/ShellHomePage')), true);
+    assert.equal(
+      fs.existsSync(path.join(tmp, 'src/app/remotes/loaders.generated.ts')),
+      true,
+    );
+
+    const remote = init(tmp, ['--role=remote', '--force']);
+    assert.equal(remote.status, 0, remote.stderr);
+    assert.equal(fs.existsSync(path.join(tmp, 'src/features/demo')), true);
+    assert.equal(fs.existsSync(path.join(tmp, 'src/pages/ShellHomePage')), true);
+    assert.equal(fs.existsSync(path.join(tmp, 'templates')), false);
   });
 });

@@ -26,7 +26,8 @@ repository. Humans should follow the same rules; full detail lives under `docs/`
   `docs/ui-context.md`.
 - Keep federated Demo suppression via `embedded={true}` on the Demo module;
   do not invent undocumented globals for host detection.
-- Do not delete `templates/role-assets/**` during init or refactors.
+- Prefer one role per clone; init does not prune/restore `src/` (no
+  `templates/role-assets`).
 - Do not commit secrets; `.env` is gitignored — update `.env.example` when
   adding new env keys.
 - Do not create commits unless the user explicitly asks.

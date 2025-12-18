@@ -29,28 +29,21 @@
 ```text
 [absent] --init --role=R--> [present: R]
 [present: R] --init (no force)--> [error]
-[present: R] --init --role=R2 --force--> [present: R2] (+ symmetric prune/restore)
+[present: R] --init --role=R2 --force--> [present: R2] (metadata only; src/ unchanged)
 ```
 
-### Role Asset Templates
+### Live sample assets
 
-| Field | Type | Rules |
-|-------|------|-------|
-| demoPath | string | `templates/role-assets/demo/` |
-| shellPath | string | `templates/role-assets/shell/` |
-| layout | — | Mirrors live `src/` relative paths (straight copy restore) |
-| demoContents | — | e.g. `features/demo/`, `pages/HomePage/` |
-| shellContents | — | `pages/ShellHomePage/`, `app/remotes/` (loaders + LoadRemote), `app/routes/shellRoutes.tsx` |
-| neverDeleted | — | Init MUST NOT delete templates buckets |
+All role sample paths live permanently under `src/` (demo, HomePage, ShellHomePage,
+remotes adapters). Init does **not** prune or restore files. Prefer one role per
+clone; avoid switching.
 
 ### Scaffold Result
 
 | Field | Type | Rules |
 |-------|------|-------|
 | role | Repository Role | From init |
-| layout | — | Canonical `src/` |
-| shellLive | — | If shell: no live demo/HomePage; has ShellHomePage + remotes adapters |
-| demoLive | — | If standalone\|remote: has demo + HomePage; no live shell-only sample assets |
+| layout | — | Canonical `src/` (all sample assets may coexist) |
 | pwaBaseline | — | Manifest + icons + SW |
 | a11yCi | — | WCAG 2.2 AA tooling in CI |
 | guidance | — | README role + start + contract version |
@@ -123,8 +116,10 @@
 
 ## Role → sample capability
 
-| Role | Live sample | Pruned live |
-|------|-------------|-------------|
-| standalone | `features/demo` + `HomePage` | shell-only assets |
-| shell | `ShellHomePage` + remote slot | `features/demo` + `HomePage` |
-| remote | `features/demo` + `HomePage`; expose `./Demo` | shell-only assets |
+| Role | Active surface (via webpack/routes) |
+|------|-------------------------------------|
+| standalone | `features/demo` + `HomePage` |
+| shell | `ShellHomePage` + remote slot(s) |
+| remote | `features/demo` + `HomePage`; expose `./Demo` |
+
+All of the above sample paths may coexist under `src/`; init does not prune.
