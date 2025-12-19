@@ -93,16 +93,24 @@ async function main() {
     { cwd: remoteDir },
   );
 
-  const remoteProc = spawn('npx', ['webpack', 'serve', '--mode', 'development'], {
-    cwd: remoteDir,
-    stdio: 'inherit',
-    env: { ...process.env, DEMO_REMOTE_URL: demoRemoteUrl },
-  });
-  const shellProc = spawn('npx', ['webpack', 'serve', '--mode', 'development'], {
-    cwd: shellDir,
-    stdio: 'inherit',
-    env: { ...process.env, DEMO_REMOTE_URL: demoRemoteUrl },
-  });
+  const remoteProc = spawn(
+    'npx',
+    ['webpack', 'serve', '--config', 'config/webpack.dev.js'],
+    {
+      cwd: remoteDir,
+      stdio: 'inherit',
+      env: { ...process.env, DEMO_REMOTE_URL: demoRemoteUrl },
+    },
+  );
+  const shellProc = spawn(
+    'npx',
+    ['webpack', 'serve', '--config', 'config/webpack.dev.js'],
+    {
+      cwd: shellDir,
+      stdio: 'inherit',
+      env: { ...process.env, DEMO_REMOTE_URL: demoRemoteUrl },
+    },
+  );
 
   const cleanup = () => {
     shellProc.kill('SIGTERM');

@@ -3,21 +3,20 @@ const fs = require('fs');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { ModuleFederationPlugin } = require('webpack').container;
-const { GenerateSW } = require('workbox-webpack-plugin');
 const {
   getPortForRole,
   getDevHost,
   getDemoRemoteUrl,
   getRemoteUrlsByAlias,
   getApiBaseUrl,
-} = require('./scripts/load-env.cjs');
+} = require('../scripts/load-env.cjs');
 const {
   defaultNameForRole,
   toFederationName,
-} = require('./scripts/app-name.cjs');
-const { remotesFromMeta } = require('./scripts/remotes-config.cjs');
+} = require('../scripts/app-name.cjs');
+const { remotesFromMeta } = require('../scripts/remotes-config.cjs');
 
-const ROOT = __dirname;
+const ROOT = path.resolve(__dirname, '..');
 
 function readMeta() {
   const metaPath = path.join(ROOT, 'starter.role.json');
@@ -75,7 +74,6 @@ function federationOptions(role, federationName, remoteEntries, urlsByAlias) {
     };
   }
 
-  // standalone: no remotes / exposes
   return {
     name: federationName,
     filename: 'remoteEntry.js',
@@ -85,8 +83,7 @@ function federationOptions(role, federationName, remoteEntries, urlsByAlias) {
   };
 }
 
-module.exports = (env, argv) => {
-  const isProd = argv.mode === 'production';
+function getAppContext() {
   const meta = readMeta();
   const role = meta.role || 'standalone';
   const federationName = resolveFederationName(meta);
@@ -97,61 +94,34 @@ module.exports = (env, argv) => {
   const demoRemoteUrl = getDemoRemoteUrl();
   const apiBaseUrl = getApiBaseUrl();
 
-  const plugins = [
-      new HtmlWebpackPlugin({
-        template: path.join(ROOT, 'public/index.html'),
-        title: appTitle,
-      }),
-      new webpack.DefinePlugin({
-        __STARTER_ROLE__: JSON.stringify(role),
-        __STARTER_DEMO_REMOTE_URL_DEFAULT__: JSON.stringify(demoRemoteUrl),
-        __STARTER_REMOTES_CONFIG__: JSON.stringify(
-          remoteEntries.map(({ alias, name, federationName: fed, expose, urlEnv }) => ({
-            alias,
-            name,
-            federationName: fed,
-            expose,
-            urlEnv,
-          })),
-        ),
-        __STARTER_REMOTES_URLS__: JSON.stringify(urlsByAlias),
-        'process.env.API_BASE_URL': JSON.stringify(apiBaseUrl),
-      }),
-      new ModuleFederationPlugin(
-        federationOptions(role, federationName, remoteEntries, urlsByAlias),
-      ),
-    ];
+  return {
+    meta,
+    role,
+    federationName,
+    remoteEntries,
+    urlsByAlias,
+    appTitle,
+    port,
+    demoRemoteUrl,
+    apiBaseUrl,
+  };
+}
 
-    if (isProd) {
-      plugins.push(
-        new GenerateSW({
-          clientsClaim: true,
-          skipWaiting: true,
-          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-          runtimeCaching: [
-            {
-              urlPattern: ({ request }) => request.destination === 'document',
-              handler: 'NetworkFirst',
-              options: { cacheName: 'pages' },
-            },
-          ],
-        }),
-      );
-    }
+function createCommonConfig(ctx) {
+  const {
+    role,
+    federationName,
+    remoteEntries,
+    urlsByAlias,
+    appTitle,
+    demoRemoteUrl,
+    apiBaseUrl,
+  } = ctx;
 
-    return {
+  return {
     entry: path.join(ROOT, 'src/main.tsx'),
     output: {
       path: path.join(ROOT, 'dist'),
-      filename: isProd ? '[name].[contenthash].js' : '[name].js',
-      // Shell/host: keep relative/`auto` so assets match the page origin.
-      // Remotes need an absolute publicPath because remoteEntry is injected via a
-      // dynamic <script> where document.currentScript is null.
-      publicPath:
-        process.env.PUBLIC_PATH ||
-        (role === 'remote' && !isProd
-          ? `http://${getDevHost()}:${port}/`
-          : 'auto'),
       clean: true,
     },
     resolve: {
@@ -204,22 +174,38 @@ module.exports = (env, argv) => {
         },
       ],
     },
-    plugins,
-    devServer: {
-      port,
-      historyApiFallback: true,
-      hot: true,
-      allowedHosts: 'all',
-      client: {
-        overlay: false,
-      },
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-      static: {
-        directory: path.join(ROOT, 'public'),
-      },
-    },
-    devtool: isProd ? 'source-map' : 'eval-source-map',
+    plugins: [
+      new HtmlWebpackPlugin({
+        template: path.join(ROOT, 'public/index.html'),
+        title: appTitle,
+      }),
+      new webpack.DefinePlugin({
+        __STARTER_ROLE__: JSON.stringify(role),
+        __STARTER_DEMO_REMOTE_URL_DEFAULT__: JSON.stringify(demoRemoteUrl),
+        __STARTER_REMOTES_CONFIG__: JSON.stringify(
+          remoteEntries.map(
+            ({ alias, name, federationName: fed, expose, urlEnv }) => ({
+              alias,
+              name,
+              federationName: fed,
+              expose,
+              urlEnv,
+            }),
+          ),
+        ),
+        __STARTER_REMOTES_URLS__: JSON.stringify(urlsByAlias),
+        'process.env.API_BASE_URL': JSON.stringify(apiBaseUrl),
+      }),
+      new ModuleFederationPlugin(
+        federationOptions(role, federationName, remoteEntries, urlsByAlias),
+      ),
+    ],
   };
+}
+
+module.exports = {
+  ROOT,
+  getDevHost,
+  getAppContext,
+  createCommonConfig,
 };

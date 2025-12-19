@@ -7,7 +7,10 @@ import test from 'node:test';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
 test('webpack remote role exposes ./Demo', () => {
-  const webpack = fs.readFileSync(path.join(ROOT, 'webpack.config.js'), 'utf8');
+  const webpack = fs.readFileSync(
+    path.join(ROOT, 'config/webpack.common.js'),
+    'utf8',
+  );
   assert.match(webpack, /['"]\.\/Demo['"]/);
   assert.match(webpack, /features\/demo/);
 });

@@ -9,5 +9,5 @@
     "resolveJsonModule": true,
     "noEmit": true
   },
-  "include": ["webpack.config.js", "jest.config.js", "playwright.config.ts"]
+  "include": ["config/**/*.js", "jest.config.js", "playwright.config.ts"]
 }

@@ -109,7 +109,10 @@ specs/001-react-role-scaffold/
 starter.role.json
 README.md
 package.json
-webpack.config.js
+config/
+├── webpack.common.js
+├── webpack.dev.js
+└── webpack.prod.js
 public/
 ├── manifest.webmanifest
 └── icons/

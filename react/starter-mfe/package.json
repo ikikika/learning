@@ -8,8 +8,8 @@
   },
   "scripts": {
     "init": "node scripts/init.mjs",
-    "start": "webpack serve --mode development",
-    "build": "webpack --mode production",
+    "start": "webpack serve --config config/webpack.dev.js",
+    "build": "webpack --config config/webpack.prod.js",
     "test": "jest && node --test tests/contract/*.test.mjs",
     "test:e2e": "node scripts/run-e2e.mjs",
     "test:compose": "node scripts/compose-harness.mjs",
@@ -44,6 +44,7 @@
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.0",
+    "webpack-merge": "^6.0.1",
     "workbox-webpack-plugin": "^7.4.1"
   },
   "overrides": {

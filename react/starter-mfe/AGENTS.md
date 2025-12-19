@@ -42,5 +42,5 @@ repository. Humans should follow the same rules; full detail lives under `docs/`
 | Constitution | `.specify/memory/constitution.md` |
 | API routes | `src/core/constants/apiRoutes.ts` |
 | HTTP client | `src/services/httpClient.ts` |
-| Env injection | `scripts/load-env.cjs`, `webpack.config.js` |
+| Env injection | `scripts/load-env.cjs`, `config/webpack.*.js` |
 | Sample feature | `src/features/demo/` |
