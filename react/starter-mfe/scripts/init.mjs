@@ -2,10 +2,13 @@
 /**
  * Init CLI — configures this repository as exactly one role.
  * Does not prune/restore src files (no templates). Role is metadata + webpack.
+ * Flags preferred for CI; missing required values prompt when stdin is a TTY.
  * @see specs/001-react-role-scaffold/contracts/init-cli.md
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import readline from 'node:readline/promises';
+import { stdin as input, stdout as output } from 'node:process';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
@@ -26,7 +29,8 @@ const {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 
-const ALLOWED_ROLES = new Set(['standalone', 'shell', 'remote']);
+const ALLOWED_ROLES = ['standalone', 'shell', 'remote'];
+const ALLOWED_ROLE_SET = new Set(ALLOWED_ROLES);
 
 function parseFlagValue(argv, longName) {
   const eq = `--${longName}=`;
@@ -74,18 +78,136 @@ function portEnvKeyForRole(role) {
   return 'PORT_STANDALONE';
 }
 
-function parsePort(raw) {
-  if (raw == null || raw === '') {
-    fail('--port=<number> required (1–65535)');
-  }
-  if (!/^\d+$/.test(raw)) {
-    fail('Invalid --port. Use an integer from 1 to 65535');
-  }
-  const n = Number(raw);
-  if (!Number.isInteger(n) || n < 1 || n > 65535) {
-    fail('Invalid --port. Use an integer from 1 to 65535');
+function fail(message, code = 1) {
+  console.error(message);
+  process.exit(code);
+}
+
+function canPrompt() {
+  return Boolean(input.isTTY && output.isTTY);
+}
+
+function tryParsePort(raw) {
+  if (raw == null || String(raw).trim() === '') return null;
+  if (!/^\d+$/.test(String(raw).trim())) return null;
+  const n = Number(String(raw).trim());
+  if (!Number.isInteger(n) || n < 1 || n > 65535) return null;
+  return n;
+}
+
+function parsePortOrFail(raw) {
+  const n = tryParsePort(raw);
+  if (n == null) {
+    fail(
+      raw == null || raw === ''
+        ? '--port=<number> required (1–65535)'
+        : 'Invalid --port. Use an integer from 1 to 65535',
+    );
   }
   return n;
+}
+
+function assertValidName(label, value) {
+  if (!isValidPackageName(value)) {
+    fail(
+      `Invalid ${label}. Use a camelCase identifier or lowercase npm-style name (e.g. myApp, my-app, or @scope/my-app)`,
+    );
+  }
+}
+
+async function promptLine(rl, question) {
+  const answer = await rl.question(question);
+  return answer.trim();
+}
+
+async function promptRole(rl) {
+  console.log('Select role:');
+  ALLOWED_ROLES.forEach((r, i) => {
+    console.log(`  ${i + 1}) ${r}`);
+  });
+  for (;;) {
+    const answer = await promptLine(
+      rl,
+      `Role [1-${ALLOWED_ROLES.length} or name]: `,
+    );
+    if (!answer) {
+      console.log('Role is required.');
+      continue;
+    }
+    if (/^\d+$/.test(answer)) {
+      const idx = Number(answer) - 1;
+      if (idx >= 0 && idx < ALLOWED_ROLES.length) return ALLOWED_ROLES[idx];
+    }
+    if (ALLOWED_ROLE_SET.has(answer)) return answer;
+    console.log(`Invalid role. Choose: ${ALLOWED_ROLES.join(', ')}`);
+  }
+}
+
+async function promptName(rl, role) {
+  const fallback = defaultNameForRole(role);
+  for (;;) {
+    const answer = await promptLine(rl, `App name [${fallback}]: `);
+    const value = answer || fallback;
+    if (isValidPackageName(value)) return { name: value, provided: Boolean(answer) };
+    console.log(
+      'Invalid name. Use camelCase or lowercase npm-style (e.g. myApp, my-app, @scope/my-app)',
+    );
+  }
+}
+
+async function promptPort(rl) {
+  for (;;) {
+    const answer = await promptLine(rl, 'Port (1–65535): ');
+    const n = tryParsePort(answer);
+    if (n != null) return n;
+    console.log('Enter an integer port from 1 to 65535.');
+  }
+}
+
+/**
+ * Fill missing role / name / port via prompts when TTY; otherwise fail like flags.
+ */
+async function resolveInteractive(args) {
+  let { role, name: nameArg, port: portArg } = args;
+  let nameProvided = nameArg != null;
+
+  const needsPrompt =
+    !role || portArg == null || portArg === '' || nameArg == null;
+
+  if (!needsPrompt) {
+    return { role, nameArg, nameProvided, portArg };
+  }
+
+  if (!canPrompt()) {
+    if (!role) fail('--role=standalone|shell|remote required');
+    if (portArg == null || portArg === '') {
+      fail('--port=<number> required (1–65535)');
+    }
+    return { role, nameArg, nameProvided, portArg };
+  }
+
+  const rl = readline.createInterface({ input, output });
+  try {
+    if (!role) {
+      role = await promptRole(rl);
+    } else if (!ALLOWED_ROLE_SET.has(role)) {
+      fail(`Invalid --role. Allowed: ${ALLOWED_ROLES.join(', ')}`);
+    }
+
+    if (nameArg == null) {
+      const prompted = await promptName(rl, role);
+      nameArg = prompted.name;
+      nameProvided = prompted.provided;
+    }
+
+    if (portArg == null || portArg === '') {
+      portArg = String(await promptPort(rl));
+    }
+  } finally {
+    rl.close();
+  }
+
+  return { role, nameArg, nameProvided, portArg };
 }
 
 function patchEnvPort(role, port) {
@@ -109,19 +231,6 @@ function patchEnvPort(role, port) {
   }
   if (!text.endsWith('\n')) text += '\n';
   fs.writeFileSync(envPath, text, 'utf8');
-}
-
-function fail(message, code = 1) {
-  console.error(message);
-  process.exit(code);
-}
-
-function assertValidName(label, value) {
-  if (!isValidPackageName(value)) {
-    fail(
-      `Invalid ${label}. Use a camelCase identifier or lowercase npm-style name (e.g. myApp, my-app, or @scope/my-app)`,
-    );
-  }
 }
 
 function buildShellRemotes({ remoteNameArg, remoteFlags }) {
@@ -205,24 +314,28 @@ function patchReadme(role, name) {
   fs.writeFileSync(readmePath, text, 'utf8');
 }
 
-function main() {
+async function main() {
+  const args = parseArgs(process.argv.slice(2));
   const {
-    role,
-    name: nameArg,
-    port: portArg,
     remoteName: remoteNameArg,
     remotes: remoteFlags,
     force,
-  } = parseArgs(process.argv.slice(2));
+  } = args;
+
+  const resolved = await resolveInteractive(args);
+  const role = resolved.role;
+  const nameArg = resolved.nameArg;
+  const nameProvided = resolved.nameProvided;
+  const portArg = resolved.portArg;
 
   if (!role) {
     fail('--role=standalone|shell|remote required');
   }
-  if (!ALLOWED_ROLES.has(role)) {
-    fail(`Invalid --role. Allowed: standalone, shell, remote`);
+  if (!ALLOWED_ROLE_SET.has(role)) {
+    fail(`Invalid --role. Allowed: ${ALLOWED_ROLES.join(', ')}`);
   }
 
-  const port = parsePort(portArg);
+  const port = parsePortOrFail(portArg);
   const name = nameArg ?? defaultNameForRole(role);
   assertValidName('--name', name);
 
@@ -246,7 +359,7 @@ function main() {
 
   writeMetadata({ role, name, remotes });
   patchEnvPort(role, port);
-  if (nameArg) {
+  if (nameProvided) {
     patchPackageName(name);
   }
   patchReadme(role, name);
@@ -276,4 +389,7 @@ function main() {
   }
 }
 
-main();
+main().catch((err) => {
+  console.error(err instanceof Error ? err.message : err);
+  process.exit(1);
+});

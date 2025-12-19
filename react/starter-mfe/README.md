@@ -24,18 +24,19 @@ Start: `npm start` (after `npm install`)
 ```bash
 cp .env.example .env   # if needed
 npm install
-npm run init -- --role=standalone --port=3000 --name=my-app
+npm run init           # interactive prompts for role, name, port
+# or: npm run init -- --role=standalone --port=3000 --name=my-app
 npm start
 ```
 
-Ports are empty in `.env` until init. Required `--port` writes the role’s `PORT_*` key. Optional `PORT` overrides the current role’s port for one process. Each shell remote uses its `urlEnv` (sample: `DEMO_REMOTE_URL`). `API_BASE_URL` is injected into the app for HTTP calls (`src/core/constants/app.ts`).
+Ports are empty in `.env` until init. Required port (flag or prompt) writes the role’s `PORT_*` key. Optional `PORT` overrides the current role’s port for one process. Each shell remote uses its `urlEnv` (sample: `DEMO_REMOTE_URL`). `API_BASE_URL` is injected into the app for HTTP calls (`src/core/constants/app.ts`).
 
-Init flags:
+Init flags (optional on a TTY — missing values are prompted):
 
 | Flag | Purpose |
 |------|---------|
-| `--role` | `standalone` \| `shell` \| `remote` (required) |
-| `--port` | Dev-server port `1`–`65535` (required; writes role `PORT_*` in `.env`) |
+| `--role` | `standalone` \| `shell` \| `remote` (required in CI / non-TTY) |
+| `--port` | Dev-server port `1`–`65535` (required in CI / non-TTY; writes role `PORT_*` in `.env`) |
 | `--name` | App name → metadata, MF container name, and (when set) `package.json` `"name"` |
 | `--remote` | Shell only, repeatable: `alias:name[:expose[:urlEnv]]`. Builds `remotes[]` in `starter.role.json` |
 | `--remote-name` | Shell only shorthand for one `demoRemote:<name>` entry (not with `--remote`) |
@@ -94,7 +95,7 @@ Re-init remote with a new `--name` (and `--force`); update shell `remotes[].expo
 
 | Script | Purpose |
 |--------|---------|
-| `npm run init -- --role=… --port=…` | Role init |
+| `npm run init` | Role init (prompts on TTY; use `--role` / `--port` in CI) |
 | `npm start` / `npm run build` | Dev / production |
 | `npm test` | Jest unit tests |
 | `npm run test:e2e` | Per-role Playwright |

@@ -44,7 +44,7 @@ src/features/<name>/
 
 ## Module Federation / roles
 
-- One role per clone after `npm run init -- --role=… --port=…`.
+- One role per clone after `npm run init` (or `--role=… --port=…`).
 - Federated `./Demo` uses `embedded?: boolean`; when `embedded={true}`, Demo
   must not take over document theme or service worker registration.
 - Init does not prune/restore `src/`; sample assets for shell and demo coexist
