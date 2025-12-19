@@ -53,7 +53,15 @@ export function LoadRemote({ alias }: LoadRemoteProps) {
     if (!urlOk || !loader) return null;
     return lazy(async () => {
       const mod = await loader();
-      const Comp = (mod.Demo ?? mod.default) as DemoComponent | undefined;
+      const exposeName = slot.expose.startsWith('./')
+        ? slot.expose.slice(2)
+        : slot.expose;
+      const Comp = (
+        mod.default ??
+        mod[exposeName] ??
+        mod.App ??
+        mod.Demo
+      ) as DemoComponent | undefined;
       if (!Comp) {
         throw new Error(`Remote ${alias} export missing`);
       }

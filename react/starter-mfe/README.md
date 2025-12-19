@@ -64,22 +64,22 @@ Re-init: `npm run init -- --role=shell --port=3001 --name=host --force` (require
 |------|----------|
 | `standalone` | Single app; demo home; no MF remotes/exposes |
 | `shell` | Host; remote slot(s) with `embedded={true}`; remotes map + generated loaders |
-| `remote` | Dual-mode: standalone demo + federated `./Demo` expose |
+| `remote` | Dual-mode: standalone demo + federated PascalCase expose → `App.tsx` |
 
 Init only writes `starter.role.json`, README, `.env` port, optional `package.json` name, and (shell) `loaders.generated.ts`. It does **not** prune or restore `src/` — keep one role per clone; avoid switching.
 
-## Public `./Demo` API
+## Public federated expose
 
-- Module: `src/features/demo` (`index.ts`)
-- Props: `embedded?: boolean` — shell MUST pass `embedded={true}`
-- When `embedded={true}`, the **Demo module** does not apply document `data-theme` or register a competing service worker
-- Remote bootstrap `ThemeProvider` / `registerPwa` apply only for the remote **standalone entry**
-- Contract version: **`1.0.0`**
+- Expose key: PascalCase of init `--name` (e.g. `my-checkout` → `./MyCheckout`)
+- Module: `src/app/App.tsx` (default + named `App`; accepts `embedded?: boolean`)
+- Shell MUST pass `embedded={true}` when mounting
+- Providers / PWA apply only on the remote **standalone entry**, not via the federated expose
+- Sample feature `src/features/demo` remains the standalone home demo (contract version **`1.0.0`**)
 - Published npm contract package is **deferred** (not required in v1)
 
-### Renaming `./Demo`
+### Renaming the expose
 
-Update Webpack `exposes`, shell remotes map, docs, exported types, `embedded?: boolean` usage, and contract version notes together.
+Re-init remote with a new `--name` (and `--force`); update shell `remotes[].expose` to match.
 
 ## Theming & PWA
 

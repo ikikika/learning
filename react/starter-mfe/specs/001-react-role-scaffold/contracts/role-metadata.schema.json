@@ -21,6 +21,11 @@
       "minLength": 1,
       "description": "Module Federation container name derived from name"
     },
+    "expose": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Remote only: MF expose key (PascalCase of name, e.g. ./Checkout)"
+    },
     "remotes": {
       "type": "array",
       "description": "Shell only: federated remotes loaded by this host",
@@ -43,7 +48,7 @@
           },
           "expose": {
             "type": "string",
-            "description": "Exposed module path (e.g. ./Demo)"
+            "description": "Exposed module path (PascalCase of remote name, e.g. ./Checkout)"
           },
           "urlEnv": {
             "type": "string",

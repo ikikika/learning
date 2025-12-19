@@ -4,10 +4,10 @@
 const {
   DEFAULT_REMOTE_NAME,
   isValidPackageName,
+  toExposePath,
   toFederationName,
 } = require('./app-name.cjs');
 
-const DEFAULT_EXPOSE = './Demo';
 const DEMO_ALIAS = 'demoRemote';
 const DEMO_URL_ENV = 'DEMO_REMOTE_URL';
 
@@ -39,7 +39,7 @@ function defaultDemoRemote(name = DEFAULT_REMOTE_NAME) {
     alias: DEMO_ALIAS,
     name,
     federationName: toFederationName(name),
-    expose: DEFAULT_EXPOSE,
+    expose: toExposePath(name),
     urlEnv: DEMO_URL_ENV,
   };
 }
@@ -47,15 +47,16 @@ function defaultDemoRemote(name = DEFAULT_REMOTE_NAME) {
 /**
  * Suggested shell remotes[] entry for a remote repo after init --role=remote.
  * Alias defaults to the federation container name so it is unique per remote.
+ * Expose defaults to PascalCase of the app name (matches remote webpack exposes).
  */
-function shellRemoteSnippetForApp(name, expose = DEFAULT_EXPOSE) {
+function shellRemoteSnippetForApp(name) {
   const federationName = toFederationName(name);
   const alias = federationName;
   return normalizeRemoteEntry({
     alias,
     name,
     federationName,
-    expose,
+    expose: toExposePath(name),
     urlEnv: aliasToUrlEnv(alias),
   });
 }
@@ -70,7 +71,7 @@ function normalizeRemoteEntry(entry) {
   }
   const alias = entry.alias || DEMO_ALIAS;
   const name = entry.name || alias;
-  const expose = entry.expose || DEFAULT_EXPOSE;
+  const expose = entry.expose || toExposePath(name);
   const urlEnv = entry.urlEnv || aliasToUrlEnv(alias);
   const federationName =
     entry.federationName || toFederationName(name);
@@ -103,14 +104,14 @@ function remotesFromMeta(meta = {}) {
     return meta.remotes.map((r) => normalizeRemoteEntry(r));
   }
   if (meta.remoteName || meta.remoteFederationName) {
+    const name = meta.remoteName || DEFAULT_REMOTE_NAME;
     return [
       normalizeRemoteEntry({
         alias: DEMO_ALIAS,
-        name: meta.remoteName || DEFAULT_REMOTE_NAME,
+        name,
         federationName:
-          meta.remoteFederationName ||
-          toFederationName(meta.remoteName || DEFAULT_REMOTE_NAME),
-        expose: DEFAULT_EXPOSE,
+          meta.remoteFederationName || toFederationName(name),
+        expose: toExposePath(name),
         urlEnv: DEMO_URL_ENV,
       }),
     ];
@@ -134,10 +135,9 @@ function parseRemoteFlag(spec) {
   }
   const alias = parts[0];
   const name = parts[1];
-  let expose = DEFAULT_EXPOSE;
+  let expose = toExposePath(name);
   let urlEnv;
   if (parts.length >= 3) {
-    // expose may itself contain nothing with colons; remaining optional urlEnv
     if (parts[2].startsWith('./')) {
       expose = parts[2];
       if (parts.length >= 4) urlEnv = parts[3];
@@ -154,7 +154,7 @@ function parseRemoteFlag(spec) {
 
 /**
  * MF import path: alias + expose without leading "."
- * e.g. demoRemote + ./Demo → demoRemote/Demo
+ * e.g. demoRemote + ./Checkout → demoRemote/Checkout
  */
 function remoteImportPath(alias, expose) {
   const mod = expose.startsWith('./') ? expose.slice(2) : expose;
@@ -172,7 +172,8 @@ function generateLoadersSource(remotes) {
     '',
     'export type RemoteModule = {',
     '  default?: ComponentType<{ embedded?: boolean }>;',
-    '  Demo?: ComponentType<{ embedded?: boolean }>;',
+    '  App?: ComponentType<{ embedded?: boolean }>;',
+    '  [exportName: string]: ComponentType<{ embedded?: boolean }> | undefined;',
     '};',
     '',
     'export type RemoteLoader = () => Promise<RemoteModule>;',
@@ -195,7 +196,6 @@ function generateLoadersSource(remotes) {
 module.exports = {
   DEMO_ALIAS,
   DEMO_URL_ENV,
-  DEFAULT_EXPOSE,
   aliasToUrlEnv,
   defaultDemoRemote,
   shellRemoteSnippetForApp,

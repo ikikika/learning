@@ -10,7 +10,7 @@ export type RemoteSlotConfig = {
   name: string;
   /** Module Federation container name */
   federationName: string;
-  /** Exposed module path (e.g. ./Demo) */
+  /** Exposed module path (e.g. ./Checkout) */
   expose: string;
   /** Env key used for the remoteEntry URL */
   urlEnv: string;
@@ -112,7 +112,7 @@ export const DEMO_REMOTE_SLOT: RemoteSlotConfig = REMOTE_SLOTS.find(
     alias: 'demoRemote',
     name: 'demoRemote',
     federationName: 'demoRemote',
-    expose: './Demo',
+    expose: './DemoRemote',
     urlEnv: 'DEMO_REMOTE_URL',
   });
 

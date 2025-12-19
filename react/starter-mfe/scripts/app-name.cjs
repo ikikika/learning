@@ -35,6 +35,23 @@ function toFederationName(pkgName) {
     .join('');
 }
 
+/**
+ * PascalCase identifier from a package/app name.
+ * e.g. `my-checkout` → `MyCheckout`, `demoRemote` → `DemoRemote`
+ */
+function toPascalCase(pkgName) {
+  const camel = toFederationName(pkgName);
+  if (!camel) return '';
+  return camel.charAt(0).toUpperCase() + camel.slice(1);
+}
+
+/** MF expose key from app name, e.g. `checkout` → `./Checkout`. */
+function toExposePath(pkgName) {
+  const pascal = toPascalCase(pkgName);
+  if (!pascal) return '';
+  return `./${pascal}`;
+}
+
 function isValidPackageName(value) {
   if (!value || typeof value !== 'string') return false;
   // Already a federation-safe identifier (e.g. demoRemote, shell).
@@ -52,6 +69,8 @@ module.exports = {
   DEFAULT_REMOTE_NAME,
   PACKAGE_NAME_RE,
   toFederationName,
+  toPascalCase,
+  toExposePath,
   isValidPackageName,
   defaultNameForRole,
 };

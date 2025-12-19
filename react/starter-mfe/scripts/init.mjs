@@ -13,6 +13,7 @@ const require = createRequire(import.meta.url);
 const {
   defaultNameForRole,
   isValidPackageName,
+  toExposePath,
   toFederationName,
 } = require('./app-name.cjs');
 const {
@@ -169,6 +170,9 @@ function writeMetadata({ role, name, remotes }) {
   if (role === 'shell') {
     meta.remotes = remotes;
   }
+  if (role === 'remote') {
+    meta.expose = toExposePath(name);
+  }
   fs.writeFileSync(
     path.join(ROOT, 'starter.role.json'),
     `${JSON.stringify(meta, null, 2)}\n`,
@@ -260,6 +264,7 @@ function main() {
   }
   if (role === 'remote') {
     const snippet = shellRemoteSnippetForApp(name);
+    console.log(`Expose: ${toExposePath(name)} → ./src/app/App.tsx`);
     console.log('');
     console.log('Copy into shell starter.role.json → remotes[]:');
     console.log('---');

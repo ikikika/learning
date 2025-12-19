@@ -115,6 +115,7 @@ test('--name writes metadata, package.json, and federationName', () => {
     assert.equal(meta.role, 'remote');
     assert.equal(meta.name, 'my-checkout');
     assert.equal(meta.federationName, 'myCheckout');
+    assert.equal(meta.expose, './MyCheckout');
     assert.equal(envPort(tmp, 'PORT_REMOTE'), '3002');
     const pkg = JSON.parse(
       fs.readFileSync(path.join(tmp, 'package.json'), 'utf8'),
@@ -123,10 +124,11 @@ test('--name writes metadata, package.json, and federationName', () => {
     assert.match(r.stdout, /Copy into shell starter\.role\.json/);
     assert.match(r.stdout, /"alias": "myCheckout"/);
     assert.match(r.stdout, /"federationName": "myCheckout"/);
+    assert.match(r.stdout, /"expose": "\.\/MyCheckout"/);
     assert.match(r.stdout, /"urlEnv": "MY_CHECKOUT_URL"/);
     assert.match(
       r.stdout,
-      /--remote=myCheckout:my-checkout:\.\/Demo:MY_CHECKOUT_URL/,
+      /--remote=myCheckout:my-checkout:\.\/MyCheckout:MY_CHECKOUT_URL/,
     );
   });
 });
@@ -149,7 +151,7 @@ test('shell --remote-name writes remotes[] with demoRemote alias', () => {
     assert.equal(meta.remotes[0].alias, 'demoRemote');
     assert.equal(meta.remotes[0].name, 'my-checkout');
     assert.equal(meta.remotes[0].federationName, 'myCheckout');
-    assert.equal(meta.remotes[0].expose, './Demo');
+    assert.equal(meta.remotes[0].expose, './MyCheckout');
     assert.equal(meta.remotes[0].urlEnv, 'DEMO_REMOTE_URL');
     assert.equal(envPort(tmp, 'PORT_SHELL'), '3001');
     assert.match(
@@ -157,7 +159,7 @@ test('shell --remote-name writes remotes[] with demoRemote alias', () => {
         path.join(tmp, 'src/app/remotes/loaders.generated.ts'),
         'utf8',
       ),
-      /demoRemote/,
+      /demoRemote\/MyCheckout/,
     );
   });
 });
@@ -178,6 +180,7 @@ test('shell accepts multiple --remote flags', () => {
     assert.equal(meta.remotes.length, 2);
     assert.equal(meta.remotes[0].alias, 'demoRemote');
     assert.equal(meta.remotes[0].federationName, 'checkout');
+    assert.equal(meta.remotes[0].expose, './Checkout');
     assert.equal(meta.remotes[1].alias, 'billingRemote');
     assert.equal(meta.remotes[1].expose, './Billing');
     assert.equal(meta.remotes[1].urlEnv, 'BILLING_REMOTE_URL');
@@ -185,7 +188,7 @@ test('shell accepts multiple --remote flags', () => {
       path.join(tmp, 'src/app/remotes/loaders.generated.ts'),
       'utf8',
     );
-    assert.match(loaders, /demoRemote/);
+    assert.match(loaders, /demoRemote\/Checkout/);
     assert.match(loaders, /billingRemote/);
     assert.match(loaders, /billingRemote\/Billing/);
   });

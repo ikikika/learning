@@ -3,7 +3,8 @@ import type { ComponentType } from 'react';
 
 export type RemoteModule = {
   default?: ComponentType<{ embedded?: boolean }>;
-  Demo?: ComponentType<{ embedded?: boolean }>;
+  App?: ComponentType<{ embedded?: boolean }>;
+  [exportName: string]: ComponentType<{ embedded?: boolean }> | undefined;
 };
 
 export type RemoteLoader = () => Promise<RemoteModule>;
@@ -11,5 +12,5 @@ export type RemoteLoader = () => Promise<RemoteModule>;
 export const remoteLoaders: Record<string, RemoteLoader> = {
   demoRemote: () =>
     // @ts-expect-error Module Federation remote — resolved at runtime
-    import('demoRemote/Demo') as Promise<RemoteModule>,
+    import('demoRemote/DemoRemote') as Promise<RemoteModule>,
 };

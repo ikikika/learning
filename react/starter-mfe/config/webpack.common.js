@@ -12,6 +12,7 @@ const {
 } = require('../scripts/load-env.cjs');
 const {
   defaultNameForRole,
+  toExposePath,
   toFederationName,
 } = require('../scripts/app-name.cjs');
 const { remotesFromMeta } = require('../scripts/remotes-config.cjs');
@@ -37,6 +38,14 @@ function resolveFederationName(meta) {
   return toFederationName(defaultNameForRole(role));
 }
 
+/** Remote MF expose key: metadata.expose or PascalCase of app name. */
+function resolveExpose(meta) {
+  if (meta.expose && typeof meta.expose === 'string') return meta.expose;
+  const role = meta.role || 'remote';
+  const name = meta.name || defaultNameForRole(role);
+  return toExposePath(name);
+}
+
 function buildRemotesMap(remoteEntries, urlsByAlias) {
   const remotes = {};
   for (const r of remoteEntries) {
@@ -46,7 +55,13 @@ function buildRemotesMap(remoteEntries, urlsByAlias) {
   return remotes;
 }
 
-function federationOptions(role, federationName, remoteEntries, urlsByAlias) {
+function federationOptions(
+  role,
+  federationName,
+  remoteEntries,
+  urlsByAlias,
+  expose,
+) {
   const shared = {
     react: { singleton: true, requiredVersion: false, eager: false },
     'react-dom': { singleton: true, requiredVersion: false, eager: false },
@@ -67,7 +82,7 @@ function federationOptions(role, federationName, remoteEntries, urlsByAlias) {
       name: federationName,
       filename: 'remoteEntry.js',
       exposes: {
-        './Demo': './src/features/demo',
+        [expose]: './src/app/App.tsx',
       },
       remotes: {},
       shared,
@@ -87,6 +102,7 @@ function getAppContext() {
   const meta = readMeta();
   const role = meta.role || 'standalone';
   const federationName = resolveFederationName(meta);
+  const expose = resolveExpose(meta);
   const remoteEntries = role === 'shell' ? remotesFromMeta(meta) : [];
   const urlsByAlias = getRemoteUrlsByAlias(remoteEntries);
   const appTitle = meta.name || defaultNameForRole(role);
@@ -98,6 +114,7 @@ function getAppContext() {
     meta,
     role,
     federationName,
+    expose,
     remoteEntries,
     urlsByAlias,
     appTitle,
@@ -111,6 +128,7 @@ function createCommonConfig(ctx) {
   const {
     role,
     federationName,
+    expose,
     remoteEntries,
     urlsByAlias,
     appTitle,
@@ -184,11 +202,11 @@ function createCommonConfig(ctx) {
         __STARTER_DEMO_REMOTE_URL_DEFAULT__: JSON.stringify(demoRemoteUrl),
         __STARTER_REMOTES_CONFIG__: JSON.stringify(
           remoteEntries.map(
-            ({ alias, name, federationName: fed, expose, urlEnv }) => ({
+            ({ alias, name, federationName: fed, expose: exp, urlEnv }) => ({
               alias,
               name,
               federationName: fed,
-              expose,
+              expose: exp,
               urlEnv,
             }),
           ),
@@ -197,7 +215,13 @@ function createCommonConfig(ctx) {
         'process.env.API_BASE_URL': JSON.stringify(apiBaseUrl),
       }),
       new ModuleFederationPlugin(
-        federationOptions(role, federationName, remoteEntries, urlsByAlias),
+        federationOptions(
+          role,
+          federationName,
+          remoteEntries,
+          urlsByAlias,
+          expose,
+        ),
       ),
     ],
   };

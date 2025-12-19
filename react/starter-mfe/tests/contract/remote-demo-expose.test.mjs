@@ -6,13 +6,22 @@ import test from 'node:test';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
-test('webpack remote role exposes ./Demo', () => {
+test('webpack remote role exposes App.tsx via PascalCase name', () => {
   const webpack = fs.readFileSync(
     path.join(ROOT, 'config/webpack.common.js'),
     'utf8',
   );
-  assert.match(webpack, /['"]\.\/Demo['"]/);
-  assert.match(webpack, /features\/demo/);
+  assert.match(webpack, /src\/app\/App\.tsx/);
+  assert.match(webpack, /toExposePath|resolveExpose/);
+});
+
+test('toExposePath converts name to PascalCase expose key', async () => {
+  const { createRequire } = await import('node:module');
+  const require = createRequire(import.meta.url);
+  const { toExposePath, toPascalCase } = require('../../scripts/app-name.cjs');
+  assert.equal(toPascalCase('my-checkout'), 'MyCheckout');
+  assert.equal(toExposePath('my-checkout'), './MyCheckout');
+  assert.equal(toExposePath('demoRemote'), './DemoRemote');
 });
 
 test('Demo public API includes embedded?: boolean and CONTRACT_VERSION 1.0.0', () => {
