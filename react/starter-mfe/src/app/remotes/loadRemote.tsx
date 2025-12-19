@@ -50,12 +50,11 @@ export function LoadRemote({ alias }: LoadRemoteProps) {
   const urlOk = isValidRemoteUrl(url);
 
   const LazyRemote = useMemo(() => {
-    if (!urlOk || !loader) return null;
+    if (!slot || !urlOk || !loader) return null;
+    const expose = slot.expose;
     return lazy(async () => {
       const mod = await loader();
-      const exposeName = slot.expose.startsWith('./')
-        ? slot.expose.slice(2)
-        : slot.expose;
+      const exposeName = expose.startsWith('./') ? expose.slice(2) : expose;
       const Comp = (
         mod.default ??
         mod[exposeName] ??
@@ -67,7 +66,7 @@ export function LoadRemote({ alias }: LoadRemoteProps) {
       }
       return { default: Comp };
     });
-  }, [alias, loader, urlOk, url]);
+  }, [alias, loader, slot, urlOk, url]);
 
   if (!slot) {
     return (

@@ -38,7 +38,7 @@ Init flags (optional on a TTY — missing values are prompted):
 | `--role` | `standalone` \| `shell` \| `remote` (required in CI / non-TTY) |
 | `--port` | Dev-server port `1`–`65535` (required in CI / non-TTY; writes role `PORT_*` in `.env`) |
 | `--name` | App name → metadata, MF container name, and (when set) `package.json` `"name"` |
-| `--remote` | Shell only, repeatable: `alias:name[:expose[:urlEnv]]`. Builds `remotes[]` in `starter.role.json` |
+| `--remote` | Shell only, repeatable: `alias:name[:expose[:urlEnv]]`. Builds `remotes[]` in `starter.role.json`. Omit for an empty host (no remotes) |
 | `--remote-name` | Shell only shorthand for one `demoRemote:<name>` entry (not with `--remote`) |
 | `--force` | Required to re-init when `starter.role.json` exists |
 
@@ -49,13 +49,14 @@ Example multi-repo naming:
 npm run init -- --role=remote --port=3002 --name=checkout
 # prints a remotes[] object + --remote=… flag to paste into the shell
 
-# shell clone — one or more remotes
-npm run init -- --role=shell --port=3001 --name=host \
+# shell clone — start with no remotes, or pass one or more
+npm run init -- --role=shell --port=3001 --name=host
+npm run init -- --role=shell --port=3001 --name=host --force \
   --remote=demoRemote:checkout \
   --remote=billingRemote:billing:./Billing:BILLING_REMOTE_URL
 ```
 
-`starter.role.json` then contains a `remotes[]` array. Webpack registers each alias; `src/app/remotes/loaders.generated.ts` gets a static import per alias. Mount extras with `<LoadRemote alias="billingRemote" />` (sample home still uses `demoRemote` via `LoadDemoRemote`).
+With no `--remote` / `--remote-name`, shell `remotes[]` is empty — the left nav shows only “Shell” welcome content. Webpack registers each alias you add; `src/app/remotes/loaders.generated.ts` gets a static import per alias. The shell left nav lists each remote from `REMOTE_SLOTS`; selecting one mounts it via `<LoadRemote alias="…" />` in the right panel.
 
 Re-init: `npm run init -- --role=shell --port=3001 --name=host --force` (requires `--force` when `starter.role.json` exists).
 
@@ -64,7 +65,7 @@ Re-init: `npm run init -- --role=shell --port=3001 --name=host --force` (require
 | Role | Behavior |
 |------|----------|
 | `standalone` | Single app; demo home; no MF remotes/exposes |
-| `shell` | Host; remote slot(s) with `embedded={true}`; remotes map + generated loaders |
+| `shell` | Host; optional remote slot(s) with `embedded={true}`; remotes map + generated loaders (empty until `--remote`) |
 | `remote` | Dual-mode: standalone demo + federated PascalCase expose → `App.tsx` |
 
 Init only writes `starter.role.json`, README, `.env` port, optional `package.json` name, and (shell) `loaders.generated.ts`. It does **not** prune or restore `src/` — keep one role per clone; avoid switching.

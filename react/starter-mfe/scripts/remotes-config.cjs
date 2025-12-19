@@ -97,10 +97,11 @@ function normalizeRemoteEntry(entry) {
 
 /**
  * Resolve remotes[] from metadata, including legacy remoteName fields.
+ * Empty `remotes: []` means no remotes (do not seed a default).
  * @param {object} meta
  */
 function remotesFromMeta(meta = {}) {
-  if (Array.isArray(meta.remotes) && meta.remotes.length > 0) {
+  if (Array.isArray(meta.remotes)) {
     return meta.remotes.map((r) => normalizeRemoteEntry(r));
   }
   if (meta.remoteName || meta.remoteFederationName) {
@@ -116,7 +117,7 @@ function remotesFromMeta(meta = {}) {
       }),
     ];
   }
-  return [defaultDemoRemote()];
+  return [];
 }
 
 /**

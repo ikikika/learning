@@ -19,12 +19,20 @@ test.describe('compose smoke (two workspaces)', () => {
     );
 
     await page.goto(SHELL_URL);
-    await expect(page.getByTestId('shell-home-page')).toBeVisible({
+    await expect(page.getByTestId('demo-shell-home-page')).toBeVisible({
       timeout: 30_000,
     });
 
     await page.getByLabel('Use dark theme').click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+    // Open remote panel before checking embedded demo
+    const remoteNav = page.locator(
+      '[data-testid="demo-shell-home-page"] nav a[href^="/remote/"]',
+    );
+    if (await remoteNav.count()) {
+      await remoteNav.first().click();
+    }
 
     // Embedded remote may or may not load; if it loads, must stay embedded
     const demo = page.getByTestId('demo-feature');

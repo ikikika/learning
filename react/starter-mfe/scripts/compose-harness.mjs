@@ -84,7 +84,12 @@ async function main() {
 
   await run(
     'node',
-    ['scripts/init.mjs', '--role=shell', `--port=${ports.shell}`],
+    [
+      'scripts/init.mjs',
+      '--role=shell',
+      `--port=${ports.shell}`,
+      '--remote=demoRemote:demoRemote',
+    ],
     { cwd: shellDir },
   );
   await run(

@@ -38,7 +38,8 @@ src/features/<name>/
 - `.env.example` leaves `PORT_*` blank; required init `--port` fills the role’s key.
 - Ports and remote URLs: `.env` / `.env.example` (`PORT_*`, `DEV_HOST`,
   per-remote `*_REMOTE_URL` / `urlEnv`, `API_BASE_URL`).
-- Shell remotes: `starter.role.json` → `remotes[]`; see `src/core/constants/remotes.ts`
+- Shell remotes: `starter.role.json` → `remotes[]` (empty by default on shell
+  init; add via `--remote` / `--remote-name`); see `src/core/constants/remotes.ts`
   and `src/app/remotes/loadRemote.tsx`.
 - Loader: `scripts/load-env.cjs` (used by webpack and Node scripts).
 

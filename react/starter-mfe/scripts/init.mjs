@@ -238,7 +238,7 @@ function buildShellRemotes({ remoteNameArg, remoteFlags }) {
     fail('Use either --remote (repeatable) or --remote-name, not both');
   }
 
-  let remotes;
+  let remotes = [];
   if (remoteFlags.length) {
     try {
       remotes = remoteFlags.map((spec) => parseRemoteFlag(spec));
@@ -248,9 +248,8 @@ function buildShellRemotes({ remoteNameArg, remoteFlags }) {
   } else if (remoteNameArg) {
     assertValidName('--remote-name', remoteNameArg);
     remotes = [defaultDemoRemote(remoteNameArg)];
-  } else {
-    remotes = [defaultDemoRemote()];
   }
+  // No --remote / --remote-name → empty remotes[]; add later via --remote (or future add-remote).
 
   const aliases = new Set();
   for (const r of remotes) {
@@ -369,10 +368,16 @@ async function main() {
     `Initialized role: ${role}, name: ${name} (federation: ${fed}), ${portKey}=${port}`,
   );
   if (role === 'shell') {
-    for (const r of remotes) {
+    if (remotes.length === 0) {
       console.log(
-        `Remote: alias=${r.alias} federation=${r.federationName} expose=${r.expose} urlEnv=${r.urlEnv}`,
+        'No remotes configured. Re-init with --remote=alias:name[:expose[:urlEnv]] to add one.',
       );
+    } else {
+      for (const r of remotes) {
+        console.log(
+          `Remote: alias=${r.alias} federation=${r.federationName} expose=${r.expose} urlEnv=${r.urlEnv}`,
+        );
+      }
     }
   }
   if (role === 'remote') {

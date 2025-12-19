@@ -28,6 +28,10 @@ function init(role) {
     `--role=${role}`,
     `--port=${port}`,
   ];
+  // Shell e2e exercises LoadRemote fallbacks — add a slot explicitly (init defaults to none).
+  if (role === 'shell') {
+    args.push('--remote=demoRemote:demoRemote');
+  }
   if (fs.existsSync(path.join(ROOT, 'starter.role.json'))) {
     args.push('--force');
   }

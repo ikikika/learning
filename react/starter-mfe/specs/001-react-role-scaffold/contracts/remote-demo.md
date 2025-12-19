@@ -35,7 +35,7 @@ Init writes `expose` on `starter.role.json` for remote role. Webpack MF
 
 | Field | Contract |
 |-------|----------|
-| Count | One or more via `remotes[]` |
+| Count | Zero or more via `remotes[]` (shell init defaults to none; add with `--remote`) |
 | Target | PascalCase expose matching the remote’s `--name` |
 | URL | Config placeholder / `urlEnv` |
 | Mount | Pass `embedded={true}` |
@@ -50,7 +50,7 @@ surface). Prefer one role per clone.
 ## Compose smoke (SC-009 / SC-014 / SC-015 / SC-019)
 
 1. Two temporary workspaces (copy/clone of this starter).
-2. `init --role=shell --port=…` in one; `init --role=remote --port=…` in the other.
+2. `init --role=shell --port=… --remote=demoRemote:demoRemote` in one; `init --role=remote --port=…` in the other.
 3. Start both; Playwright asserts shell owns PWA install/offline UX and document
    `data-theme`; embedded remote does not take over either.
 4. Shell mounts with `embedded={true}`.

@@ -19,7 +19,7 @@ npm equivalent (e.g. `npm run init -- --role=shell --port=3001 --remote=demoRemo
 | `--role` | `standalone`, `shell`, `remote` | Yes in non-TTY; prompted when stdin is a TTY |
 | `--port` | Integer `1`–`65535` | Yes in non-TTY; prompted when stdin is a TTY — writes role `PORT_*` in `.env` |
 | `--name` | camelCase identifier or lowercase npm-style name | No — prompted on TTY (Enter = role default); flag/default otherwise |
-| `--remote` | `alias:name[:expose[:urlEnv]]` (repeatable) | No — **shell only**. Default expose is PascalCase of `name` (e.g. `demoRemote:checkout` → `./Checkout`) |
+| `--remote` | `alias:name[:expose[:urlEnv]]` (repeatable) | No — **shell only**. Default expose is PascalCase of `name` (e.g. `demoRemote:checkout` → `./Checkout`). When omitted (and no `--remote-name`), `remotes[]` is **empty** |
 | `--remote-name` | same rules as `--name` | No — **shell only**; shorthand for a single `demoRemote:<name>` entry. Mutually exclusive with `--remote` |
 | `--force` | presence | When `starter.role.json` already exists |
 
@@ -55,7 +55,7 @@ When **not** a TTY (CI, piped stdin), missing `--role` / `--port` MUST fail with
 3. Set the role’s port in `.env` (`PORT_STANDALONE` / `PORT_SHELL` / `PORT_REMOTE`). `.env.example` leaves these blank; init creates `.env` from the example when missing and fills the active role’s key.
 4. When `--name` is provided **or** the user typed a non-default name at the prompt, set `package.json` `"name"` to that value.
 5. Webpack reads role / `remotes[]` / remote `expose` from metadata (no src file prune).
-6. Shell init regenerates `src/app/remotes/loaders.generated.ts` with a static `import()` per remote alias.
+6. Shell init regenerates `src/app/remotes/loaders.generated.ts` with a static `import()` per remote alias (empty registry when `remotes[]` is empty).
 7. **Does not** delete or restore live `src/` trees. Sample assets for all roles live under `src/` permanently; prefer one role per clone and avoid switching.
 
 ## Role behavior (runtime)
@@ -63,5 +63,5 @@ When **not** a TTY (CI, piped stdin), missing `--role` / `--port` MUST fail with
 | Role | Effect |
 |------|--------|
 | `standalone` | Webpack: no remotes/exposes; routes → standalone |
-| `shell` | Webpack remotes from `remotes[]`; routes → shell; loaders generated |
+| `shell` | Webpack remotes from `remotes[]` (may be empty); routes → shell; loaders generated |
 | `remote` | Webpack exposes PascalCase name → `./src/app/App.tsx`; prints shell `remotes[]` snippet |

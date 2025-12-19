@@ -133,6 +133,24 @@ test('--name writes metadata, package.json, and federationName', () => {
   });
 });
 
+test('shell without --remote writes empty remotes[]', () => {
+  withTempCopy((tmp) => {
+    const r = init(tmp, ['--role=shell', '--port=3001', '--name=host']);
+    assert.equal(r.status, 0, r.stderr);
+    const meta = JSON.parse(
+      fs.readFileSync(path.join(tmp, 'starter.role.json'), 'utf8'),
+    );
+    assert.deepEqual(meta.remotes, []);
+    const loaders = fs.readFileSync(
+      path.join(tmp, 'src/app/remotes/loaders.generated.ts'),
+      'utf8',
+    );
+    assert.match(loaders, /remoteLoaders: Record<string, RemoteLoader> = \{\s*\};/);
+    assert.doesNotMatch(loaders, /demoRemote/);
+    assert.match(r.stdout, /No remotes configured/);
+  });
+});
+
 test('shell --remote-name writes remotes[] with demoRemote alias', () => {
   withTempCopy((tmp) => {
     const r = init(tmp, [
