@@ -24,8 +24,8 @@ Validation guide for `001-react-role-scaffold`. Implementation details live in
 
 ```bash
 npm install
-npm run init -- --role=standalone   # or shell | remote
-# npm run init -- --role=shell --force
+npm run init -- --role=standalone --port=3000   # or shell|remote with their ports
+# npm run init -- --role=shell --port=3001 --force
 ```
 
 Expected after success:
@@ -74,7 +74,7 @@ npm start
 
 ### V4 — Init guardrails (no src prune)
 
-1. Missing/invalid `--role` → fail.
+1. Missing/invalid `--role` or `--port` → fail.
 2. Re-init without `--force` → refuse.
 3. `--force` to another role updates metadata (and shell loaders) but does **not**
    delete demo/shell sample paths under `src/`.

@@ -50,7 +50,7 @@ surface). Prefer one role per clone.
 Harness MUST:
 
 1. Create **two temporary workspaces** (copy/clone of this starter).
-2. `init --role=shell` in one; `init --role=remote` in the other.
+2. `init --role=shell --port=…` in one; `init --role=remote --port=…` in the other.
 3. Start both; run Playwright asserting shell-owned PWA + `data-theme` and no
    remote takeover (`embedded={true}` on Demo).
 

@@ -35,6 +35,7 @@ src/features/<name>/
 
 ## Environment & ports
 
+- `.env.example` leaves `PORT_*` blank; required init `--port` fills the role’s key.
 - Ports and remote URLs: `.env` / `.env.example` (`PORT_*`, `DEV_HOST`,
   per-remote `*_REMOTE_URL` / `urlEnv`, `API_BASE_URL`).
 - Shell remotes: `starter.role.json` → `remotes[]`; see `src/core/constants/remotes.ts`
@@ -43,7 +44,7 @@ src/features/<name>/
 
 ## Module Federation / roles
 
-- One role per clone after `npm run init -- --role=…`.
+- One role per clone after `npm run init -- --role=… --port=…`.
 - Federated `./Demo` uses `embedded?: boolean`; when `embedded={true}`, Demo
   must not take over document theme or service worker registration.
 - Init does not prune/restore `src/`; sample assets for shell and demo coexist

@@ -1,5 +1,5 @@
 /**
- * Load repo-root `.env` into process.env (does not override existing env).
+ * Load repo-root `.env` into process.env (does not override non-empty env).
  * Shared by webpack (CJS) and Node scripts.
  */
 const fs = require('fs');
@@ -23,7 +23,9 @@ function loadEnvFile(filePath = path.join(ROOT, '.env')) {
     ) {
       value = value.slice(1, -1);
     }
-    if (process.env[key] === undefined) {
+    const existing = process.env[key];
+    // Allow .env to fill blanks (e.g. empty PORT_* placeholders or inherited "")
+    if (existing === undefined || existing === '') {
       process.env[key] = value;
     }
   }
@@ -31,29 +33,45 @@ function loadEnvFile(filePath = path.join(ROOT, '.env')) {
 
 loadEnvFile();
 
-function num(name, fallback) {
-  const raw = process.env[name];
-  const n = raw ? Number(raw) : NaN;
-  return Number.isFinite(n) ? n : fallback;
+function portEnvKeyForRole(role) {
+  if (role === 'shell') return 'PORT_SHELL';
+  if (role === 'remote') return 'PORT_REMOTE';
+  return 'PORT_STANDALONE';
+}
+
+function parsePortValue(raw) {
+  if (raw == null || String(raw).trim() === '') return null;
+  const n = Number(raw);
+  if (!Number.isFinite(n) || !Number.isInteger(n) || n < 1 || n > 65535) {
+    return null;
+  }
+  return n;
+}
+
+function getPort(name) {
+  return parsePortValue(process.env[name]);
 }
 
 function getPorts() {
   return {
-    standalone: num('PORT_STANDALONE', 3000),
-    shell: num('PORT_SHELL', 3001),
-    remote: num('PORT_REMOTE', 3002),
+    standalone: getPort('PORT_STANDALONE'),
+    shell: getPort('PORT_SHELL'),
+    remote: getPort('PORT_REMOTE'),
   };
 }
 
 function getPortForRole(role) {
-  if (process.env.PORT) {
-    const n = Number(process.env.PORT);
-    if (Number.isFinite(n)) return n;
+  const fromPort = parsePortValue(process.env.PORT);
+  if (fromPort != null) return fromPort;
+
+  const key = portEnvKeyForRole(role);
+  const n = getPort(key);
+  if (n == null) {
+    throw new Error(
+      `${key} is not set. Run: npm run init -- --role=${role} --port=<number>`,
+    );
   }
-  const ports = getPorts();
-  if (role === 'shell') return ports.shell;
-  if (role === 'remote') return ports.remote;
-  return ports.standalone;
+  return n;
 }
 
 function getDevHost() {
@@ -68,13 +86,15 @@ function getDemoRemoteUrl() {
 
 /**
  * Resolve a remote entry URL from env (urlEnv key).
- * DEMO_REMOTE_URL defaults to local PORT_REMOTE; other keys default to "".
+ * DEMO_REMOTE_URL defaults to local PORT_REMOTE when that port is set; other keys default to "".
  */
 function getRemoteUrl(urlEnv = 'DEMO_REMOTE_URL') {
   if (process.env[urlEnv]) return process.env[urlEnv];
   if (urlEnv === 'DEMO_REMOTE_URL') {
-    const ports = getPorts();
-    return `http://${getDevHost()}:${ports.remote}/remoteEntry.js`;
+    const remotePort = getPort('PORT_REMOTE');
+    if (remotePort != null) {
+      return `http://${getDevHost()}:${remotePort}/remoteEntry.js`;
+    }
   }
   return '';
 }
@@ -98,6 +118,8 @@ function getApiBaseUrl() {
 module.exports = {
   ROOT,
   loadEnvFile,
+  portEnvKeyForRole,
+  getPort,
   getPorts,
   getPortForRole,
   getDevHost,

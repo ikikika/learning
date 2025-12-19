@@ -10,17 +10,15 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
-const {
-  getPorts,
-  getDevHost,
-  getDemoRemoteUrl,
-} = require('./load-env.cjs');
+const { getDevHost } = require('./load-env.cjs');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const host = getDevHost();
-const ports = getPorts();
-const demoRemoteUrl = getDemoRemoteUrl();
+
+/** Explicit compose ports — not read from .env (ports are empty until init). */
+const ports = { shell: 3001, remote: 3002 };
+const demoRemoteUrl = `http://${host}:${ports.remote}/remoteEntry.js`;
 const shellUrl = `http://${host}:${ports.shell}`;
 const remoteUrl = `http://${host}:${ports.remote}`;
 
@@ -84,8 +82,16 @@ async function main() {
   copyWorkspace(shellDir);
   copyWorkspace(remoteDir);
 
-  await run('node', ['scripts/init.mjs', '--role=shell'], { cwd: shellDir });
-  await run('node', ['scripts/init.mjs', '--role=remote'], { cwd: remoteDir });
+  await run(
+    'node',
+    ['scripts/init.mjs', '--role=shell', `--port=${ports.shell}`],
+    { cwd: shellDir },
+  );
+  await run(
+    'node',
+    ['scripts/init.mjs', '--role=remote', `--port=${ports.remote}`],
+    { cwd: remoteDir },
+  );
 
   const remoteProc = spawn('npx', ['webpack', 'serve', '--mode', 'development'], {
     cwd: remoteDir,

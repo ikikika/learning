@@ -60,10 +60,54 @@ function parseArgs(argv) {
   return {
     role: parseFlagValue(argv, 'role'),
     name: parseFlagValue(argv, 'name'),
+    port: parseFlagValue(argv, 'port'),
     remoteName: parseFlagValue(argv, 'remote-name'),
     remotes: parseFlagValues(argv, 'remote'),
     force: argv.includes('--force'),
   };
+}
+
+function portEnvKeyForRole(role) {
+  if (role === 'shell') return 'PORT_SHELL';
+  if (role === 'remote') return 'PORT_REMOTE';
+  return 'PORT_STANDALONE';
+}
+
+function parsePort(raw) {
+  if (raw == null || raw === '') {
+    fail('--port=<number> required (1–65535)');
+  }
+  if (!/^\d+$/.test(raw)) {
+    fail('Invalid --port. Use an integer from 1 to 65535');
+  }
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 1 || n > 65535) {
+    fail('Invalid --port. Use an integer from 1 to 65535');
+  }
+  return n;
+}
+
+function patchEnvPort(role, port) {
+  const key = portEnvKeyForRole(role);
+  const envPath = path.join(ROOT, '.env');
+  const examplePath = path.join(ROOT, '.env.example');
+  let text;
+  if (fs.existsSync(envPath)) {
+    text = fs.readFileSync(envPath, 'utf8');
+  } else if (fs.existsSync(examplePath)) {
+    text = fs.readFileSync(examplePath, 'utf8');
+  } else {
+    text = '';
+  }
+  const line = `${key}=${port}`;
+  const re = new RegExp(`^${key}=.*$`, 'm');
+  if (re.test(text)) {
+    text = text.replace(re, line);
+  } else {
+    text = `${text.trimEnd()}${text ? '\n' : ''}${line}\n`;
+  }
+  if (!text.endsWith('\n')) text += '\n';
+  fs.writeFileSync(envPath, text, 'utf8');
 }
 
 function fail(message, code = 1) {
@@ -161,6 +205,7 @@ function main() {
   const {
     role,
     name: nameArg,
+    port: portArg,
     remoteName: remoteNameArg,
     remotes: remoteFlags,
     force,
@@ -173,6 +218,7 @@ function main() {
     fail(`Invalid --role. Allowed: standalone, shell, remote`);
   }
 
+  const port = parsePort(portArg);
   const name = nameArg ?? defaultNameForRole(role);
   assertValidName('--name', name);
 
@@ -195,12 +241,16 @@ function main() {
   }
 
   writeMetadata({ role, name, remotes });
+  patchEnvPort(role, port);
   if (nameArg) {
     patchPackageName(name);
   }
   patchReadme(role, name);
   const fed = toFederationName(name);
-  console.log(`Initialized role: ${role}, name: ${name} (federation: ${fed})`);
+  const portKey = portEnvKeyForRole(role);
+  console.log(
+    `Initialized role: ${role}, name: ${name} (federation: ${fed}), ${portKey}=${port}`,
+  );
   if (role === 'shell') {
     for (const r of remotes) {
       console.log(

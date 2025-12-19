@@ -51,7 +51,7 @@ test('init does not prune demo or shell sample assets', () => {
       true,
     );
 
-    const shell = init(tmp, ['--role=shell']);
+    const shell = init(tmp, ['--role=shell', '--port=3001']);
     assert.equal(shell.status, 0, shell.stderr);
     assert.equal(fs.existsSync(path.join(tmp, 'src/features/demo')), true);
     assert.equal(fs.existsSync(path.join(tmp, 'src/pages/HomePage')), true);
@@ -61,7 +61,7 @@ test('init does not prune demo or shell sample assets', () => {
       true,
     );
 
-    const remote = init(tmp, ['--role=remote', '--force']);
+    const remote = init(tmp, ['--role=remote', '--port=3002', '--force']);
     assert.equal(remote.status, 0, remote.stderr);
     assert.equal(fs.existsSync(path.join(tmp, 'src/features/demo')), true);
     assert.equal(fs.existsSync(path.join(tmp, 'src/pages/ShellHomePage')), true);

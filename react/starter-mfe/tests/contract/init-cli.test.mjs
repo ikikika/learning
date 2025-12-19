@@ -41,6 +41,12 @@ function init(cwd, args) {
   });
 }
 
+function envPort(tmp, key) {
+  const text = fs.readFileSync(path.join(tmp, '.env'), 'utf8');
+  const m = text.match(new RegExp(`^${key}=(.*)$`, 'm'));
+  return m ? m[1].trim() : null;
+}
+
 test('missing --role exits non-zero', () => {
   withTempCopy((tmp) => {
     const r = init(tmp, []);
@@ -49,9 +55,25 @@ test('missing --role exits non-zero', () => {
   });
 });
 
+test('missing --port exits non-zero', () => {
+  withTempCopy((tmp) => {
+    const r = init(tmp, ['--role=standalone']);
+    assert.notEqual(r.status, 0);
+    assert.match(r.stderr, /--port=<number> required/);
+  });
+});
+
+test('invalid --port exits non-zero', () => {
+  withTempCopy((tmp) => {
+    const r = init(tmp, ['--role=standalone', '--port=0']);
+    assert.notEqual(r.status, 0);
+    assert.match(r.stderr, /Invalid --port/);
+  });
+});
+
 test('invalid --role exits non-zero', () => {
   withTempCopy((tmp) => {
-    const r = init(tmp, ['--role=nope']);
+    const r = init(tmp, ['--role=nope', '--port=3000']);
     assert.notEqual(r.status, 0);
     assert.match(r.stderr, /standalone, shell, remote/);
   });
@@ -59,17 +81,18 @@ test('invalid --role exits non-zero', () => {
 
 test('refuses without --force when metadata exists', () => {
   withTempCopy((tmp) => {
-    const first = init(tmp, ['--role=standalone']);
+    const first = init(tmp, ['--role=standalone', '--port=3000']);
     assert.equal(first.status, 0);
-    const second = init(tmp, ['--role=shell']);
+    const second = init(tmp, ['--role=shell', '--port=3001']);
     assert.notEqual(second.status, 0);
     assert.match(second.stderr, /--force/);
   });
 });
 
-test('success writes starter.role.json', () => {
+test('success writes starter.role.json and .env port', () => {
   withTempCopy((tmp) => {
-    const r = init(tmp, ['--role=standalone']);
+    assert.equal(envPort(tmp, 'PORT_STANDALONE'), '');
+    const r = init(tmp, ['--role=standalone', '--port=3100']);
     assert.equal(r.status, 0);
     const meta = JSON.parse(
       fs.readFileSync(path.join(tmp, 'starter.role.json'), 'utf8'),
@@ -77,12 +100,14 @@ test('success writes starter.role.json', () => {
     assert.equal(meta.role, 'standalone');
     assert.equal(meta.name, 'standalone');
     assert.equal(meta.federationName, 'standalone');
+    assert.equal(envPort(tmp, 'PORT_STANDALONE'), '3100');
+    assert.match(r.stdout, /PORT_STANDALONE=3100/);
   });
 });
 
 test('--name writes metadata, package.json, and federationName', () => {
   withTempCopy((tmp) => {
-    const r = init(tmp, ['--role=remote', '--name=my-checkout']);
+    const r = init(tmp, ['--role=remote', '--port=3002', '--name=my-checkout']);
     assert.equal(r.status, 0, r.stderr);
     const meta = JSON.parse(
       fs.readFileSync(path.join(tmp, 'starter.role.json'), 'utf8'),
@@ -90,6 +115,7 @@ test('--name writes metadata, package.json, and federationName', () => {
     assert.equal(meta.role, 'remote');
     assert.equal(meta.name, 'my-checkout');
     assert.equal(meta.federationName, 'myCheckout');
+    assert.equal(envPort(tmp, 'PORT_REMOTE'), '3002');
     const pkg = JSON.parse(
       fs.readFileSync(path.join(tmp, 'package.json'), 'utf8'),
     );
@@ -109,6 +135,7 @@ test('shell --remote-name writes remotes[] with demoRemote alias', () => {
   withTempCopy((tmp) => {
     const r = init(tmp, [
       '--role=shell',
+      '--port=3001',
       '--name=host-app',
       '--remote-name=my-checkout',
     ]);
@@ -124,6 +151,7 @@ test('shell --remote-name writes remotes[] with demoRemote alias', () => {
     assert.equal(meta.remotes[0].federationName, 'myCheckout');
     assert.equal(meta.remotes[0].expose, './Demo');
     assert.equal(meta.remotes[0].urlEnv, 'DEMO_REMOTE_URL');
+    assert.equal(envPort(tmp, 'PORT_SHELL'), '3001');
     assert.match(
       fs.readFileSync(
         path.join(tmp, 'src/app/remotes/loaders.generated.ts'),
@@ -138,6 +166,7 @@ test('shell accepts multiple --remote flags', () => {
   withTempCopy((tmp) => {
     const r = init(tmp, [
       '--role=shell',
+      '--port=3001',
       '--name=host',
       '--remote=demoRemote:checkout',
       '--remote=billingRemote:billing:./Billing:BILLING_REMOTE_URL',
@@ -164,7 +193,11 @@ test('shell accepts multiple --remote flags', () => {
 
 test('--remote-name rejected for non-shell roles', () => {
   withTempCopy((tmp) => {
-    const r = init(tmp, ['--role=standalone', '--remote-name=x']);
+    const r = init(tmp, [
+      '--role=standalone',
+      '--port=3000',
+      '--remote-name=x',
+    ]);
     assert.notEqual(r.status, 0);
     assert.match(r.stderr, /only valid with --role=shell/);
   });
@@ -172,7 +205,7 @@ test('--remote-name rejected for non-shell roles', () => {
 
 test('invalid --name exits non-zero', () => {
   withTempCopy((tmp) => {
-    const r = init(tmp, ['--role=standalone', '--name=BAD NAME']);
+    const r = init(tmp, ['--role=standalone', '--port=3000', '--name=BAD NAME']);
     assert.notEqual(r.status, 0);
     assert.match(r.stderr, /Invalid --name/);
   });

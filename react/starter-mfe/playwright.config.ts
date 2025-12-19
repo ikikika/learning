@@ -27,17 +27,19 @@ function loadDotEnv() {
 
 loadDotEnv();
 
-function num(name: string, fallback: number): number {
+function num(name: string): number | null {
   const raw = process.env[name];
-  const n = raw ? Number(raw) : NaN;
-  return Number.isFinite(n) ? n : fallback;
+  if (raw == null || String(raw).trim() === '') return null;
+  const n = Number(raw);
+  return Number.isFinite(n) && Number.isInteger(n) && n >= 1 && n <= 65535
+    ? n
+    : null;
 }
 
 const host = process.env.DEV_HOST || '127.0.0.1';
-const standalonePort = num('PORT_STANDALONE', 3000);
 const PORT = process.env.PLAYWRIGHT_PORT
   ? Number(process.env.PLAYWRIGHT_PORT)
-  : standalonePort;
+  : (num('PORT_STANDALONE') ?? 3000);
 const BASE = process.env.PLAYWRIGHT_BASE_URL || `http://${host}:${PORT}`;
 
 export default defineConfig({

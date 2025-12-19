@@ -24,17 +24,18 @@ Start: `npm start` (after `npm install`)
 ```bash
 cp .env.example .env   # if needed
 npm install
-npm run init -- --role=standalone --name=my-app
+npm run init -- --role=standalone --port=3000 --name=my-app
 npm start
 ```
 
-Ports come from `.env` (`PORT_STANDALONE` / `PORT_SHELL` / `PORT_REMOTE`). Defaults: 3000 / 3001 / 3002. Optional `PORT` overrides the current role’s port. Each shell remote uses its `urlEnv` (sample: `DEMO_REMOTE_URL`). `API_BASE_URL` is injected into the app for HTTP calls (`src/core/constants/app.ts`).
+Ports are empty in `.env` until init. Required `--port` writes the role’s `PORT_*` key. Optional `PORT` overrides the current role’s port for one process. Each shell remote uses its `urlEnv` (sample: `DEMO_REMOTE_URL`). `API_BASE_URL` is injected into the app for HTTP calls (`src/core/constants/app.ts`).
 
 Init flags:
 
 | Flag | Purpose |
 |------|---------|
 | `--role` | `standalone` \| `shell` \| `remote` (required) |
+| `--port` | Dev-server port `1`–`65535` (required; writes role `PORT_*` in `.env`) |
 | `--name` | App name → metadata, MF container name, and (when set) `package.json` `"name"` |
 | `--remote` | Shell only, repeatable: `alias:name[:expose[:urlEnv]]`. Builds `remotes[]` in `starter.role.json` |
 | `--remote-name` | Shell only shorthand for one `demoRemote:<name>` entry (not with `--remote`) |
@@ -44,18 +45,18 @@ Example multi-repo naming:
 
 ```bash
 # remote clone
-npm run init -- --role=remote --name=checkout
+npm run init -- --role=remote --port=3002 --name=checkout
 # prints a remotes[] object + --remote=… flag to paste into the shell
 
 # shell clone — one or more remotes
-npm run init -- --role=shell --name=host \
+npm run init -- --role=shell --port=3001 --name=host \
   --remote=demoRemote:checkout \
   --remote=billingRemote:billing:./Billing:BILLING_REMOTE_URL
 ```
 
 `starter.role.json` then contains a `remotes[]` array. Webpack registers each alias; `src/app/remotes/loaders.generated.ts` gets a static import per alias. Mount extras with `<LoadRemote alias="billingRemote" />` (sample home still uses `demoRemote` via `LoadDemoRemote`).
 
-Re-init: `npm run init -- --role=shell --name=host --force` (requires `--force` when `starter.role.json` exists).
+Re-init: `npm run init -- --role=shell --port=3001 --name=host --force` (requires `--force` when `starter.role.json` exists).
 
 ## Roles
 
@@ -65,7 +66,7 @@ Re-init: `npm run init -- --role=shell --name=host --force` (requires `--force` 
 | `shell` | Host; remote slot(s) with `embedded={true}`; remotes map + generated loaders |
 | `remote` | Dual-mode: standalone demo + federated `./Demo` expose |
 
-Init only writes `starter.role.json`, README, optional `package.json` name, and (shell) `loaders.generated.ts`. It does **not** prune or restore `src/` — keep one role per clone; avoid switching.
+Init only writes `starter.role.json`, README, `.env` port, optional `package.json` name, and (shell) `loaders.generated.ts`. It does **not** prune or restore `src/` — keep one role per clone; avoid switching.
 
 ## Public `./Demo` API
 
@@ -93,7 +94,7 @@ Update Webpack `exposes`, shell remotes map, docs, exported types, `embedded?: b
 
 | Script | Purpose |
 |--------|---------|
-| `npm run init -- --role=…` | Role init |
+| `npm run init -- --role=… --port=…` | Role init |
 | `npm start` / `npm run build` | Dev / production |
 | `npm test` | Jest unit tests |
 | `npm run test:e2e` | Per-role Playwright |

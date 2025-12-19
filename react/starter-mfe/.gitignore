@@ -16,5 +16,4 @@ Thumbs.db
 playwright-report/
 test-results/
 .blob/
-starter.role.json
 *.tsbuildinfo
