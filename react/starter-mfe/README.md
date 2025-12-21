@@ -93,7 +93,7 @@ Init only writes `starter.role.json`, README, `.env` port, optional `package.jso
 ## Public federated expose
 
 - Expose key: PascalCase of init `--name` (e.g. `my-checkout` → `./MyCheckout`)
-- Module: `src/app/FederatedRemoteApp.tsx` (default + named export; accepts `embedded?: boolean` and optional sample `title?: string`; MemoryRouter for in-panel routes)
+- Module: `src/app/FederatedRemoteApp.tsx` (default + named export; accepts `embedded?: boolean` and optional sample `title?: string`; nested under shell `/remote/:alias/*` so in-panel links update the address bar)
 - Shell MUST pass `embedded={true}` when mounting (LoadRemote does this; bag cannot override)
 - Providers / PWA apply only on the remote **own-app entry** (`App.tsx` + `remoteRoutes`), not via the federated expose
 - Remote sample: `src/features/demoRemote` with Route 1 / Route 2 and a small in-remote link between them; Route 1 shows host `title` when provided (`data-testid="demo-remote-host-title"`)
@@ -134,6 +134,8 @@ npx playwright install chromium
 ## Responsive
 
 Primary flows verified at phone-width (~375px) across standalone, shell, and remote-standalone without primary horizontal scroll.
+
+Dev note: webpack `publicPath` is absolute in development so refreshing nested shell URLs (e.g. `/remote/demoRemote/route-1`) still loads host chunks correctly.
 
 ## Performance
 

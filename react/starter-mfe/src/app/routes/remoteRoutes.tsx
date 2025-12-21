@@ -10,7 +10,7 @@ const remotePageChildren: RouteObject[] = [
 
 /**
  * Remote routes — no MainLayout (shell/standalone only).
- * Own-app entry via `@active-routes`; same tree for FederatedRemoteApp.
+ * Own-app entry via `@active-routes`.
  */
 export const routes: RouteObject[] = [
   {
@@ -20,7 +20,10 @@ export const routes: RouteObject[] = [
   },
 ];
 
-/** Alias for federated embed (identical — host owns document chrome). */
-export const embeddedRoutes = routes;
+/**
+ * Relative routes for federated embed under shell `remote/:alias/*`.
+ * Participates in the host BrowserRouter so the address bar updates.
+ */
+export const embeddedRoutes: RouteObject[] = remotePageChildren;
 
 export const remoteRoutes = routes;

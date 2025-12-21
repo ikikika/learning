@@ -65,6 +65,7 @@ function federationOptions(
   const shared = {
     react: { singleton: true, requiredVersion: false, eager: false },
     'react-dom': { singleton: true, requiredVersion: false, eager: false },
+    'react-router': { singleton: true, requiredVersion: false, eager: false },
   };
 
   if (role === 'shell') {

@@ -12,7 +12,7 @@ export const routes: RouteObject[] = [
         element: <DemoShellHomePage />,
         children: [
           { index: true, element: <ShellWelcome /> },
-          { path: 'remote/:alias', element: <RemotePanel /> },
+          { path: 'remote/:alias/*', element: <RemotePanel /> },
         ],
       },
     ],

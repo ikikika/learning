@@ -1,4 +1,4 @@
-import { MemoryRouter, useRoutes } from 'react-router';
+import { useRoutes } from 'react-router';
 import { embeddedRoutes } from './routes/remoteRoutes';
 import { HostPropsProvider } from '../features/demoRemote/HostPropsContext';
 
@@ -11,8 +11,9 @@ export type FederatedRemoteAppProps = {
 
 /**
  * Remote-only Module Federation entry.
- * Isolates remote routing in MemoryRouter so shell BrowserRouter / URLs
- * are unaffected. Does not replace App.tsx for shell or standalone.
+ * Uses the host BrowserRouter (shell `remote/:alias/*`) so in-remote
+ * navigation updates the address bar. Does not replace App.tsx for
+ * shell or standalone own-app entry.
  */
 function EmbeddedRemoteRoutes() {
   return useRoutes(embeddedRoutes);
@@ -28,9 +29,7 @@ export function FederatedRemoteApp({
 
   return (
     <HostPropsProvider value={{ title: hostTitle }}>
-      <MemoryRouter initialEntries={['/route-1']}>
-        <EmbeddedRemoteRoutes />
-      </MemoryRouter>
+      <EmbeddedRemoteRoutes />
     </HostPropsProvider>
   );
 }

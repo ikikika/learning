@@ -15,6 +15,7 @@ jest.mock('react-router', () => ({
       {children}
     </a>
   ),
+  useParams: () => ({}),
 }));
 
 describe('DemoRemoteRoute1', () => {

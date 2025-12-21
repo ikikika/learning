@@ -50,7 +50,9 @@ src/features/<name>/
 - One role per clone after `npm run init` (or `--role=… --port=…`).
 - Federated remote expose uses `FederatedRemoteApp` (`embedded?: boolean`);
   when embedded, host owns document theme / PWA. Remote sample UI lives in
-  `features/demoRemote` (not `features/demo`).
+  `features/demoRemote` (not `features/demo`). Shell and remotes share
+  singleton `react`, `react-dom`, and `react-router` so embedded routes update
+  the host address bar under `/remote/:alias/*`.
 - Init does not prune/restore `src/`; sample assets for shell, demo, and
   demoRemote coexist under `src/`. Prefer not switching roles on the same clone.
 

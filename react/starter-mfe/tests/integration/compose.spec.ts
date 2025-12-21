@@ -62,12 +62,14 @@ test.describe('compose smoke (two workspaces)', () => {
     await expect(page.getByTestId('demo-remote-route-1')).toBeVisible({
       timeout: 45_000,
     });
+    await expect(page).toHaveURL(/\/remote\/demoRemote\/route-1/);
     await expect(page.getByTestId('demo-remote-host-title')).toHaveText(
       'From Shell A',
     );
 
     await page.getByTestId('demo-remote-to-route-2').click();
     await expect(page.getByTestId('demo-remote-route-2')).toBeVisible();
+    await expect(page).toHaveURL(/\/remote\/demoRemote\/route-2/);
     await expect(page.getByTestId('demo-shell-home-page')).toBeVisible();
 
     // Unmount first remote fully before loading second alias
