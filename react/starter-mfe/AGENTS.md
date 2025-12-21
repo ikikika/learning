@@ -13,8 +13,8 @@ repository. Humans should follow the same rules; full detail lives under `docs/`
    theming, or shared components.
 4. For role / MFE / layout principles, see
    [`.specify/memory/constitution.md`](./.specify/memory/constitution.md).
-5. Prefer matching existing patterns under `src/features/demo/` when adding
-   features.
+5. Prefer matching existing patterns under `src/features/demo/` (standalone)
+   or `src/features/demoRemote/` (remote) when adding features.
 
 ## Must follow
 
@@ -43,4 +43,5 @@ repository. Humans should follow the same rules; full detail lives under `docs/`
 | API routes | `src/core/constants/apiRoutes.ts` |
 | HTTP client | `src/services/httpClient.ts` |
 | Env injection | `scripts/load-env.cjs`, `config/webpack.*.js` |
-| Sample feature | `src/features/demo/` |
+| Sample feature (standalone) | `src/features/demo/` |
+| Sample feature (remote) | `src/features/demoRemote/` |

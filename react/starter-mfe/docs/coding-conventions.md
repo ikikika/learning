@@ -46,10 +46,11 @@ src/features/<name>/
 ## Module Federation / roles
 
 - One role per clone after `npm run init` (or `--role=… --port=…`).
-- Federated `./Demo` uses `embedded?: boolean`; when `embedded={true}`, Demo
-  must not take over document theme or service worker registration.
-- Init does not prune/restore `src/`; sample assets for shell and demo coexist
-  under `src/`. Prefer not switching roles on the same clone.
+- Federated remote expose uses `FederatedRemoteApp` (`embedded?: boolean`);
+  when embedded, host owns document theme / PWA. Remote sample UI lives in
+  `features/demoRemote` (not `features/demo`).
+- Init does not prune/restore `src/`; sample assets for shell, demo, and
+  demoRemote coexist under `src/`. Prefer not switching roles on the same clone.
 
 ## Styling & UI
 

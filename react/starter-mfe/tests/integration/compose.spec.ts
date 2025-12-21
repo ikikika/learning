@@ -34,15 +34,15 @@ test.describe('compose smoke (two workspaces)', () => {
       await remoteNav.first().click();
     }
 
-    // Embedded remote may or may not load; if it loads, must stay embedded
-    const demo = page.getByTestId('demo-feature');
-    if (await demo.count()) {
-      await expect(demo).toHaveAttribute('data-embedded', 'true');
+    // Embedded remote may or may not load; if it loads, show Route 1 sample
+    const remoteRoute1 = page.getByTestId('demo-remote-route-1');
+    if (await remoteRoute1.count()) {
+      await expect(remoteRoute1).toBeVisible();
     }
 
-    // Remote standalone still serves its own entry
+    // Remote as own app still serves its default route
     const remotePage = await page.context().newPage();
     await remotePage.goto(REMOTE_URL);
-    await expect(remotePage.getByTestId('home-page')).toBeVisible();
+    await expect(remotePage.getByTestId('demo-remote-route-1')).toBeVisible();
   });
 });

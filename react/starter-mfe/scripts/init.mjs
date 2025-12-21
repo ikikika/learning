@@ -382,7 +382,9 @@ async function main() {
   }
   if (role === 'remote') {
     const snippet = shellRemoteSnippetForApp(name);
-    console.log(`Expose: ${toExposePath(name)} → ./src/app/App.tsx`);
+    console.log(
+      `Expose: ${toExposePath(name)} → ./src/app/FederatedRemoteApp.tsx`,
+    );
     console.log('');
     console.log('Copy into shell starter.role.json → remotes[]:');
     console.log('---');

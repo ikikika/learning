@@ -82,7 +82,7 @@ function federationOptions(
       name: federationName,
       filename: 'remoteEntry.js',
       exposes: {
-        [expose]: './src/app/App.tsx',
+        [expose]: './src/app/FederatedRemoteApp.tsx',
       },
       remotes: {},
       shared,

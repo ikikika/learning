@@ -50,6 +50,19 @@ test('init does not prune demo or shell sample assets', () => {
       true,
     );
     assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoShell')), true);
+    assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoRemote')), true);
+    assert.equal(
+      fs.existsSync(path.join(tmp, 'src/pages/DemoRemoteRoute1Page')),
+      true,
+    );
+    assert.equal(
+      fs.existsSync(path.join(tmp, 'src/pages/DemoRemoteRoute2Page')),
+      true,
+    );
+    assert.equal(
+      fs.existsSync(path.join(tmp, 'src/app/FederatedRemoteApp.tsx')),
+      true,
+    );
     assert.equal(
       fs.existsSync(path.join(tmp, 'src/app/remotes/loadRemote.tsx')),
       true,
@@ -64,6 +77,7 @@ test('init does not prune demo or shell sample assets', () => {
       true,
     );
     assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoShell')), true);
+    assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoRemote')), true);
     assert.equal(
       fs.existsSync(path.join(tmp, 'src/app/remotes/loaders.generated.ts')),
       true,
@@ -72,6 +86,15 @@ test('init does not prune demo or shell sample assets', () => {
     const remote = init(tmp, ['--role=remote', '--port=3002', '--force']);
     assert.equal(remote.status, 0, remote.stderr);
     assert.equal(fs.existsSync(path.join(tmp, 'src/features/demo')), true);
+    assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoRemote')), true);
+    assert.equal(
+      fs.existsSync(path.join(tmp, 'src/pages/DemoRemoteRoute1Page')),
+      true,
+    );
+    assert.equal(
+      fs.existsSync(path.join(tmp, 'src/pages/DemoRemoteRoute2Page')),
+      true,
+    );
     assert.equal(
       fs.existsSync(path.join(tmp, 'src/pages/DemoShellHomePage')),
       true,

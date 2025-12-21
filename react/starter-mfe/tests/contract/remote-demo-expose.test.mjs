@@ -6,12 +6,12 @@ import test from 'node:test';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
-test('webpack remote role exposes App.tsx via PascalCase name', () => {
+test('webpack remote role exposes FederatedRemoteApp via PascalCase name', () => {
   const webpack = fs.readFileSync(
     path.join(ROOT, 'config/webpack.common.js'),
     'utf8',
   );
-  assert.match(webpack, /src\/app\/App\.tsx/);
+  assert.match(webpack, /src\/app\/FederatedRemoteApp\.tsx/);
   assert.match(webpack, /toExposePath|resolveExpose/);
 });
 

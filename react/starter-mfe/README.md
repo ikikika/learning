@@ -66,17 +66,18 @@ Re-init: `npm run init -- --role=shell --port=3001 --name=host --force` (require
 |------|----------|
 | `standalone` | Single app; demo home; no MF remotes/exposes |
 | `shell` | Host; optional remote slot(s) with `embedded={true}`; remotes map + generated loaders (empty until `--remote`) |
-| `remote` | Dual-mode: standalone demo + federated PascalCase expose → `App.tsx` |
+| `remote` | Dual-mode: `demoRemote` routes (`/route-1`, `/route-2`) + federated PascalCase expose → `FederatedRemoteApp.tsx` |
 
 Init only writes `starter.role.json`, README, `.env` port, optional `package.json` name, and (shell) `loaders.generated.ts`. It does **not** prune or restore `src/` — keep one role per clone; avoid switching.
 
 ## Public federated expose
 
 - Expose key: PascalCase of init `--name` (e.g. `my-checkout` → `./MyCheckout`)
-- Module: `src/app/App.tsx` (default + named `App`; accepts `embedded?: boolean`)
+- Module: `src/app/FederatedRemoteApp.tsx` (default + named export; accepts `embedded?: boolean`; MemoryRouter for in-panel routes)
 - Shell MUST pass `embedded={true}` when mounting
-- Providers / PWA apply only on the remote **standalone entry**, not via the federated expose
-- Sample feature `src/features/demo` remains the standalone home demo (contract version **`1.0.0`**)
+- Providers / PWA apply only on the remote **own-app entry** (`App.tsx` + `remoteRoutes`), not via the federated expose
+- Remote sample: `src/features/demoRemote` with pages Route 1 / Route 2 (no in-remote nav)
+- Sample feature `src/features/demo` remains the **standalone** home demo (contract version **`1.0.0`**)
 - Published npm contract package is **deferred** (not required in v1)
 
 ### Renaming the expose
