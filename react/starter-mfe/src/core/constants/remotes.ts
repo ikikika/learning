@@ -32,6 +32,52 @@ declare global {
 declare const __STARTER_REMOTES_CONFIG__: RemoteSlotStatic[] | undefined;
 declare const __STARTER_REMOTES_URLS__: Record<string, string> | undefined;
 declare const __STARTER_DEMO_REMOTE_URL_DEFAULT__: string | undefined;
+declare const __STARTER_REMOTE_PROPS__:
+  | Record<string, Record<string, unknown>>
+  | undefined;
+
+export type RemotePropsBag = Record<string, unknown>;
+
+function bakedRemoteProps(): Record<string, Record<string, unknown>> {
+  if (
+    typeof __STARTER_REMOTE_PROPS__ !== 'undefined' &&
+    __STARTER_REMOTE_PROPS__ &&
+    typeof __STARTER_REMOTE_PROPS__ === 'object'
+  ) {
+    return __STARTER_REMOTE_PROPS__;
+  }
+  return {};
+}
+
+/**
+ * Resolve host props for a remotes[] alias.
+ * Unknown / orphan aliases → {}.
+ */
+export function getRemotePropsFromMap(
+  map: Record<string, Record<string, unknown>> | null | undefined,
+  alias: string,
+): RemotePropsBag {
+  if (!map || typeof map !== 'object') return {};
+  const bag = map[alias];
+  if (!bag || typeof bag !== 'object' || Array.isArray(bag)) return {};
+  return { ...bag };
+}
+
+export function getRemoteProps(alias: string): RemotePropsBag {
+  return getRemotePropsFromMap(bakedRemoteProps(), alias);
+}
+
+/**
+ * Merge baked host props with authoritative embedded={true}.
+ * Any `embedded` key in the bag is stripped.
+ */
+export function mergeRemoteMountProps(
+  bag: RemotePropsBag,
+): Record<string, unknown> & { embedded: true } {
+  const { embedded: _ignored, ...rest } = bag;
+  void _ignored;
+  return { ...rest, embedded: true };
+}
 
 function bakedConfig(): RemoteSlotStatic[] {
   if (

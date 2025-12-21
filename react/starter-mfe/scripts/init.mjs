@@ -21,9 +21,9 @@ const {
 } = require('./app-name.cjs');
 const {
   defaultDemoRemote,
-  generateLoadersSource,
   parseRemoteFlag,
   shellRemoteSnippetForApp,
+  writeLoadersGenerated,
 } = require('./remotes-config.cjs');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -261,12 +261,6 @@ function buildShellRemotes({ remoteNameArg, remoteFlags }) {
   return remotes;
 }
 
-function writeLoadersGenerated(remotes) {
-  const dest = path.join(ROOT, 'src/app/remotes/loaders.generated.ts');
-  fs.mkdirSync(path.dirname(dest), { recursive: true });
-  fs.writeFileSync(dest, generateLoadersSource(remotes), 'utf8');
-}
-
 function writeMetadata({ role, name, remotes }) {
   const meta = {
     role,
@@ -353,7 +347,7 @@ async function main() {
   // Role selection is metadata + webpack only. Live src/ keeps all sample
   // assets; do not prune/restore. Prefer one role per clone and avoid switching.
   if (role === 'shell') {
-    writeLoadersGenerated(remotes);
+    writeLoadersGenerated(remotes, ROOT);
   }
 
   writeMetadata({ role, name, remotes });

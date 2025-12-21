@@ -57,6 +57,13 @@
         }
       }
     },
+    "remoteProps": {
+      "type": "object",
+      "description": "Optional per-alias host props bags (shell). Keys are remote aliases; values are JSON objects. Additive on schema version 1; keys not in remotes[].alias are ignored at runtime.",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
     "remoteName": {
       "type": "string",
       "minLength": 1,

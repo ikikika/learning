@@ -11,5 +11,5 @@ export function RemotePanel() {
     return null;
   }
 
-  return <LoadRemote alias={alias} />;
+  return <LoadRemote key={alias} alias={alias} />;
 }

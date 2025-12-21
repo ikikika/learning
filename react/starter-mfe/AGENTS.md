@@ -28,6 +28,9 @@ repository. Humans should follow the same rules; full detail lives under `docs/`
   do not invent undocumented globals for host detection.
 - Prefer one role per clone; init does not prune/restore `src/` (no
   `templates/role-assets`).
+- Shell-only: use `npm run add-remote` to append remotes and optional
+  `remoteProps`; restart the shell afterward. Per-alias props bake via
+  `__STARTER_REMOTE_PROPS__` / `getRemoteProps` in `remotes.ts`.
 - Do not commit secrets; `.env` is gitignored — update `.env.example` when
   adding new env keys.
 - Do not create commits unless the user explicitly asks.

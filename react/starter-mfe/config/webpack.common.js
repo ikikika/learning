@@ -126,6 +126,7 @@ function getAppContext() {
 
 function createCommonConfig(ctx) {
   const {
+    meta,
     role,
     federationName,
     expose,
@@ -212,6 +213,13 @@ function createCommonConfig(ctx) {
           ),
         ),
         __STARTER_REMOTES_URLS__: JSON.stringify(urlsByAlias),
+        __STARTER_REMOTE_PROPS__: JSON.stringify(
+          role === 'shell' &&
+            meta.remoteProps &&
+            typeof meta.remoteProps === 'object'
+            ? meta.remoteProps
+            : {},
+        ),
         'process.env.API_BASE_URL': JSON.stringify(apiBaseUrl),
       }),
       new ModuleFederationPlugin(

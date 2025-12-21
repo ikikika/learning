@@ -9,6 +9,13 @@ describe('Demo', () => {
       status: 200,
       statusText: 'OK',
       url: 'https://jsonplaceholder.typicode.com/posts/1',
+      text: async () =>
+        JSON.stringify({
+          userId: 1,
+          id: 1,
+          title: 'test title',
+          body: 'test body',
+        }),
       json: async () => ({
         userId: 1,
         id: 1,

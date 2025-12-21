@@ -39,8 +39,10 @@ src/features/<name>/
 - Ports and remote URLs: `.env` / `.env.example` (`PORT_*`, `DEV_HOST`,
   per-remote `*_REMOTE_URL` / `urlEnv`, `API_BASE_URL`).
 - Shell remotes: `starter.role.json` → `remotes[]` (empty by default on shell
-  init; add via `--remote` / `--remote-name`); see `src/core/constants/remotes.ts`
-  and `src/app/remotes/loadRemote.tsx`.
+  init; add via `--remote` / `--remote-name` at init, or later with
+  `npm run add-remote` — shell only). Optional `remoteProps` map holds
+  per-alias host props; bake via webpack; read with `getRemoteProps(alias)`.
+  See `src/core/constants/remotes.ts` and `src/app/remotes/loadRemote.tsx`.
 - Loader: `scripts/load-env.cjs` (used by webpack and Node scripts).
 
 ## Module Federation / roles

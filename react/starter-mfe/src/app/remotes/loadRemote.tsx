@@ -5,11 +5,18 @@ import {
   useMemo,
   type ReactNode,
 } from 'react';
-import { getRemoteSlot, isValidRemoteUrl } from '../../core/constants/remotes';
+import {
+  getRemoteProps,
+  getRemoteSlot,
+  isValidRemoteUrl,
+  mergeRemoteMountProps,
+} from '../../core/constants/remotes';
 import { RemoteFallback } from '../../components/RemoteFallback';
 import { remoteLoaders } from './loaders.generated';
 
-type DemoComponent = React.ComponentType<{ embedded?: boolean }>;
+type DemoComponent = React.ComponentType<
+  Record<string, unknown> & { embedded?: boolean }
+>;
 
 type EBState = { error: Error | null };
 
@@ -42,12 +49,14 @@ type LoadRemoteProps = {
 
 /**
  * Load a federated remote by alias from starter.role.json remotes[].
+ * Spreads per-alias remoteProps with embedded={true} authoritative.
  */
 export function LoadRemote({ alias }: LoadRemoteProps) {
   const slot = getRemoteSlot(alias);
   const loader = remoteLoaders[alias];
   const url = slot?.url ?? '';
   const urlOk = isValidRemoteUrl(url);
+  const mountProps = mergeRemoteMountProps(getRemoteProps(alias));
 
   const LazyRemote = useMemo(() => {
     if (!slot || !urlOk || !loader) return null;
@@ -79,7 +88,7 @@ export function LoadRemote({ alias }: LoadRemoteProps) {
   if (!loader) {
     return (
       <RemoteFallback
-        reason={`No generated loader for "${alias}". Re-run init for the shell role.`}
+        reason={`No generated loader for "${alias}". Re-run init or add-remote for the shell role.`}
       />
     );
   }
@@ -106,7 +115,7 @@ export function LoadRemote({ alias }: LoadRemoteProps) {
       }
     >
       <RemoteErrorBoundary>
-        <LazyRemote embedded={true} />
+        <LazyRemote {...mountProps} />
       </RemoteErrorBoundary>
     </Suspense>
   );

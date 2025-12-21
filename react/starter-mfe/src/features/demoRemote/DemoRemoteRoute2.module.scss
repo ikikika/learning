@@ -8,6 +8,14 @@
 }
 
 .copy {
-  margin: 0;
+  margin: 0 0 var(--space-3);
   color: var(--color-text-muted);
+}
+
+.nav {
+  margin: 0;
+}
+
+.nav a {
+  color: var(--color-link, var(--color-accent));
 }

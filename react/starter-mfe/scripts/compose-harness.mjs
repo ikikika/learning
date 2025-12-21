@@ -48,6 +48,7 @@ function copyWorkspace(dest) {
     'test-results',
     'starter.role.json',
     'coverage',
+    '.vscode',
   ]);
   fs.cpSync(ROOT, dest, {
     recursive: true,
@@ -84,11 +85,30 @@ async function main() {
 
   await run(
     'node',
+    ['scripts/init.mjs', '--role=shell', `--port=${ports.shell}`],
+    { cwd: shellDir },
+  );
+  await run(
+    'node',
     [
-      'scripts/init.mjs',
-      '--role=shell',
-      `--port=${ports.shell}`,
-      '--remote=demoRemote:demoRemote',
+      'scripts/add-remote.mjs',
+      '--alias=demoRemote',
+      '--name=demoRemote',
+      `--port=${ports.remote}`,
+      '--props={"title":"From Shell A"}',
+    ],
+    { cwd: shellDir },
+  );
+  await run(
+    'node',
+    [
+      'scripts/add-remote.mjs',
+      '--alias=billingRemote',
+      '--name=billing',
+      '--federation-name=demoRemote',
+      '--expose=./DemoRemote',
+      `--port=${ports.remote}`,
+      '--props={"title":"Billing Slot"}',
     ],
     { cwd: shellDir },
   );
@@ -113,7 +133,11 @@ async function main() {
     {
       cwd: shellDir,
       stdio: 'inherit',
-      env: { ...process.env, DEMO_REMOTE_URL: demoRemoteUrl },
+      env: {
+        ...process.env,
+        DEMO_REMOTE_URL: demoRemoteUrl,
+        BILLING_REMOTE_URL: demoRemoteUrl,
+      },
     },
   );
 
