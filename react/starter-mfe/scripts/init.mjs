@@ -380,7 +380,12 @@ async function main() {
       `Expose: ${toExposePath(name)} → ./src/app/FederatedRemoteApp.tsx`,
     );
     console.log('');
-    console.log('Copy into shell starter.role.json → remotes[]:');
+    console.log('In your shell clone, run:');
+    console.log(
+      `npm run add-remote -- --alias=${snippet.alias} --name=${snippet.name} --port=${port} --expose=${snippet.expose} --federation-name=${snippet.federationName} --url-env=${snippet.urlEnv}`,
+    );
+    console.log('');
+    console.log('Or copy into shell starter.role.json → remotes[]:');
     console.log('---');
     console.log(JSON.stringify(snippet, null, 2));
     console.log('---');

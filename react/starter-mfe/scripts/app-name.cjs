@@ -6,7 +6,7 @@
 const DEFAULT_NAMES = {
   standalone: 'standalone',
   shell: 'shell',
-  remote: 'demoRemote',
+  remote: 'demo-remote',
 };
 
 const DEFAULT_REMOTE_NAME = 'demoRemote';

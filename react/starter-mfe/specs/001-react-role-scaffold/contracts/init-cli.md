@@ -64,4 +64,4 @@ When **not** a TTY (CI, piped stdin), missing `--role` / `--port` MUST fail with
 |------|--------|
 | `standalone` | Webpack: no remotes/exposes; routes → standalone |
 | `shell` | Webpack remotes from `remotes[]` (may be empty); routes → shell; loaders generated |
-| `remote` | Webpack exposes PascalCase name → `./src/app/App.tsx`; prints shell `remotes[]` snippet |
+| `remote` | Webpack exposes PascalCase name → `./src/app/App.tsx`; prints a copy-paste `npm run add-remote` command plus shell `remotes[]` snippet |

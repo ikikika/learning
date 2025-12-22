@@ -121,7 +121,11 @@ test('--name writes metadata, package.json, and federationName', () => {
       fs.readFileSync(path.join(tmp, 'package.json'), 'utf8'),
     );
     assert.equal(pkg.name, 'my-checkout');
-    assert.match(r.stdout, /Copy into shell starter\.role\.json/);
+    assert.match(
+      r.stdout,
+      /npm run add-remote -- --alias=myCheckout --name=my-checkout --port=3002 --expose=\.\/MyCheckout --federation-name=myCheckout --url-env=MY_CHECKOUT_URL/,
+    );
+    assert.match(r.stdout, /Or copy into shell starter\.role\.json/);
     assert.match(r.stdout, /"alias": "myCheckout"/);
     assert.match(r.stdout, /"federationName": "myCheckout"/);
     assert.match(r.stdout, /"expose": "\.\/MyCheckout"/);
