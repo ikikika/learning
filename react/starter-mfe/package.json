@@ -2,7 +2,7 @@
   "name": "starter-mfe",
   "version": "0.1.0",
   "private": true,
-  "description": "In-repo React starter with standalone | shell | remote roles (Webpack Module Federation)",
+  "description": "In-repo React starter with standalone | host | remote roles (Webpack Module Federation)",
   "engines": {
     "node": ">=20"
   },

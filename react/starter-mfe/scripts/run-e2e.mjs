@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Per-role Playwright: init → test for standalone, shell, remote.
+ * Per-role Playwright: init → test for standalone, host, remote.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -17,7 +17,7 @@ const host = getDevHost();
 /** Explicit smoke ports — not read from .env (ports are empty until init). */
 const ROLE_PORTS = {
   standalone: 3000,
-  shell: 3001,
+  host: 3001,
   remote: 3002,
 };
 
@@ -28,8 +28,8 @@ function init(role) {
     `--role=${role}`,
     `--port=${port}`,
   ];
-  // Shell e2e exercises LoadRemote fallbacks — add a slot explicitly (init defaults to none).
-  if (role === 'shell') {
+  // Host e2e exercises LoadRemote fallbacks — add a slot explicitly (init defaults to none).
+  if (role === 'host') {
     args.push('--remote=demoRemote:demoRemote');
   }
   if (fs.existsSync(path.join(ROOT, 'starter.role.json'))) {
@@ -58,7 +58,7 @@ function runPlaywright(project, port) {
 
 const roles = [
   { role: 'standalone', project: 'standalone' },
-  { role: 'shell', project: 'shell' },
+  { role: 'host', project: 'host' },
   { role: 'remote', project: 'remote-standalone' },
 ];
 

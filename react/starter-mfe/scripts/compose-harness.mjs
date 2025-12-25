@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Two temporary workspaces: shell + remote, then run compose Playwright project.
+ * Two temporary workspaces: host + remote, then run compose Playwright project.
  */
 import fs from 'node:fs';
 import os from 'node:os';
@@ -17,9 +17,9 @@ const ROOT = path.resolve(__dirname, '..');
 const host = getDevHost();
 
 /** Explicit compose ports — not read from .env (ports are empty until init). */
-const ports = { shell: 3001, remote: 3002 };
+const ports = { host: 3001, remote: 3002 };
 const demoRemoteUrl = `http://${host}:${ports.remote}/remoteEntry.js`;
-const shellUrl = `http://${host}:${ports.shell}`;
+const hostUrl = `http://${host}:${ports.host}`;
 const remoteUrl = `http://${host}:${ports.remote}`;
 
 function run(cmd, args, opts = {}) {
@@ -78,15 +78,15 @@ async function waitForUrl(url, timeoutMs = 90_000) {
 
 async function main() {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'starter-mfe-compose-'));
-  const shellDir = path.join(tmp, 'shell');
+  const hostDir = path.join(tmp, 'host');
   const remoteDir = path.join(tmp, 'remote');
-  copyWorkspace(shellDir);
+  copyWorkspace(hostDir);
   copyWorkspace(remoteDir);
 
   await run(
     'node',
-    ['scripts/init.mjs', '--role=shell', `--port=${ports.shell}`],
-    { cwd: shellDir },
+    ['scripts/init.mjs', '--role=host', `--port=${ports.host}`],
+    { cwd: hostDir },
   );
   await run(
     'node',
@@ -95,9 +95,9 @@ async function main() {
       '--alias=demoRemote',
       '--name=demoRemote',
       `--port=${ports.remote}`,
-      '--props={"title":"From Shell A"}',
+      '--props={"title":"From Host A"}',
     ],
-    { cwd: shellDir },
+    { cwd: hostDir },
   );
   await run(
     'node',
@@ -110,7 +110,7 @@ async function main() {
       `--port=${ports.remote}`,
       '--props={"title":"Billing Slot"}',
     ],
-    { cwd: shellDir },
+    { cwd: hostDir },
   );
   await run(
     'node',
@@ -127,11 +127,11 @@ async function main() {
       env: { ...process.env, DEMO_REMOTE_URL: demoRemoteUrl },
     },
   );
-  const shellProc = spawn(
+  const hostProc = spawn(
     'npx',
     ['webpack', 'serve', '--config', 'config/webpack.dev.js'],
     {
-      cwd: shellDir,
+      cwd: hostDir,
       stdio: 'inherit',
       env: {
         ...process.env,
@@ -142,7 +142,7 @@ async function main() {
   );
 
   const cleanup = () => {
-    shellProc.kill('SIGTERM');
+    hostProc.kill('SIGTERM');
     remoteProc.kill('SIGTERM');
     fs.rmSync(tmp, { recursive: true, force: true });
   };
@@ -154,16 +154,16 @@ async function main() {
 
   try {
     await waitForUrl(remoteUrl);
-    await waitForUrl(shellUrl);
+    await waitForUrl(hostUrl);
 
     await run('npx', ['playwright', 'test', '--project=compose'], {
       cwd: ROOT,
       env: {
         ...process.env,
-        PLAYWRIGHT_SHELL_URL: shellUrl,
+        PLAYWRIGHT_HOST_URL: hostUrl,
         PLAYWRIGHT_REMOTE_URL: remoteUrl,
         PLAYWRIGHT_SKIP_WEBSERVER: '1',
-        PLAYWRIGHT_BASE_URL: shellUrl,
+        PLAYWRIGHT_BASE_URL: hostUrl,
       },
     });
   } finally {

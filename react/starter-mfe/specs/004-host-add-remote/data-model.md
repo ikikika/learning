@@ -1,10 +1,10 @@
-# Data Model: Shell add-remote
+# Data Model: Host add-remote
 
-**Feature**: `004-shell-add-remote` | **Date**: 2026-08-02
+**Feature**: `004-host-add-remote` | **Date**: 2026-08-02
 
 ## Entities
 
-### ShellRemoteRegistration
+### HostRemoteRegistration
 
 Host-side record for one federated remote (existing `remotes[]` item).
 
@@ -45,9 +45,9 @@ Serializable props bag for one alias.
 
 **Lifecycle**: Optional create on add-remote via `--props`; later hand-edit; removing a remote from `remotes[]` may leave orphan props (ignored).
 
-### ShellCompositionMount
+### HostCompositionMount
 
-Runtime mount in the shell panel (not persisted).
+Runtime mount in the host panel (not persisted).
 
 | Field | Type | Rules |
 |-------|------|--------|
@@ -57,7 +57,7 @@ Runtime mount in the shell panel (not persisted).
 
 ## Validation summary
 
-- Shell role required for add-remote writes
+- Host role required for add-remote writes
 - Exactly one of `--url` / `--port`
 - `--props` if present must parse as a JSON **object** (not array/primitive)
 - Alias uniqueness within `remotes[]`
@@ -71,7 +71,7 @@ Runtime mount in the shell panel (not persisted).
 [registered]
     --hand-edit remoteProps--> [registered with updated props]
 [registered]
-    --select in shell nav--> [mounted with props ∪ embedded=true]
+    --select in host nav--> [mounted with props ∪ embedded=true]
 [props for unknown alias]
     --runtime read--> ignored (no mount effect)
 ```

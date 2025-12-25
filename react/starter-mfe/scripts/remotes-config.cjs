@@ -1,5 +1,5 @@
 /**
- * Shell remotes[] helpers shared by init + webpack (CJS).
+ * Host remotes[] helpers shared by init + webpack (CJS).
  */
 const {
   DEFAULT_REMOTE_NAME,
@@ -45,11 +45,11 @@ function defaultDemoRemote(name = DEFAULT_REMOTE_NAME) {
 }
 
 /**
- * Suggested shell remotes[] entry for a remote repo after init --role=remote.
+ * Suggested host remotes[] entry for a remote repo after init --role=remote.
  * Alias defaults to the federation container name so it is unique per remote.
  * Expose defaults to PascalCase of the app name (matches remote webpack exposes).
  */
-function shellRemoteSnippetForApp(name) {
+function hostRemoteSnippetForApp(name) {
   const federationName = toFederationName(name);
   const alias = federationName;
   return normalizeRemoteEntry({
@@ -219,7 +219,7 @@ function normalizeRemotePropsMap(map) {
 }
 
 /**
- * Generate TypeScript loader registry for shell role.
+ * Generate TypeScript loader registry for host role.
  * @param {Array<{ alias: string, expose: string }>} remotes
  */
 function generateLoadersSource(remotes) {
@@ -270,7 +270,7 @@ module.exports = {
   DEMO_URL_ENV,
   aliasToUrlEnv,
   defaultDemoRemote,
-  shellRemoteSnippetForApp,
+  hostRemoteSnippetForApp,
   normalizeRemoteEntry,
   remotesFromMeta,
   parseRemoteFlag,

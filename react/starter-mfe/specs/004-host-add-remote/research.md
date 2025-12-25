@@ -1,6 +1,6 @@
-# Research: Shell add-remote
+# Research: Host add-remote
 
-**Feature**: `004-shell-add-remote` | **Date**: 2026-08-02
+**Feature**: `004-host-add-remote` | **Date**: 2026-08-02
 
 ## R1 — Where to persist remotes[] updates
 
@@ -20,7 +20,7 @@
 
 ## R3 — Where to store per-remote props
 
-**Decision**: Add optional `remoteProps` map on `starter.role.json`: `{ [alias: string]: Record<string, unknown> }` with JSON-serializable values only. Bake as `__STARTER_REMOTE_PROPS__` in webpack for shell builds. Hand-edit this map for later changes (no update CLI in v1).
+**Decision**: Add optional `remoteProps` map on `starter.role.json`: `{ [alias: string]: Record<string, unknown> }` with JSON-serializable values only. Bake as `__STARTER_REMOTE_PROPS__` in webpack for host builds. Hand-edit this map for later changes (no update CLI in v1).
 
 **Rationale**: Single documented file for registration + props (FR-016); mirrors remotes bake pattern; unknown aliases ignored at read time (FR-017).
 
@@ -44,7 +44,7 @@
 
 ## R6 — CLI identity defaults
 
-**Decision**: Required `--alias`. Optional `--name` (default alias), `--expose` (default PascalCase of name → `./Name`), `--federation-name` (default from name). Optional `--props='<json object>'` on add. Reject duplicate alias. Shell role only.
+**Decision**: Required `--alias`. Optional `--name` (default alias), `--expose` (default PascalCase of name → `./Name`), `--federation-name` (default from name). Optional `--props='<json object>'` on add. Reject duplicate alias. Host role only.
 
 **Rationale**: Matches `normalizeRemoteEntry` / init `--remote` conventions; FR-007/009/015.
 
@@ -60,7 +60,7 @@
 
 ## R8 — Standalone / remote non-regression
 
-**Decision**: No changes to `standaloneRoutes`, `shellRoutes` tree shape, or `App.tsx` useRoutes path. Remote expose remains `FederatedRemoteApp`. Webpack `__STARTER_REMOTE_PROPS__` only meaningful for shell; remote/standalone builds get `{}`.
+**Decision**: No changes to `standaloneRoutes`, `hostRoutes` tree shape, or `App.tsx` useRoutes path. Remote expose remains `FederatedRemoteApp`. Webpack `__STARTER_REMOTE_PROPS__` only meaningful for host; remote/standalone builds get `{}`.
 
 **Rationale**: Spec User Story 5 / FR-008.
 

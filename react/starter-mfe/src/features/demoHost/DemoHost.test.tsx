@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { DemoShell } from './DemoShell';
+import { DemoHost } from './DemoHost';
 
 jest.mock('react-router', () => ({
   NavLink: ({
@@ -39,17 +39,17 @@ jest.mock('../../core/constants/remotes', () => ({
   ],
 }));
 
-describe('DemoShell', () => {
-  it('always shows Shell nav link', () => {
-    render(<DemoShell />);
-    expect(screen.getByRole('link', { name: 'Shell' })).toHaveAttribute(
+describe('DemoHost', () => {
+  it('always shows Host nav link', () => {
+    render(<DemoHost />);
+    expect(screen.getByRole('link', { name: 'Host' })).toHaveAttribute(
       'href',
       '/',
     );
   });
 
   it('shows a nav link for each REMOTE_SLOTS name', () => {
-    render(<DemoShell />);
+    render(<DemoHost />);
     expect(screen.getByRole('link', { name: 'Billing' })).toHaveAttribute(
       'href',
       '/remote/billingRemote',

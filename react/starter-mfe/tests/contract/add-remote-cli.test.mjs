@@ -68,13 +68,13 @@ function snapshotFiles(cwd) {
   };
 }
 
-test('non-shell role rejects with no file writes', () => {
+test('non-host role rejects with no file writes', () => {
   withTempCopy((tmp) => {
     assert.equal(init(tmp, ['--role=remote', '--port=3002']).status, 0);
     const before = snapshotFiles(tmp);
     const r = addRemote(tmp, ['--alias=demoRemote', '--port=3002']);
     assert.notEqual(r.status, 0);
-    assert.match(r.stderr, /shell-only/i);
+    assert.match(r.stderr, /host-only/i);
     const after = snapshotFiles(tmp);
     assert.equal(after.meta, before.meta);
     assert.equal(after.env, before.env);
@@ -88,7 +88,7 @@ test('standalone role rejects with no file writes', () => {
     const before = snapshotFiles(tmp);
     const r = addRemote(tmp, ['--alias=demoRemote', '--port=3002']);
     assert.notEqual(r.status, 0);
-    assert.match(r.stderr, /shell-only/i);
+    assert.match(r.stderr, /host-only/i);
     const after = snapshotFiles(tmp);
     assert.equal(after.meta, before.meta);
   });
@@ -98,7 +98,7 @@ test('duplicate alias rejects with no file writes', () => {
   withTempCopy((tmp) => {
     assert.equal(
       init(tmp, [
-        '--role=shell',
+        '--role=host',
         '--port=3001',
         '--remote=demoRemote:demoRemote',
       ]).status,
@@ -117,7 +117,7 @@ test('duplicate alias rejects with no file writes', () => {
 
 test('missing url and port rejects', () => {
   withTempCopy((tmp) => {
-    assert.equal(init(tmp, ['--role=shell', '--port=3001']).status, 0);
+    assert.equal(init(tmp, ['--role=host', '--port=3001']).status, 0);
     const r = addRemote(tmp, ['--alias=demoRemote']);
     assert.notEqual(r.status, 0);
     assert.match(r.stderr, /exactly one of --url|--port/i);
@@ -126,7 +126,7 @@ test('missing url and port rejects', () => {
 
 test('both url and port rejects', () => {
   withTempCopy((tmp) => {
-    assert.equal(init(tmp, ['--role=shell', '--port=3001']).status, 0);
+    assert.equal(init(tmp, ['--role=host', '--port=3001']).status, 0);
     const r = addRemote(tmp, [
       '--alias=demoRemote',
       '--url=http://127.0.0.1:3002/remoteEntry.js',
@@ -139,7 +139,7 @@ test('both url and port rejects', () => {
 
 test('invalid url rejects with no writes', () => {
   withTempCopy((tmp) => {
-    assert.equal(init(tmp, ['--role=shell', '--port=3001']).status, 0);
+    assert.equal(init(tmp, ['--role=host', '--port=3001']).status, 0);
     const before = snapshotFiles(tmp);
     const r = addRemote(tmp, ['--alias=demoRemote', '--url=not-a-url']);
     assert.notEqual(r.status, 0);
@@ -150,7 +150,7 @@ test('invalid url rejects with no writes', () => {
 
 test('invalid port rejects with no writes', () => {
   withTempCopy((tmp) => {
-    assert.equal(init(tmp, ['--role=shell', '--port=3001']).status, 0);
+    assert.equal(init(tmp, ['--role=host', '--port=3001']).status, 0);
     const before = snapshotFiles(tmp);
     const r = addRemote(tmp, ['--alias=demoRemote', '--port=0']);
     assert.notEqual(r.status, 0);
@@ -161,22 +161,22 @@ test('invalid port rejects with no writes', () => {
 
 test('--props object is written to remoteProps[alias]', () => {
   withTempCopy((tmp) => {
-    assert.equal(init(tmp, ['--role=shell', '--port=3001']).status, 0);
+    assert.equal(init(tmp, ['--role=host', '--port=3001']).status, 0);
     const r = addRemote(tmp, [
       '--alias=demoRemote',
       '--name=demoRemote',
       '--port=3002',
-      '--props={"title":"From Shell A"}',
+      '--props={"title":"From Host A"}',
     ]);
     assert.equal(r.status, 0, r.stderr);
     const meta = readMeta(tmp);
-    assert.deepEqual(meta.remoteProps.demoRemote, { title: 'From Shell A' });
+    assert.deepEqual(meta.remoteProps.demoRemote, { title: 'From Host A' });
   });
 });
 
 test('invalid --props JSON fails with no writes', () => {
   withTempCopy((tmp) => {
-    assert.equal(init(tmp, ['--role=shell', '--port=3001']).status, 0);
+    assert.equal(init(tmp, ['--role=host', '--port=3001']).status, 0);
     const before = snapshotFiles(tmp);
     const r = addRemote(tmp, [
       '--alias=demoRemote',
@@ -193,7 +193,7 @@ test('invalid --props JSON fails with no writes', () => {
 
 test('non-object --props fails with no writes', () => {
   withTempCopy((tmp) => {
-    assert.equal(init(tmp, ['--role=shell', '--port=3001']).status, 0);
+    assert.equal(init(tmp, ['--role=host', '--port=3001']).status, 0);
     const before = snapshotFiles(tmp);
     const r = addRemote(tmp, [
       '--alias=demoRemote',

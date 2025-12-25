@@ -1,4 +1,4 @@
-export type AppRole = 'standalone' | 'shell' | 'remote';
+export type AppRole = 'standalone' | 'host' | 'remote';
 
 declare global {
   interface Window {
@@ -18,7 +18,7 @@ export function getAppRole(): AppRole {
     typeof __STARTER_ROLE__ !== 'undefined' ? __STARTER_ROLE__ : undefined;
   if (
     injected === 'standalone' ||
-    injected === 'shell' ||
+    injected === 'host' ||
     injected === 'remote'
   ) {
     return injected;

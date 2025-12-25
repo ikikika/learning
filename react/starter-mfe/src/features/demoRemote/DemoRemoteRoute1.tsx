@@ -4,7 +4,7 @@ import styles from './DemoRemoteRoute1.module.scss';
 
 /**
  * Sample remote content for Route 1.
- * Shows optional host `title` when embedded via shell props.
+ * Shows optional host `title` when embedded via host props.
  */
 export function DemoRemoteRoute1() {
   const { title } = useHostProps();
@@ -22,7 +22,7 @@ export function DemoRemoteRoute1() {
       ) : null}
       <p className={styles.copy}>
         Sample remote page. This is the default entry when the remote runs on
-        its own or is loaded into a shell panel.
+        its own or is loaded into a host panel.
       </p>
       <p className={styles.nav}>
         <Link to={route2To} data-testid="demo-remote-to-route-2">

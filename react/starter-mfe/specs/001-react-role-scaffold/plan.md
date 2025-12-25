@@ -5,7 +5,7 @@
 **Input**: Feature specification from `/specs/001-react-role-scaffold/spec.md`
 
 **Note**: This plan is for the in-repo starter itself. Init configures **this**
-repository as exactly one of `standalone` | `shell` | `remote` per run (not a
+repository as exactly one of `standalone` | `host` | `remote` per run (not a
 multi-app monorepo).
 
 ## Summary
@@ -13,15 +13,15 @@ multi-app monorepo).
 Deliver an in-repo React starter initialized with required `--role`. Init writes
 `starter.role.json` + README, shapes Webpack MF, and uses **symmetric**
 prune/restore via templates that **mirror `src/` relative paths**:
-`templates/role-assets/demo/` and `templates/role-assets/shell/`. Shell prunes
-live demo + `HomePage` and restores shell assets; standalone/remote prune
-shell-only live assets and restore demo + `HomePage`. Tokens + ThemeProvider
-with light/dark + “Use system theme”. Shell mounts `./Demo` with
+`templates/role-assets/demo/` and `templates/role-assets/host/`. Host prunes
+live demo + `HomePage` and restores host assets; standalone/remote prune
+host-only live assets and restore demo + `HomePage`. Tokens + ThemeProvider
+with light/dark + “Use system theme”. Host mounts `./Demo` with
 **`embedded={true}`**; the **Demo module** suppresses document PWA/theme when
 embedded (remote bootstrap ThemeProvider/`registerPwa` are standalone-entry
 only). **Compose smoke**: two temp workspaces. **WCAG 2.2 AA CI**. Per-role
 smoke: first visit (cleared storage) → system/`light`, toggle, **toggle →
-reload → same `data-theme`**, use-system. Shell smoke also covers
+reload → same `data-theme`**, use-system. Host smoke also covers
 **empty/invalid remote URL**. Offline: **"internet connection required"**.
 In-repo typed `./Demo` + `1.0.0` (published package deferred). ~2s interactive
 is **aspirational**.
@@ -38,13 +38,13 @@ No mandatory published shared contract packages in v1.
 **Storage**: `starter.role.json`; `navigator.onLine`; theme in `localStorage`
 after light/dark toggle (first visit: `prefers-color-scheme` → `light`;
 “Use system theme” clears); pristine role assets under
-`templates/role-assets/demo/` and `templates/role-assets/shell/` (mirror
+`templates/role-assets/demo/` and `templates/role-assets/host/` (mirror
 `src/` relative paths).
 
 **Testing**: Co-located unit tests; `tests/contract/`; Playwright per-role
-(viewport, offline, shell fallback incl. **empty/invalid remote URL**, theme
+(viewport, offline, host fallback incl. **empty/invalid remote URL**, theme
 **first visit** + toggle + **reload persistence** + use-system for
-standalone/shell/remote-standalone); compose harness (two temp workspaces);
+standalone/host/remote-standalone); compose harness (two temp workspaces);
 WCAG 2.2 AA CI gate on primary routes.
 
 **Target Platform**: Evergreen browsers incl. phone-width; PWA-capable; Node 20+.
@@ -63,7 +63,7 @@ required; `--force` to re-init.
 
 **Scale/Scope**:
 - In: init + symmetric templates, MF roles, demo/typed contract + `embedded`
-  prop, shell slot/fallback (incl. empty/invalid URL), PWA, theming, compose
+  prop, host slot/fallback (incl. empty/invalid URL), PWA, theming, compose
   smoke, per-role theme first-visit/reload smoke, axe CI.
 - Out: external generators; separate migration CLI (FR-012); `@scope/*`; UI
   kits; published remote-contracts package (deferred); hard CI perf budget;
@@ -80,7 +80,7 @@ required; `--force` to re-init.
   `embedded?: boolean` (Principle III). Published package deferred via
   Complexity Tracking.
 - **Composition-First UI**: PASS — flat components; no UI kit.
-- **Responsive Experience & PWA Readiness**: PASS — responsive + PWA; shell
+- **Responsive Experience & PWA Readiness**: PASS — responsive + PWA; host
   owns federated PWA/theme; Demo suppresses when `embedded={true}`; WCAG AA CI.
 - **Multi-Repository Topology**: PASS — one app/clone; compose uses temp copies.
 - **Application Layout**: PASS — canonical `src/` + mirrored templates.
@@ -119,7 +119,7 @@ public/
 templates/
 └── role-assets/
     ├── demo/             # mirrors src/: features/demo/, pages/HomePage/
-    └── shell/            # mirrors src/: pages/ShellHomePage/, app/remotes/loadDemoRemote.tsx, app/routes/shellRoutes.tsx
+    └── host/            # mirrors src/: pages/HostHomePage/, app/remotes/loadDemoRemote.tsx, app/routes/hostRoutes.tsx
 scripts/
 ├── init.mjs              # symmetric prune/restore; --role [--force]
 └── compose-harness.mjs   # two temp workspaces for test:compose
@@ -128,14 +128,14 @@ src/
 ├── bootstrap.tsx
 ├── app/
 │   ├── App.tsx
-│   ├── providers/        # ThemeProvider + registerPwa: standalone/shell entry
-│   ├── remotes/          # shell loaders pass embedded={true} to ./Demo
+│   ├── providers/        # ThemeProvider + registerPwa: standalone/host entry
+│   ├── remotes/          # host loaders pass embedded={true} to ./Demo
 │   └── routes/
 ├── features/
 │   └── demo/             # ./Demo; honors embedded?: boolean (suppress when true)
 ├── pages/
 │   ├── HomePage/
-│   └── ShellHomePage/
+│   └── HostHomePage/
 ├── layouts/MainLayout/
 ├── components/
 │   ├── Button/
@@ -156,9 +156,9 @@ tests/
 **Repository Role**: One of three after `init --role=…`.
 
 **Structure Decision**: Live app under `src/`. Templates mirror `src/` under
-`demo/` and `shell/`. Shell mounts `./Demo` with `embedded={true}`; Demo module
+`demo/` and `host/`. Host mounts `./Demo` with `embedded={true}`; Demo module
 suppresses document PWA/theme; remote bootstrap providers are standalone-entry
-only. Per-role smoke covers first visit + reload; shell smoke covers
+only. Per-role smoke covers first visit + reload; host smoke covers
 empty/invalid remote URL. Perf ~2s aspirational only.
 
 ## Complexity Tracking

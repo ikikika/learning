@@ -15,7 +15,7 @@ export function DemoRemoteRoute2() {
       <p className={styles.copy}>
         Second sample remote page. Reachable by URL when the remote runs as its
         own app (for example <code>/route-2</code>), or via the Route 1 link
-        when embedded (shell address becomes <code>/remote/…/route-2</code>).
+        when embedded (host address becomes <code>/remote/…/route-2</code>).
       </p>
       <p className={styles.nav}>
         <Link to={route1To} data-testid="demo-remote-to-route-1">

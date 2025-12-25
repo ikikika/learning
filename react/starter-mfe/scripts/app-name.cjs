@@ -5,7 +5,7 @@
 /** Default MF / metadata names when --name is omitted. */
 const DEFAULT_NAMES = {
   standalone: 'standalone',
-  shell: 'shell',
+  host: 'host',
   remote: 'demo-remote',
 };
 
@@ -54,7 +54,7 @@ function toExposePath(pkgName) {
 
 function isValidPackageName(value) {
   if (!value || typeof value !== 'string') return false;
-  // Already a federation-safe identifier (e.g. demoRemote, shell).
+  // Already a federation-safe identifier (e.g. demoRemote, host).
   if (/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(value)) return true;
   if (!PACKAGE_NAME_RE.test(value)) return false;
   return /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(toFederationName(value));

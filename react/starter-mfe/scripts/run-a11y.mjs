@@ -14,7 +14,7 @@ const host = getDevHost();
 /** Explicit smoke ports — not read from .env (ports are empty until init). */
 const ROLE_PORTS = {
   standalone: 3000,
-  shell: 3001,
+  host: 3001,
   remote: 3002,
 };
 
@@ -31,7 +31,7 @@ function init(role) {
 }
 
 // AA audit against primary demo route for each role
-for (const role of ['standalone', 'shell', 'remote']) {
+for (const role of ['standalone', 'host', 'remote']) {
   const port = ROLE_PORTS[role];
   init(role);
   const r = spawnSync('npx', ['playwright', 'test', '--project=a11y'], {

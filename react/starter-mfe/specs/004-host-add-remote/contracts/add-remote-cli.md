@@ -1,8 +1,8 @@
 # Contract: add-remote CLI
 
-**Feature**: `004-shell-add-remote`  
+**Feature**: `004-host-add-remote`  
 **Invocation**: `npm run add-remote -- [flags]`  
-**Role gate**: `starter.role.json.role === "shell"` only
+**Role gate**: `starter.role.json.role === "host"` only
 
 ## Flags
 
@@ -39,7 +39,7 @@ If required flags are already complete, optional flags use defaults with no prom
 | Condition | Exit | Side effects |
 |-----------|------|--------------|
 | Success | 0 | Appends `remotes[]`, writes `.env[urlEnv]`, regenerates loaders, optionally sets `remoteProps[alias]`; prints restart hint |
-| Not shell | ≠0 | No file writes |
+| Not host | ≠0 | No file writes |
 | Duplicate alias | ≠0 | No file writes |
 | Invalid/missing location or props JSON | ≠0 | No file writes |
 

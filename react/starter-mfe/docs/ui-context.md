@@ -67,7 +67,7 @@ _TODO: Confirm first-visit / persist / “Use system theme” rules for authors.
 ### Theme ownership (federation)
 
 <!--
-  shell → owns document theme when composing
+  host → owns document theme when composing
   remote standalone → full ThemeProvider
   remote embedded (embedded={true}) → must NOT take over document theme
 -->
@@ -99,7 +99,7 @@ _TODO: Rules such as:_
 | Button | `src/components/Button/` | _TODO_ |
 | ThemeToggle | `src/components/ThemeToggle/` | _TODO_ |
 | ConnectionRequired | `src/components/ConnectionRequired/` | Offline banner |
-| RemoteFallback | `src/components/RemoteFallback/` | Shell remote failure |
+| RemoteFallback | `src/components/RemoteFallback/` | Host remote failure |
 
 ## Layout & composition
 

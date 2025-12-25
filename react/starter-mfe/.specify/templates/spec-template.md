@@ -125,20 +125,20 @@
   chosen when the feature description did not specify certain details.
 
   For this multi-repo starter, always record:
-  - this repository's role: shell, remote, or standalone
-  - for a remote, how it runs standalone and which shell(s) may consume it
-  - for a shell, how remote locations are configured and failure is handled
+  - this repository's role: host, remote, or standalone
+  - for a remote, how it runs standalone and which host(s) may consume it
+  - for a host, how remote locations are configured and failure is handled
   - required shared UI/config/contract package names and compatible versions
   - mobile-responsive expectations for primary flows (constitution MUST)
   - PWA baseline expectations (manifest/icons/offline shell) and whether
-    install/offline UX is shell-owned when federated
+    install/offline UX is host-owned when federated
 -->
 
 - [Repository role, e.g., "This repository is the checkout remote"]
-- [Federation assumption, e.g., "Checkout MUST run standalone and be consumed by the shell"]
+- [Federation assumption, e.g., "Checkout MUST run standalone and be consumed by the host"]
 - [Shared package dependency, e.g., "@scope/checkout-contracts ^2.0.0"]
 - [Responsive assumption, e.g., "Primary flows MUST work at phone-width without horizontal scroll"]
-- [PWA assumption, e.g., "App ships installable PWA baseline; shell owns install UX when federated"]
+- [PWA assumption, e.g., "App ships installable PWA baseline; host owns install UX when federated"]
 - [Assumption about target users, e.g., "Users have stable internet connectivity"]
 - [Assumption about scope boundaries, e.g., "Offline mutation sync is out of scope for v1"]
 - [Assumption about data/environment, e.g., "Existing authentication system will be reused"]

@@ -30,12 +30,12 @@ describe('DemoRemoteRoute1', () => {
 
   it('shows demo-remote-host-title when context title is set', () => {
     render(
-      <HostPropsProvider value={{ title: 'From Shell A' }}>
+      <HostPropsProvider value={{ title: 'From Host A' }}>
         <DemoRemoteRoute1 />
       </HostPropsProvider>,
     );
     expect(screen.getByTestId('demo-remote-host-title')).toHaveTextContent(
-      'From Shell A',
+      'From Host A',
     );
   });
 });

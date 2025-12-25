@@ -3,7 +3,7 @@ declare module '@active-routes' {
   export const routes: RouteObject[];
 }
 
-declare const __STARTER_ROLE__: 'standalone' | 'shell' | 'remote' | undefined;
+declare const __STARTER_ROLE__: 'standalone' | 'host' | 'remote' | undefined;
 declare const __STARTER_DEMO_REMOTE_URL_DEFAULT__: string | undefined;
 declare const __STARTER_REMOTES_CONFIG__:
   | Array<{

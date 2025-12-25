@@ -8,7 +8,7 @@ export function MainLayout() {
   const online = useOnlineStatus();
 
   return (
-    <div className={styles.shell}>
+    <div className={styles.host}>
       <header className={styles.header}>
         <div className={styles.brand}>Starter MFE</div>
         <ThemeToggle />

@@ -34,7 +34,7 @@ function loadEnvFile(filePath = path.join(ROOT, '.env')) {
 loadEnvFile();
 
 function portEnvKeyForRole(role) {
-  if (role === 'shell') return 'PORT_SHELL';
+  if (role === 'host') return 'PORT_HOST';
   if (role === 'remote') return 'PORT_REMOTE';
   return 'PORT_STANDALONE';
 }
@@ -55,7 +55,7 @@ function getPort(name) {
 function getPorts() {
   return {
     standalone: getPort('PORT_STANDALONE'),
-    shell: getPort('PORT_SHELL'),
+    host: getPort('PORT_HOST'),
     remote: getPort('PORT_REMOTE'),
   };
 }

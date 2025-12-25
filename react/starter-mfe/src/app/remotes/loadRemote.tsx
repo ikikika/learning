@@ -88,7 +88,7 @@ export function LoadRemote({ alias }: LoadRemoteProps) {
   if (!loader) {
     return (
       <RemoteFallback
-        reason={`No generated loader for "${alias}". Re-run init or add-remote for the shell role.`}
+        reason={`No generated loader for "${alias}". Re-run init or add-remote for the host role.`}
       />
     );
   }

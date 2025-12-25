@@ -3,7 +3,7 @@ import { useRoutes } from 'react-router';
 import { routes } from '@active-routes';
 
 export type AppProps = {
-  /** Shell passes `embedded={true}` when mounting the federated expose. */
+  /** Host passes `embedded={true}` when mounting the federated expose. */
   embedded?: boolean;
 };
 

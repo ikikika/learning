@@ -12,9 +12,9 @@
 
 | Role | Install / offline UX |
 |------|----------------------|
-| shell | Owns install/offline PWA UX for composed experience |
+| host | Owns install/offline PWA UX for composed experience |
 | remote (standalone) | Full installable PWA baseline |
-| remote (embedded) | MUST NOT take over shell install/offline; `./Demo` with `embedded={true}` suppresses document SW takeover ([remote-demo.md](./remote-demo.md)); remote bootstrap `registerPwa` is standalone-entry only |
+| remote (embedded) | MUST NOT take over host install/offline; `./Demo` with `embedded={true}` suppresses document SW takeover ([remote-demo.md](./remote-demo.md)); remote bootstrap `registerPwa` is standalone-entry only |
 | standalone | Owns its own PWA baseline |
 
 ## Connectivity message
@@ -28,7 +28,7 @@ When no network is detected:
 
 ## Compose smoke
 
-Automated compose (shell + remote from this starter) MUST assert shell-owned
+Automated compose (host + remote from this starter) MUST assert host-owned
 install/offline PWA UX with no remote takeover (paired with document-theme
 assertions in [theming.md](./theming.md) / [remote-demo.md](./remote-demo.md)).
 Harness: two temporary workspaces per [remote-demo.md](./remote-demo.md).

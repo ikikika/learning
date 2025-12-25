@@ -1,15 +1,15 @@
 ---
 name: demoRemote sample routes
-overview: Add permanent demoRemote sample pages for the remote role only (two routes, no in-remote nav). Shell and standalone roles stay byte-for-byte behaviorally unchanged.
+overview: Add permanent demoRemote sample pages for the remote role only (two routes, no in-remote nav). Host and standalone roles stay byte-for-byte behaviorally unchanged.
 todos:
   - id: feature-pages
     content: Add features/demoRemote (Route 1/2 content) and DemoRemoteRoute1Page / DemoRemoteRoute2Page wrappers
     status: pending
   - id: wire-remote-only
-    content: Wire remoteRoutes + remote-only federated entry (MemoryRouter); do not change App.tsx, shell, or standalone
+    content: Wire remoteRoutes + remote-only federated entry (MemoryRouter); do not change App.tsx, host, or standalone
     status: pending
   - id: update-tests
-    content: Update remote-standalone, compose, and init-no-prune tests for demoRemote (not shell/standalone smoke)
+    content: Update remote-standalone, compose, and init-no-prune tests for demoRemote (not host/standalone smoke)
     status: pending
   - id: update-docs
     content: Light AGENTS.md + README notes for remote sample
@@ -21,15 +21,15 @@ isProject: false
 
 ## Hard constraint — remote only
 
-**Do not change how the `standalone` or `shell` roles work.** No edits to their route tables, chrome, bootstrap, or shared App mount path.
+**Do not change how the `standalone` or `host` roles work.** No edits to their route tables, chrome, bootstrap, or shared App mount path.
 
 | Allowed | Forbidden |
 |---------|-----------|
-| [`remoteRoutes.tsx`](../../src/app/routes/remoteRoutes.tsx) | [`standaloneRoutes.tsx`](../../src/app/routes/standaloneRoutes.tsx), [`shellRoutes.tsx`](../../src/app/routes/shellRoutes.tsx) |
-| New `features/demoRemote/`, `pages/DemoRemote*` | [`features/demo/`](../../src/features/demo/), [`features/demoShell/`](../../src/features/demoShell/), [`HomePage`](../../src/pages/HomePage/) |
+| [`remoteRoutes.tsx`](../../src/app/routes/remoteRoutes.tsx) | [`standaloneRoutes.tsx`](../../src/app/routes/standaloneRoutes.tsx), [`hostRoutes.tsx`](../../src/app/routes/hostRoutes.tsx) |
+| New `features/demoRemote/`, `pages/DemoRemote*` | [`features/demo/`](../../src/features/demo/), [`features/demoHost/`](../../src/features/demoHost/), [`HomePage`](../../src/pages/HomePage/) |
 | New remote-only federated entry (see below) | Changing [`App.tsx`](../../src/app/App.tsx) behavior for non-embedded mounts |
-| Remote-role webpack `exposes` target | [`AppProviders`](../../src/app/providers/AppProviders.tsx), shell nav / `REMOTE_SLOTS`, `LoadRemote` contract beyond what compose already does |
-| Tests that target remote / compose remote panel | Changing standalone or shell e2e expectations except compose’s remote-panel assertion |
+| Remote-role webpack `exposes` target | [`AppProviders`](../../src/app/providers/AppProviders.tsx), host nav / `REMOTE_SLOTS`, `LoadRemote` contract beyond what compose already does |
+| Tests that target remote / compose remote panel | Changing standalone or host e2e expectations except compose’s remote-panel assertion |
 
 ## Approach
 
@@ -37,12 +37,12 @@ Init stays metadata-only. Sample assets live under `src/`; webpack already alias
 
 **No in-remote navigation:** no left navbar, link list, or route links. Labels **Route 1** / **Route 2** are page headings only. Default entry `route-1` (index redirect); `route-2` is in the route table and reachable by URL when the remote runs as its own app.
 
-**Embedded (federated) load — remote-only entry, not App.tsx:** keep [`App.tsx`](../../src/app/App.tsx) as `useRoutes(routes)` only (shell, standalone, and remote-as-own-app unchanged). For Module Federation, point the remote-role `exposes` entry at a **new** file (e.g. [`src/app/FederatedRemoteApp.tsx`](../../src/app/FederatedRemoteApp.tsx)) that:
+**Embedded (federated) load — remote-only entry, not App.tsx:** keep [`App.tsx`](../../src/app/App.tsx) as `useRoutes(routes)` only (host, standalone, and remote-as-own-app unchanged). For Module Federation, point the remote-role `exposes` entry at a **new** file (e.g. [`src/app/FederatedRemoteApp.tsx`](../../src/app/FederatedRemoteApp.tsx)) that:
 
 - wraps with `MemoryRouter` (`initialEntries={['/route-1']}`)
 - mounts the embedded remote route tree (no `MainLayout`)
 
-Shell still loads that expose via `LoadRemote` + `embedded={true}`; shell’s own `App` / `BrowserRouter` / `shellRoutes` are untouched.
+Host still loads that expose via `LoadRemote` + `embedded={true}`; host’s own `App` / `BrowserRouter` / `hostRoutes` are untouched.
 
 ```mermaid
 flowchart LR
@@ -51,7 +51,7 @@ flowchart LR
   remoteRoutes --> r2["DemoRemoteRoute2Page"]
   remoteRole --> expose["exposes → FederatedRemoteApp"]
   expose --> memory["MemoryRouter + embedded tree"]
-  shellRole["role=shell"] --> shellApp["App.tsx unchanged"]
+  hostRole["role=host"] --> hostApp["App.tsx unchanged"]
   standaloneRole["role=standalone"] --> standaloneApp["App.tsx unchanged"]
 ```
 
@@ -80,25 +80,25 @@ No `DemoRemote` layout, no `DemoRemoteHomePage`, no `NavLink`s.
 - **Remote as own app** (via unchanged `App` + `@active-routes`): `MainLayout` → index → `route-1`, plus `route-1` / `route-2`
 - **Embedded tree** (exported for `FederatedRemoteApp` only): same pages, no `MainLayout`
 
-**Webpack (remote role branch only):** `exposes[expose]` → `./src/app/FederatedRemoteApp.tsx` instead of `App.tsx`. Shell/standalone webpack branches unchanged.
+**Webpack (remote role branch only):** `exposes[expose]` → `./src/app/FederatedRemoteApp.tsx` instead of `App.tsx`. Host/standalone webpack branches unchanged.
 
-**Do not modify** [`App.tsx`](../../src/app/App.tsx), [`standaloneRoutes.tsx`](../../src/app/routes/standaloneRoutes.tsx), [`shellRoutes.tsx`](../../src/app/routes/shellRoutes.tsx), or demoShell.
+**Do not modify** [`App.tsx`](../../src/app/App.tsx), [`standaloneRoutes.tsx`](../../src/app/routes/standaloneRoutes.tsx), [`hostRoutes.tsx`](../../src/app/routes/hostRoutes.tsx), or demoHost.
 
 ## Tests / contract updates
 
 - [`remote-standalone.spec.ts`](../../tests/integration/remote-standalone.spec.ts) — Route 1 content (remote role)
-- [`compose.spec.ts`](../../tests/integration/compose.spec.ts) — remote panel shows demoRemote Route 1 (shell chrome assertions stay as today)
+- [`compose.spec.ts`](../../tests/integration/compose.spec.ts) — remote panel shows demoRemote Route 1 (host chrome assertions stay as today)
 - [`init-no-prune.test.mjs`](../../tests/contract/init-no-prune.test.mjs) — `demoRemote` assets survive init
-- Leave [`standalone.spec.ts`](../../tests/integration/standalone.spec.ts) and shell-only assertions alone unless compose’s remote panel check requires a testid swap
+- Leave [`standalone.spec.ts`](../../tests/integration/standalone.spec.ts) and host-only assertions alone unless compose’s remote panel check requires a testid swap
 
 ## Docs (light)
 
-- [`AGENTS.md`](../../AGENTS.md) / [`README.md`](../../README.md) — remote sample is `demoRemote` multi-route; do not imply shell/standalone changed
+- [`AGENTS.md`](../../AGENTS.md) / [`README.md`](../../README.md) — remote sample is `demoRemote` multi-route; do not imply host/standalone changed
 
 ## Out of scope
 
-- Any behavioral change to standalone or shell roles
+- Any behavioral change to standalone or host roles
 - Editing `App.tsx` for MemoryRouter / alternate trees
 - Changing `init.mjs` to scaffold files
-- Shell nav / `REMOTE_SLOTS` / demoShell
+- Host nav / `REMOTE_SLOTS` / demoHost
 - In-remote nav chrome or links between Route 1 and Route 2

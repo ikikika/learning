@@ -10,7 +10,7 @@ module.exports = () => {
     devtool: 'source-map',
     output: {
       filename: '[name].[contenthash].js',
-      // Shell/host: keep relative/`auto` so assets match the page origin.
+      // Host/host: keep relative/`auto` so assets match the page origin.
       publicPath: process.env.PUBLIC_PATH || 'auto',
     },
     plugins: [

@@ -24,18 +24,18 @@ Validation guide for `001-react-role-scaffold`. Implementation details live in
 
 ```bash
 npm install
-npm run init -- --role=standalone --port=3000   # or shell|remote with their ports
-# npm run init -- --role=shell --port=3001 --force
+npm run init -- --role=standalone --port=3000   # or host|remote with their ports
+# npm run init -- --role=host --port=3001 --force
 ```
 
 Expected after success:
 
 - `starter.role.json` + README role match
-- Canonical `src/` (demo, HomePage, ShellHomePage, and remotes adapters may all
+- Canonical `src/` (demo, HomePage, HostHomePage, and remotes adapters may all
   coexist; init does not prune)
-- If `shell`: `loaders.generated.ts` regenerated; remotes map from metadata
+- If `host`: `loaders.generated.ts` regenerated; remotes map from metadata
 - If `remote`: `./Demo` types + **`embedded?: boolean`** + contract version
-  **`1.0.0`** documented; shell `remotes[]` snippet printed
+  **`1.0.0`** documented; host `add-remote` command printed
 
 ## Local run
 
@@ -48,21 +48,21 @@ npm start
 ### V1 — Standalone (P1)
 
 1. Init `--role=standalone`.
-2. Home loads; phone-width OK; PWA artifacts present; no live `ShellHomePage`.
+2. Home loads; phone-width OK; PWA artifacts present; no live `HostHomePage`.
 3. Offline → **internet connection required**.
 4. Theme: cleared storage → system/`light`; toggle persists across **reload**;
    **Use system theme** clears.
 5. CI axe (or local) AA on primary route passes or fails closed.
 
-### V2 — Shell (P2)
+### V2 — Host (P2)
 
-1. Init `--role=shell` (`--force` if needed).
-2. Confirm live demo + `HomePage` gone; shell templates restored; demo
+1. Init `--role=host` (`--force` if needed).
+2. Confirm live demo + `HomePage` gone; host templates restored; demo
    templates intact.
 3. Remote unreachable → fallback; **empty/invalid remote URL** → fallback.
-4. Shell theme: first visit + toggle + reload persistence + use-system.
+4. Host theme: first visit + toggle + reload persistence + use-system.
 5. Offline → connection-required message.
-6. AA audit on shell primary route in CI.
+6. AA audit on host primary route in CI.
 
 ### V3 — Remote (P3)
 
@@ -70,14 +70,14 @@ npm start
 2. Standalone demo + PWA + theme; `./Demo` exports `embedded?: boolean` +
    `1.0.0`.
 3. Offline message; AA on remote standalone primary route.
-4. Confirm no live shell-only sample assets.
+4. Confirm no live host-only sample assets.
 
 ### V4 — Init guardrails (no src prune)
 
 1. Missing/invalid `--role` or `--port` → fail.
 2. Re-init without `--force` → refuse.
-3. `--force` to another role updates metadata (and shell loaders) but does **not**
-   delete demo/shell sample paths under `src/`.
+3. `--force` to another role updates metadata (and host loaders) but does **not**
+   delete demo/host sample paths under `src/`.
 
 ### V5 — Per-role automated smoke
 
@@ -86,9 +86,9 @@ npm test
 npm run test:e2e   # or npx playwright test
 ```
 
-Expected: for **standalone, shell, and remote-standalone** — **first visit
+Expected: for **standalone, host, and remote-standalone** — **first visit
 (cleared storage) → system/`light`**, theme toggle/`data-theme`, **toggle →
-reload → same `data-theme`**, use-system, viewport, offline; shell also
+reload → same `data-theme`**, use-system, viewport, offline; host also
 **empty/invalid remote URL → RemoteFallback**.
 
 ### V6 — Compose smoke (required)
@@ -97,9 +97,9 @@ reload → same `data-theme`**, use-system, viewport, offline; shell also
 npm run test:compose
 ```
 
-Harness creates **two temp workspaces**, inits shell + remote, starts both.
+Harness creates **two temp workspaces**, inits host + remote, starts both.
 
-Expected (SC-009/014/015/019): demo in shell with `embedded={true}`; shell owns
+Expected (SC-009/014/015/019): demo in host with `embedded={true}`; host owns
 PWA + `data-theme`; Demo does not take over.
 
 ### V7 — WCAG 2.2 AA CI

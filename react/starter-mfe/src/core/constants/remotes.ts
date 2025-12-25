@@ -1,5 +1,5 @@
 /**
- * Federated remote slot config for the shell role.
+ * Federated remote slot config for the host role.
  * Config is injected at build time from starter.role.json remotes[].
  */
 
@@ -147,7 +147,7 @@ function toSlot(entry: RemoteSlotStatic): RemoteSlotConfig {
   };
 }
 
-/** All configured remote slots (shell). Empty when not a shell build. */
+/** All configured remote slots (host). Empty when not a host build. */
 export const REMOTE_SLOTS: RemoteSlotConfig[] = bakedConfig().map(toSlot);
 
 /** @deprecated Prefer REMOTE_SLOTS / getRemoteSlot — sample demo alias */

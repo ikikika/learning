@@ -1,7 +1,7 @@
 import { RouteObject } from 'react-router';
 import { MainLayout } from '../../layouts/MainLayout/MainLayout';
-import { DemoShellHomePage } from '../../pages/DemoShellHomePage/DemoShellHomePage';
-import { ShellWelcome, RemotePanel } from '../../features/demoShell';
+import { DemoHostHomePage } from '../../pages/DemoHostHomePage/DemoHostHomePage';
+import { HostWelcome, RemotePanel } from '../../features/demoHost';
 
 export const routes: RouteObject[] = [
   {
@@ -9,9 +9,9 @@ export const routes: RouteObject[] = [
     element: <MainLayout />,
     children: [
       {
-        element: <DemoShellHomePage />,
+        element: <DemoHostHomePage />,
         children: [
-          { index: true, element: <ShellWelcome /> },
+          { index: true, element: <HostWelcome /> },
           { path: 'remote/:alias/*', element: <RemotePanel /> },
         ],
       },
@@ -19,4 +19,4 @@ export const routes: RouteObject[] = [
   },
 ];
 
-export const shellRoutes = routes;
+export const hostRoutes = routes;

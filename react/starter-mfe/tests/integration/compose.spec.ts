@@ -1,25 +1,25 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * Compose smoke — expects shell at PLAYWRIGHT_SHELL_URL and remote at PLAYWRIGHT_REMOTE_URL
+ * Compose smoke — expects host at PLAYWRIGHT_HOST_URL and remote at PLAYWRIGHT_REMOTE_URL
  * (set by scripts/compose-harness.mjs). Fallback ports match .env defaults.
  */
-const SHELL_URL =
-  process.env.PLAYWRIGHT_SHELL_URL || 'http://127.0.0.1:3001';
+const HOST_URL =
+  process.env.PLAYWRIGHT_HOST_URL || 'http://127.0.0.1:3001';
 const REMOTE_URL =
   process.env.PLAYWRIGHT_REMOTE_URL || 'http://127.0.0.1:3002';
 
 test.describe('compose smoke (two workspaces)', () => {
-  test('shell owns document theme; embedded demo does not take over', async ({
+  test('host owns document theme; embedded demo does not take over', async ({
     page,
   }) => {
     test.skip(
-      !process.env.PLAYWRIGHT_SHELL_URL,
-      'compose harness did not set PLAYWRIGHT_SHELL_URL',
+      !process.env.PLAYWRIGHT_HOST_URL,
+      'compose harness did not set PLAYWRIGHT_HOST_URL',
     );
 
-    await page.goto(SHELL_URL);
-    await expect(page.getByTestId('demo-shell-home-page')).toBeVisible({
+    await page.goto(HOST_URL);
+    await expect(page.getByTestId('demo-host-home-page')).toBeVisible({
       timeout: 30_000,
     });
 
@@ -27,7 +27,7 @@ test.describe('compose smoke (two workspaces)', () => {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
     const remoteNav = page.locator(
-      '[data-testid="demo-shell-home-page"] nav a[href^="/remote/"]',
+      '[data-testid="demo-host-home-page"] nav a[href^="/remote/"]',
     );
     if (await remoteNav.count()) {
       await remoteNav.first().click();
@@ -48,13 +48,13 @@ test.describe('compose smoke (two workspaces)', () => {
 
   test('per-remote titles and Route 2 in panel', async ({ page }) => {
     test.skip(
-      !process.env.PLAYWRIGHT_SHELL_URL,
-      'compose harness did not set PLAYWRIGHT_SHELL_URL',
+      !process.env.PLAYWRIGHT_HOST_URL,
+      'compose harness did not set PLAYWRIGHT_HOST_URL',
     );
     test.setTimeout(90_000);
 
-    await page.goto(SHELL_URL);
-    await expect(page.getByTestId('demo-shell-home-page')).toBeVisible({
+    await page.goto(HOST_URL);
+    await expect(page.getByTestId('demo-host-home-page')).toBeVisible({
       timeout: 30_000,
     });
 
@@ -64,17 +64,17 @@ test.describe('compose smoke (two workspaces)', () => {
     });
     await expect(page).toHaveURL(/\/remote\/demoRemote\/route-1/);
     await expect(page.getByTestId('demo-remote-host-title')).toHaveText(
-      'From Shell A',
+      'From Host A',
     );
 
     await page.getByTestId('demo-remote-to-route-2').click();
     await expect(page.getByTestId('demo-remote-route-2')).toBeVisible();
     await expect(page).toHaveURL(/\/remote\/demoRemote\/route-2/);
-    await expect(page.getByTestId('demo-shell-home-page')).toBeVisible();
+    await expect(page.getByTestId('demo-host-home-page')).toBeVisible();
 
     // Unmount first remote fully before loading second alias
     await page.locator('nav a[href="/"]').click();
-    await expect(page.getByTestId('shell-welcome')).toBeVisible();
+    await expect(page.getByTestId('host-welcome')).toBeVisible();
 
     await page.locator('nav a[href="/remote/billingRemote"]').click();
     await expect(page.getByTestId('demo-remote-route-1')).toBeVisible({
@@ -84,7 +84,7 @@ test.describe('compose smoke (two workspaces)', () => {
       'Billing Slot',
     );
     await expect(page.getByTestId('demo-remote-host-title')).not.toHaveText(
-      'From Shell A',
+      'From Host A',
     );
   });
 });

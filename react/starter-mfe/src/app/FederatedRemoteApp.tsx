@@ -3,7 +3,7 @@ import { embeddedRoutes } from './routes/remoteRoutes';
 import { HostPropsProvider } from '../features/demoRemote/HostPropsContext';
 
 export type FederatedRemoteAppProps = {
-  /** Shell passes `embedded={true}` when mounting the federated expose. */
+  /** Host passes `embedded={true}` when mounting the federated expose. */
   embedded?: boolean;
   /** Optional host title shown on sample Route 1 when non-empty. */
   title?: string;
@@ -11,9 +11,9 @@ export type FederatedRemoteAppProps = {
 
 /**
  * Remote-only Module Federation entry.
- * Uses the host BrowserRouter (shell `remote/:alias/*`) so in-remote
+ * Uses the host BrowserRouter (host `remote/:alias/*`) so in-remote
  * navigation updates the address bar. Does not replace App.tsx for
- * shell or standalone own-app entry.
+ * host or standalone own-app entry.
  */
 function EmbeddedRemoteRoutes() {
   return useRoutes(embeddedRoutes);

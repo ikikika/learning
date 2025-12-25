@@ -41,15 +41,15 @@ function init(cwd, args) {
   });
 }
 
-test('init does not prune demo or shell sample assets', () => {
+test('init does not prune demo or host sample assets', () => {
   withTempCopy((tmp) => {
     assert.equal(fs.existsSync(path.join(tmp, 'src/features/demo')), true);
     assert.equal(fs.existsSync(path.join(tmp, 'src/pages/HomePage')), true);
     assert.equal(
-      fs.existsSync(path.join(tmp, 'src/pages/DemoShellHomePage')),
+      fs.existsSync(path.join(tmp, 'src/pages/DemoHostHomePage')),
       true,
     );
-    assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoShell')), true);
+    assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoHost')), true);
     assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoRemote')), true);
     assert.equal(
       fs.existsSync(path.join(tmp, 'src/pages/DemoRemoteRoute1Page')),
@@ -68,15 +68,15 @@ test('init does not prune demo or shell sample assets', () => {
       true,
     );
 
-    const shell = init(tmp, ['--role=shell', '--port=3001']);
-    assert.equal(shell.status, 0, shell.stderr);
+    const host = init(tmp, ['--role=host', '--port=3001']);
+    assert.equal(host.status, 0, host.stderr);
     assert.equal(fs.existsSync(path.join(tmp, 'src/features/demo')), true);
     assert.equal(fs.existsSync(path.join(tmp, 'src/pages/HomePage')), true);
     assert.equal(
-      fs.existsSync(path.join(tmp, 'src/pages/DemoShellHomePage')),
+      fs.existsSync(path.join(tmp, 'src/pages/DemoHostHomePage')),
       true,
     );
-    assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoShell')), true);
+    assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoHost')), true);
     assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoRemote')), true);
     assert.equal(
       fs.existsSync(path.join(tmp, 'src/app/remotes/loaders.generated.ts')),
@@ -96,7 +96,7 @@ test('init does not prune demo or shell sample assets', () => {
       true,
     );
     assert.equal(
-      fs.existsSync(path.join(tmp, 'src/pages/DemoShellHomePage')),
+      fs.existsSync(path.join(tmp, 'src/pages/DemoHostHomePage')),
       true,
     );
     assert.equal(fs.existsSync(path.join(tmp, 'templates')), false);

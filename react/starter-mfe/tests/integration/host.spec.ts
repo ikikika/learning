@@ -2,22 +2,22 @@ import { test, expect } from '@playwright/test';
 
 const THEME_STORAGE_KEY = 'starter-mfe-theme';
 
-test.describe('shell smoke', () => {
+test.describe('host smoke', () => {
   test('fallback for unreachable remote + empty/invalid URL; theme persistence', async ({
     page,
     context,
   }) => {
     await page.setViewportSize({ width: 375, height: 812 });
 
-    // Default `/` shows Shell welcome — no remote load
+    // Default `/` shows Host welcome — no remote load
     await page.goto('/');
-    await expect(page.getByTestId('demo-shell-home-page')).toBeVisible();
-    await expect(page.getByTestId('shell-welcome')).toBeVisible();
+    await expect(page.getByTestId('demo-host-home-page')).toBeVisible();
+    await expect(page.getByTestId('host-welcome')).toBeVisible();
     await expect(page.getByTestId('remote-fallback')).toHaveCount(0);
 
     // Empty remote URL → fallback (must be on remote panel route)
     await page.goto('/remote/demoRemote?remoteUrl=');
-    await expect(page.getByTestId('demo-shell-home-page')).toBeVisible();
+    await expect(page.getByTestId('demo-host-home-page')).toBeVisible();
     await expect(page.getByTestId('remote-fallback')).toBeVisible();
     await expect(page.getByTestId('remote-fallback')).toContainText(
       /empty or invalid/i,
@@ -35,7 +35,7 @@ test.describe('shell smoke', () => {
       timeout: 15_000,
     });
 
-    // Theme: first visit + toggle + reload + use-system (on Shell welcome)
+    // Theme: first visit + toggle + reload + use-system (on Host welcome)
     await page.goto('/');
     await page.evaluate((key) => localStorage.removeItem(key), THEME_STORAGE_KEY);
     await page.reload();

@@ -1,15 +1,15 @@
 # Contract: starter.role.json remoteProps extension
 
-**Feature**: `004-shell-add-remote`  
+**Feature**: `004-host-add-remote`  
 **Extends**: `specs/001-react-role-scaffold/contracts/role-metadata.schema.json`
 
-## Additive property (shell)
+## Additive property (host)
 
 ```json
 {
   "remoteProps": {
     "type": "object",
-    "description": "Optional per-alias host props bags (shell). Keys are remote aliases; values are JSON objects.",
+    "description": "Optional per-alias host props bags (host). Keys are remote aliases; values are JSON objects.",
     "additionalProperties": {
       "type": "object"
     }
@@ -25,4 +25,4 @@
 
 ## Hand-edit (v1)
 
-Developers edit `remoteProps.<alias>` in `starter.role.json`, then restart the shell so DefinePlugin bake refreshes.
+Developers edit `remoteProps.<alias>` in `starter.role.json`, then restart the host so DefinePlugin bake refreshes.

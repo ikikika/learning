@@ -61,8 +61,8 @@ export default defineConfig({
       testMatch: /\/standalone\.spec\.ts$/,
     },
     {
-      name: 'shell',
-      testMatch: /\/shell\.spec\.ts$/,
+      name: 'host',
+      testMatch: /\/host\.spec\.ts$/,
     },
     {
       name: 'remote-standalone',

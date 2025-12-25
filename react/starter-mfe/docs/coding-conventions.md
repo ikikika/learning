@@ -38,9 +38,9 @@ src/features/<name>/
 - `.env.example` leaves `PORT_*` blank; required init `--port` fills the role’s key.
 - Ports and remote URLs: `.env` / `.env.example` (`PORT_*`, `DEV_HOST`,
   per-remote `*_REMOTE_URL` / `urlEnv`, `API_BASE_URL`).
-- Shell remotes: `starter.role.json` → `remotes[]` (empty by default on shell
+- Host remotes: `starter.role.json` → `remotes[]` (empty by default on host
   init; add via `--remote` / `--remote-name` at init, or later with
-  `npm run add-remote` — shell only). Optional `remoteProps` map holds
+  `npm run add-remote` — host only). Optional `remoteProps` map holds
   per-alias host props; bake via webpack; read with `getRemoteProps(alias)`.
   See `src/core/constants/remotes.ts` and `src/app/remotes/loadRemote.tsx`.
 - Loader: `scripts/load-env.cjs` (used by webpack and Node scripts).
@@ -50,10 +50,10 @@ src/features/<name>/
 - One role per clone after `npm run init` (or `--role=… --port=…`).
 - Federated remote expose uses `FederatedRemoteApp` (`embedded?: boolean`);
   when embedded, host owns document theme / PWA. Remote sample UI lives in
-  `features/demoRemote` (not `features/demo`). Shell and remotes share
+  `features/demoRemote` (not `features/demo`). Host and remotes share
   singleton `react`, `react-dom`, and `react-router` so embedded routes update
   the host address bar under `/remote/:alias/*`.
-- Init does not prune/restore `src/`; sample assets for shell, demo, and
+- Init does not prune/restore `src/`; sample assets for host, demo, and
   demoRemote coexist under `src/`. Prefer not switching roles on the same clone.
 
 ## Styling & UI

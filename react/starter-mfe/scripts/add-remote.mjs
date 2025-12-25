@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * Shell-only CLI: append one remote to starter.role.json remotes[],
+ * Host-only CLI: append one remote to starter.role.json remotes[],
  * write .env[urlEnv], regenerate loaders, optional remoteProps[alias].
  * Flags preferred for CI; missing required values prompt when stdin is a TTY.
- * @see specs/004-shell-add-remote/contracts/add-remote-cli.md
+ * @see specs/004-host-add-remote/contracts/add-remote-cli.md
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -332,9 +332,9 @@ async function main() {
     fail('starter.role.json is not valid JSON');
   }
 
-  if (meta.role !== 'shell') {
+  if (meta.role !== 'host') {
     fail(
-      `add-remote is shell-only (current role: ${meta.role ?? 'unknown'}). No files were written.`,
+      `add-remote is host-only (current role: ${meta.role ?? 'unknown'}). No files were written.`,
     );
   }
 
@@ -398,7 +398,7 @@ async function main() {
   const nextRemotes = [...remotes, entry];
   meta.remotes = nextRemotes;
   meta.federationName =
-    meta.federationName || toFederationName(meta.name || 'shell');
+    meta.federationName || toFederationName(meta.name || 'host');
   meta.updatedAt = new Date().toISOString();
 
   if (propsBag) {
@@ -420,7 +420,7 @@ async function main() {
     console.log(`remoteProps.${entry.alias}=${JSON.stringify(propsBag)}`);
   }
   console.log(
-    'Restart the shell (npm start) so webpack remotes map and baked props refresh.',
+    'Restart the host (npm start) so webpack remotes map and baked props refresh.',
   );
 }
 

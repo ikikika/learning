@@ -8,7 +8,7 @@
   "properties": {
     "role": {
       "type": "string",
-      "enum": ["standalone", "shell", "remote"],
+      "enum": ["standalone", "host", "remote"],
       "description": "Exactly one repository role after init"
     },
     "name": {
@@ -28,7 +28,7 @@
     },
     "remotes": {
       "type": "array",
-      "description": "Shell only: federated remotes loaded by this host",
+      "description": "Host only: federated remotes loaded by this host",
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -59,7 +59,7 @@
     },
     "remoteProps": {
       "type": "object",
-      "description": "Optional per-alias host props bags (shell). Keys are remote aliases; values are JSON objects. Additive on schema version 1; keys not in remotes[].alias are ignored at runtime.",
+      "description": "Optional per-alias host props bags (host). Keys are remote aliases; values are JSON objects. Additive on schema version 1; keys not in remotes[].alias are ignored at runtime.",
       "additionalProperties": {
         "type": "object"
       }

@@ -22,24 +22,24 @@ Sync Impact Report
 ### I. Dual-Mode Portability
 
 Each generated repository MUST contain one independently buildable and
-deployable React application with an explicit role: shell, remote, or
+deployable React application with an explicit role: host, remote, or
 standalone.
 
 - A remote repository MUST run in standalone development/test mode and as a
   federated remote without forking feature or domain logic.
-- A shell repository MUST run independently while loading remotes through
+- A host repository MUST run independently while loading remotes through
   configuration; it MUST NOT contain remote implementation code.
 - A standalone repository MAY omit federation configuration, while preserving
-  the canonical application structure so it can evolve into a shell or remote.
+  the canonical application structure so it can evolve into a host or remote.
 - Feature UI and domain logic MUST live in modules that do not assume a
-  specific shell or sole ownership of the page.
+  specific host or sole ownership of the page.
 - Host-only and remote-only wiring (bootstrap, Module Federation config,
   routing mount points) MUST stay in thin adapters at the edges.
 - A remote change that breaks standalone OR federated operation is a
   constitution violation unless documented and justified in Complexity
   Tracking.
 
-Rationale: One app per repository gives shells and remotes independent
+Rationale: One app per repository gives hosts and remotes independent
 ownership and deployment while dual-mode remotes remain locally operable.
 
 ### II. Shared Runtime Singletons
@@ -106,7 +106,7 @@ remote deploys.
 ### VI. Responsive Experience & PWA Readiness
 
 Frontend experiences MUST be mobile-responsive and Progressive Web App (PWA)
-capable across repository roles (shell, remote, and standalone).
+capable across repository roles (host, remote, and standalone).
 
 - Layouts and shared UI MUST remain usable on small viewports (phone-width)
   without requiring horizontal scrolling for primary tasks, unless a Complexity
@@ -120,9 +120,9 @@ capable across repository roles (shell, remote, and standalone).
   installable/display identity (name, icons, display mode), and a service worker
   (or equivalent) that enables at least offline shell/caching for the app shell
   assets appropriate to the repository role.
-- Shell and remote PWAs MUST NOT assume exclusive control of the browser when
+- Host and remote PWAs MUST NOT assume exclusive control of the browser when
   composed; remotes MUST remain safe when embedded (no conflicting
-  full-document PWA takeovers that break the shell). Prefer shell-owned
+  full-document PWA takeovers that break the host). Prefer host-owned
   install/offline UX when federated; remotes MAY still be PWA-capable in
   standalone mode.
 - New UI work MUST state responsive and PWA impact in plans/PRs (verified,
@@ -138,7 +138,7 @@ not optional polish.
 - **Packaging**: Federation MUST use Webpack Module Federation (not alternate
   federation runtimes unless Complexity Tracking justifies an exception).
   The production topology MUST be multi-repository:
-  - one repository for the shell;
+  - one repository for the host;
   - one repository for each remote;
   - one root `src/` per application repository;
   - no required `apps/host`, `apps/remote-*`, or workspace `packages/` wrapper.
@@ -152,7 +152,7 @@ not optional polish.
 src/
 ├── main.tsx              # MF-safe async entry (import bootstrap)
 ├── bootstrap.tsx         # createRoot + top-level providers
-├── app/                  # shell: App, providers, routes
+├── app/                  # host: App, providers, routes
 ├── features/             # domain modules (public index.ts per feature)
 ├── pages/                # route-level screens
 ├── layouts/              # page chrome
@@ -167,7 +167,7 @@ src/
   - Domain logic and feature UI MUST live under `features/<name>/` with a
     public `index.ts` (the natural unit for remote `exposes`).
   - Feature-specific api/hooks/services/types MUST stay inside that feature.
-  - Shell concerns (providers, route tables) MUST stay under `app/`.
+  - Host concerns (providers, route tables) MUST stay under `app/`.
   - Shared helpers MUST live under `core/` — do not add a parallel `lib/` for
     the same role.
   - Root `services/` is for cross-feature infra only, not domain services.
@@ -177,7 +177,7 @@ src/
   one-off snowflake patterns that cannot be shared across remotes.
 - **PWA**: Each application repository MUST include manifest + icons + service
   worker (or equivalent) baseline as required by Principle VI; federated
-  composition MUST prefer shell-owned install/offline UX.
+  composition MUST prefer host-owned install/offline UX.
 - **Performance**: Avoid unnecessary waterfalls and duplicate framework weight;
   measure remote load cost when adding new federated surfaces.
 - **Secrets & config**: No secrets in client bundles; environment-specific host
@@ -192,7 +192,7 @@ src/
 - Every implementation plan MUST pass the Constitution Check gates before
   Phase 0 research is treated as complete, and again after Phase 1 design.
 - Plans, PRs, and agent implementations MUST state the repository role
-  (shell, remote, or standalone). Remote changes MUST state standalone and
+  (host, remote, or standalone). Remote changes MUST state standalone and
   federated impact and MUST NOT silently drop either mode.
 - Plans, PRs, and agent implementations MUST state responsive and PWA impact
   (verified, deferred with tracked follow-up, or justified N/A).

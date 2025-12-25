@@ -53,7 +53,7 @@ _TODO: State the problem and outcome._
   list. Example shape for this starter (replace with your real flows):
 
   1. Init as standalone → run locally → extend a feature
-  2. Init as shell → compose a remote with fallback
+  2. Init as host → compose a remote with fallback
   3. Init as remote → standalone + federated ./Demo
 
   Each flow: actor → steps → successful outcome.
@@ -95,7 +95,7 @@ _TODO: Success criteria (optional)._
 ## Glossary (optional)
 
 <!--
-  Domain terms that confuse newcomers (shell, remote, embedded, role, etc.).
+  Domain terms that confuse newcomers (host, remote, embedded, role, etc.).
   One line per term.
 -->
 

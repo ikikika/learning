@@ -63,17 +63,17 @@ function envValue(cwd, key) {
 
 test('success writes remotes[], .env urlEnv, and loaders.generated.ts', () => {
   withTempCopy((tmp) => {
-    assert.equal(init(tmp, ['--role=shell', '--port=3001']).status, 0);
+    assert.equal(init(tmp, ['--role=host', '--port=3001']).status, 0);
     const r = addRemote(tmp, [
       '--alias=demoRemote',
       '--name=demoRemote',
       '--port=3002',
     ]);
     assert.equal(r.status, 0, r.stderr);
-    assert.match(r.stdout, /Restart the shell/i);
+    assert.match(r.stdout, /Restart the host/i);
 
     const meta = readMeta(tmp);
-    assert.equal(meta.role, 'shell');
+    assert.equal(meta.role, 'host');
     assert.equal(meta.remotes.length, 1);
     assert.equal(meta.remotes[0].alias, 'demoRemote');
     assert.equal(meta.remotes[0].federationName, 'demoRemote');
@@ -97,7 +97,7 @@ test('success writes remotes[], .env urlEnv, and loaders.generated.ts', () => {
 
 test('two sequential adds leave both aliases in meta and loaders', () => {
   withTempCopy((tmp) => {
-    assert.equal(init(tmp, ['--role=shell', '--port=3001']).status, 0);
+    assert.equal(init(tmp, ['--role=host', '--port=3001']).status, 0);
     const first = addRemote(tmp, [
       '--alias=demoRemote',
       '--name=demoRemote',
@@ -141,7 +141,7 @@ test('two sequential adds leave both aliases in meta and loaders', () => {
 
 test('--url writes absolute URL to env', () => {
   withTempCopy((tmp) => {
-    assert.equal(init(tmp, ['--role=shell', '--port=3001']).status, 0);
+    assert.equal(init(tmp, ['--role=host', '--port=3001']).status, 0);
     const url = 'http://127.0.0.1:4000/remoteEntry.js';
     const r = addRemote(tmp, ['--alias=demoRemote', `--url=${url}`]);
     assert.equal(r.status, 0, r.stderr);

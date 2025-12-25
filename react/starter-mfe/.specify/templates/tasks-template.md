@@ -25,12 +25,12 @@ description: "Task list template for feature implementation"
   Canonical Application Layout (`app/`, `features/`, `pages/`, `layouts/`,
   `components/`, `core/`, `services/`, `styles/`, `test/`, `main.tsx`,
   `bootstrap.tsx`)
-- **Shell repository**: shell code remains in root `src/`; remote URLs and
+- **Host repository**: host code remains in root `src/`; remote URLs and
   fallbacks are configuration; remote source code is never added here
 - **Remote repository**: remote code remains in root `src/`; tasks cover both
   standalone operation and federated exposes
 - **Standalone repository**: root `src/`; federation tasks are omitted unless
-  this repository is being converted to a shell or remote
+  this repository is being converted to a host or remote
 - **Shared code/contracts**: consume versioned packages; do not create
   monorepo `apps/` or workspace `packages/` folders
 - Paths shown below assume this single-application repository layout

@@ -1,4 +1,4 @@
-# Specification Quality Checklist: Shell add-remote command
+# Specification Quality Checklist: Host add-remote command
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
 **Created**: 2026-08-02

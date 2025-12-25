@@ -22,14 +22,14 @@ const {
 const {
   defaultDemoRemote,
   parseRemoteFlag,
-  shellRemoteSnippetForApp,
+  hostRemoteSnippetForApp,
   writeLoadersGenerated,
 } = require('./remotes-config.cjs');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 
-const ALLOWED_ROLES = ['standalone', 'shell', 'remote'];
+const ALLOWED_ROLES = ['standalone', 'host', 'remote'];
 const ALLOWED_ROLE_SET = new Set(ALLOWED_ROLES);
 
 function parseFlagValue(argv, longName) {
@@ -73,7 +73,7 @@ function parseArgs(argv) {
 }
 
 function portEnvKeyForRole(role) {
-  if (role === 'shell') return 'PORT_SHELL';
+  if (role === 'host') return 'PORT_HOST';
   if (role === 'remote') return 'PORT_REMOTE';
   return 'PORT_STANDALONE';
 }
@@ -179,7 +179,7 @@ async function resolveInteractive(args) {
   }
 
   if (!canPrompt()) {
-    if (!role) fail('--role=standalone|shell|remote required');
+    if (!role) fail('--role=standalone|host|remote required');
     if (portArg == null || portArg === '') {
       fail('--port=<number> required (1–65535)');
     }
@@ -233,7 +233,7 @@ function patchEnvPort(role, port) {
   fs.writeFileSync(envPath, text, 'utf8');
 }
 
-function buildShellRemotes({ remoteNameArg, remoteFlags }) {
+function buildHostRemotes({ remoteNameArg, remoteFlags }) {
   if (remoteFlags.length && remoteNameArg) {
     fail('Use either --remote (repeatable) or --remote-name, not both');
   }
@@ -269,7 +269,7 @@ function writeMetadata({ role, name, remotes }) {
     version: 1,
     updatedAt: new Date().toISOString(),
   };
-  if (role === 'shell') {
+  if (role === 'host') {
     meta.remotes = remotes;
   }
   if (role === 'remote') {
@@ -322,7 +322,7 @@ async function main() {
   const portArg = resolved.portArg;
 
   if (!role) {
-    fail('--role=standalone|shell|remote required');
+    fail('--role=standalone|host|remote required');
   }
   if (!ALLOWED_ROLE_SET.has(role)) {
     fail(`Invalid --role. Allowed: ${ALLOWED_ROLES.join(', ')}`);
@@ -333,10 +333,10 @@ async function main() {
   assertValidName('--name', name);
 
   let remotes = [];
-  if (role === 'shell') {
-    remotes = buildShellRemotes({ remoteNameArg, remoteFlags });
+  if (role === 'host') {
+    remotes = buildHostRemotes({ remoteNameArg, remoteFlags });
   } else if (remoteNameArg || remoteFlags.length) {
-    fail('--remote / --remote-name are only valid with --role=shell');
+    fail('--remote / --remote-name are only valid with --role=host');
   }
 
   const metaPath = path.join(ROOT, 'starter.role.json');
@@ -346,7 +346,7 @@ async function main() {
 
   // Role selection is metadata + webpack only. Live src/ keeps all sample
   // assets; do not prune/restore. Prefer one role per clone and avoid switching.
-  if (role === 'shell') {
+  if (role === 'host') {
     writeLoadersGenerated(remotes, ROOT);
   }
 
@@ -361,36 +361,22 @@ async function main() {
   console.log(
     `Initialized role: ${role}, name: ${name} (federation: ${fed}), ${portKey}=${port}`,
   );
-  if (role === 'shell') {
-    if (remotes.length === 0) {
+  if (role === 'host') {
+    for (const r of remotes) {
       console.log(
-        'No remotes configured. Re-init with --remote=alias:name[:expose[:urlEnv]] to add one.',
+        `Remote: alias=${r.alias} federation=${r.federationName} expose=${r.expose} urlEnv=${r.urlEnv}`,
       );
-    } else {
-      for (const r of remotes) {
-        console.log(
-          `Remote: alias=${r.alias} federation=${r.federationName} expose=${r.expose} urlEnv=${r.urlEnv}`,
-        );
-      }
     }
   }
   if (role === 'remote') {
-    const snippet = shellRemoteSnippetForApp(name);
+    const snippet = hostRemoteSnippetForApp(name);
     console.log(
       `Expose: ${toExposePath(name)} → ./src/app/FederatedRemoteApp.tsx`,
     );
     console.log('');
-    console.log('In your shell clone, run:');
+    console.log('In your host clone, run:');
     console.log(
       `npm run add-remote -- --alias=${snippet.alias} --name=${snippet.name} --port=${port} --expose=${snippet.expose} --federation-name=${snippet.federationName} --url-env=${snippet.urlEnv}`,
-    );
-    console.log('');
-    console.log('Or copy into shell starter.role.json → remotes[]:');
-    console.log('---');
-    console.log(JSON.stringify(snippet, null, 2));
-    console.log('---');
-    console.log(
-      `Or re-init shell with: --remote=${snippet.alias}:${snippet.name}:${snippet.expose}:${snippet.urlEnv}`,
     );
   }
 }

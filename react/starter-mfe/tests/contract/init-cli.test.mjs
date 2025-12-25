@@ -51,7 +51,7 @@ test('missing --role exits non-zero', () => {
   withTempCopy((tmp) => {
     const r = init(tmp, []);
     assert.notEqual(r.status, 0);
-    assert.match(r.stderr, /--role=standalone\|shell\|remote required/);
+    assert.match(r.stderr, /--role=standalone\|host\|remote required/);
   });
 });
 
@@ -75,7 +75,7 @@ test('invalid --role exits non-zero', () => {
   withTempCopy((tmp) => {
     const r = init(tmp, ['--role=nope', '--port=3000']);
     assert.notEqual(r.status, 0);
-    assert.match(r.stderr, /standalone, shell, remote/);
+    assert.match(r.stderr, /standalone, host, remote/);
   });
 });
 
@@ -83,7 +83,7 @@ test('refuses without --force when metadata exists', () => {
   withTempCopy((tmp) => {
     const first = init(tmp, ['--role=standalone', '--port=3000']);
     assert.equal(first.status, 0);
-    const second = init(tmp, ['--role=shell', '--port=3001']);
+    const second = init(tmp, ['--role=host', '--port=3001']);
     assert.notEqual(second.status, 0);
     assert.match(second.stderr, /--force/);
   });
@@ -125,21 +125,14 @@ test('--name writes metadata, package.json, and federationName', () => {
       r.stdout,
       /npm run add-remote -- --alias=myCheckout --name=my-checkout --port=3002 --expose=\.\/MyCheckout --federation-name=myCheckout --url-env=MY_CHECKOUT_URL/,
     );
-    assert.match(r.stdout, /Or copy into shell starter\.role\.json/);
-    assert.match(r.stdout, /"alias": "myCheckout"/);
-    assert.match(r.stdout, /"federationName": "myCheckout"/);
-    assert.match(r.stdout, /"expose": "\.\/MyCheckout"/);
-    assert.match(r.stdout, /"urlEnv": "MY_CHECKOUT_URL"/);
-    assert.match(
-      r.stdout,
-      /--remote=myCheckout:my-checkout:\.\/MyCheckout:MY_CHECKOUT_URL/,
-    );
+    assert.doesNotMatch(r.stdout, /Or copy into host starter\.role\.json/);
+    assert.doesNotMatch(r.stdout, /Or re-init host with:/);
   });
 });
 
-test('shell without --remote writes empty remotes[]', () => {
+test('host without --remote writes empty remotes[]', () => {
   withTempCopy((tmp) => {
-    const r = init(tmp, ['--role=shell', '--port=3001', '--name=host']);
+    const r = init(tmp, ['--role=host', '--port=3001', '--name=host']);
     assert.equal(r.status, 0, r.stderr);
     const meta = JSON.parse(
       fs.readFileSync(path.join(tmp, 'starter.role.json'), 'utf8'),
@@ -151,14 +144,14 @@ test('shell without --remote writes empty remotes[]', () => {
     );
     assert.match(loaders, /remoteLoaders: Record<string, RemoteLoader> = \{\s*\};/);
     assert.doesNotMatch(loaders, /demoRemote/);
-    assert.match(r.stdout, /No remotes configured/);
+    assert.doesNotMatch(r.stdout, /No remotes configured|Re-init with --remote/);
   });
 });
 
-test('shell --remote-name writes remotes[] with demoRemote alias', () => {
+test('host --remote-name writes remotes[] with demoRemote alias', () => {
   withTempCopy((tmp) => {
     const r = init(tmp, [
-      '--role=shell',
+      '--role=host',
       '--port=3001',
       '--name=host-app',
       '--remote-name=my-checkout',
@@ -175,7 +168,7 @@ test('shell --remote-name writes remotes[] with demoRemote alias', () => {
     assert.equal(meta.remotes[0].federationName, 'myCheckout');
     assert.equal(meta.remotes[0].expose, './MyCheckout');
     assert.equal(meta.remotes[0].urlEnv, 'DEMO_REMOTE_URL');
-    assert.equal(envPort(tmp, 'PORT_SHELL'), '3001');
+    assert.equal(envPort(tmp, 'PORT_HOST'), '3001');
     assert.match(
       fs.readFileSync(
         path.join(tmp, 'src/app/remotes/loaders.generated.ts'),
@@ -186,10 +179,10 @@ test('shell --remote-name writes remotes[] with demoRemote alias', () => {
   });
 });
 
-test('shell accepts multiple --remote flags', () => {
+test('host accepts multiple --remote flags', () => {
   withTempCopy((tmp) => {
     const r = init(tmp, [
-      '--role=shell',
+      '--role=host',
       '--port=3001',
       '--name=host',
       '--remote=demoRemote:checkout',
@@ -216,7 +209,7 @@ test('shell accepts multiple --remote flags', () => {
   });
 });
 
-test('--remote-name rejected for non-shell roles', () => {
+test('--remote-name rejected for non-host roles', () => {
   withTempCopy((tmp) => {
     const r = init(tmp, [
       '--role=standalone',
@@ -224,7 +217,7 @@ test('--remote-name rejected for non-shell roles', () => {
       '--remote-name=x',
     ]);
     assert.notEqual(r.status, 0);
-    assert.match(r.stderr, /only valid with --role=shell/);
+    assert.match(r.stderr, /only valid with --role=host/);
   });
 });
 

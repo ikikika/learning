@@ -68,7 +68,7 @@ function federationOptions(
     'react-router': { singleton: true, requiredVersion: false, eager: false },
   };
 
-  if (role === 'shell') {
+  if (role === 'host') {
     return {
       name: federationName,
       filename: 'remoteEntry.js',
@@ -104,7 +104,7 @@ function getAppContext() {
   const role = meta.role || 'standalone';
   const federationName = resolveFederationName(meta);
   const expose = resolveExpose(meta);
-  const remoteEntries = role === 'shell' ? remotesFromMeta(meta) : [];
+  const remoteEntries = role === 'host' ? remotesFromMeta(meta) : [];
   const urlsByAlias = getRemoteUrlsByAlias(remoteEntries);
   const appTitle = meta.name || defaultNameForRole(role);
   const port = getPortForRole(role);
@@ -149,8 +149,8 @@ function createCommonConfig(ctx) {
       alias: {
         '@': path.join(ROOT, 'src'),
         '@active-routes':
-          role === 'shell'
-            ? path.join(ROOT, 'src/app/routes/shellRoutes.tsx')
+          role === 'host'
+            ? path.join(ROOT, 'src/app/routes/hostRoutes.tsx')
             : role === 'remote'
               ? path.join(ROOT, 'src/app/routes/remoteRoutes.tsx')
               : path.join(ROOT, 'src/app/routes/standaloneRoutes.tsx'),
@@ -215,7 +215,7 @@ function createCommonConfig(ctx) {
         ),
         __STARTER_REMOTES_URLS__: JSON.stringify(urlsByAlias),
         __STARTER_REMOTE_PROPS__: JSON.stringify(
-          role === 'shell' &&
+          role === 'host' &&
             meta.remoteProps &&
             typeof meta.remoteProps === 'object'
             ? meta.remoteProps

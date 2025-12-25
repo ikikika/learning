@@ -6,7 +6,7 @@
 
 | Field | Type | Rules |
 |-------|------|-------|
-| value | enum | Exactly one of `standalone`, `shell`, `remote` |
+| value | enum | Exactly one of `standalone`, `host`, `remote` |
 | selectedVia | — | Only via required init `--role` |
 | cardinality | — | Exactly one per repository after successful init |
 
@@ -18,7 +18,7 @@
 | role | enum | Same as Repository Role |
 | name | string | App name from `--name` (defaults by role) |
 | federationName | string | MF container name derived from `name` |
-| remotes | array | Shell only: `{ alias, name, federationName, expose, urlEnv }[]` |
+| remotes | array | Host only: `{ alias, name, federationName, expose, urlEnv }[]` |
 | remoteName / remoteFederationName | string | Deprecated legacy single-remote fields (still read if `remotes` absent) |
 | version | integer | Schema version (`1`) |
 | updatedAt | ISO-8601 | Optional |
@@ -34,7 +34,7 @@
 
 ### Live sample assets
 
-All role sample paths live permanently under `src/` (demo, HomePage, ShellHomePage,
+All role sample paths live permanently under `src/` (demo, HomePage, HostHomePage,
 remotes adapters). Init does **not** prune or restore files. Prefer one role per
 clone; avoid switching.
 
@@ -55,23 +55,23 @@ clone; avoid switching.
 | name | string | `./Demo` |
 | module | path | `features/demo` |
 | publicTypes | — | Exported props/types |
-| embedded | `boolean?` | Optional prop `embedded?: boolean`; shell passes `true`; omit/`false` = standalone |
+| embedded | `boolean?` | Optional prop `embedded?: boolean`; host passes `true`; omit/`false` = standalone |
 | suppressionLocus | — | When `embedded===true`, **Demo module** suppresses document PWA/`data-theme` |
 | contractVersion | string | `1.0.0` documented |
 | dualMode | — | Same module standalone + federated |
 | publishedPackage | — | Not required in v1 (Complexity Tracking) |
 
-### Remote Location Config (shell)
+### Remote Location Config (host)
 
 | Field | Type | Rules |
 |-------|------|-------|
 | slotId | string | One sample slot |
 | entry | string | `./Demo` |
 | remoteUrl | string | Placeholder; empty/invalid → fallback |
-| mountProps | — | Shell passes `embedded={true}` |
+| mountProps | — | Host passes `embedded={true}` |
 | fallback | Remote Fallback | Required for missing, unreachable, empty/invalid |
 
-### Remote Fallback (shell)
+### Remote Fallback (host)
 
 | Field | Type | Rules |
 |-------|------|-------|
@@ -95,8 +95,8 @@ clone; avoid switching.
 | firstVisit | — | `prefers-color-scheme` → `light` |
 | persistence | — | After light/dark toggle → `localStorage` |
 | clearControl | — | “Use system theme” |
-| federatedOwnership | — | Shell owns when composed |
-| perRoleSmoke | — | First visit + toggle + **reload persistence** + use-system for standalone, shell, remote-standalone |
+| federatedOwnership | — | Host owns when composed |
+| perRoleSmoke | — | First visit + toggle + **reload persistence** + use-system for standalone, host, remote-standalone |
 
 **State transitions**:
 
@@ -111,15 +111,15 @@ clone; avoid switching.
 | Field | Type | Rules |
 |-------|------|-------|
 | workspaces | 2 | Temp copy/clone each |
-| inits | — | One `shell`, one `remote` |
-| assert | — | Shell owns PWA + `data-theme`; no remote takeover |
+| inits | — | One `host`, one `remote` |
+| assert | — | Host owns PWA + `data-theme`; no remote takeover |
 
 ## Role → sample capability
 
 | Role | Active surface (via webpack/routes) |
 |------|-------------------------------------|
 | standalone | `features/demo` + `HomePage` |
-| shell | `ShellHomePage` + remote slot(s) |
+| host | `HostHomePage` + remote slot(s) |
 | remote | `features/demo` + `HomePage`; expose `./Demo` |
 
 All of the above sample paths may coexist under `src/`; init does not prune.

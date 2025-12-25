@@ -1,7 +1,7 @@
-# Contract: Host → remote props (shell composition)
+# Contract: Host → remote props (host composition)
 
-**Feature**: `004-shell-add-remote`  
-**Consumer**: Shell `LoadRemote`  
+**Feature**: `004-host-add-remote`  
+**Consumer**: Host `LoadRemote`  
 **Provider**: Federated expose (`FederatedRemoteApp` / compatible default export)
 
 ## Mount props
@@ -14,8 +14,8 @@
 
 ## Bake
 
-- Shell webpack defines `__STARTER_REMOTE_PROPS__` from `starter.role.json.remoteProps` (default `{}`)
-- Non-shell builds: empty object
+- Host webpack defines `__STARTER_REMOTE_PROPS__` from `starter.role.json.remoteProps` (default `{}`)
+- Non-host builds: empty object
 
 ## Failure
 
