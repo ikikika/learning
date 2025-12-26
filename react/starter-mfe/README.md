@@ -1,6 +1,9 @@
 # Starter MFE
 
-In-repo React starter initialized as exactly one of `standalone` | `host` | `remote` (Webpack Module Federation). Multi-repo topology: one role per clone.
+In-repo React starter initialized as exactly one of `standalone` | `host` |
+`remote` (Webpack Module Federation). Constitution also defines `hybrid`
+(intermediate host / team shell); scaffold for that role is not shipped yet.
+Multi-repo topology: one role per clone.
 
 **Docs**
 
@@ -87,6 +90,7 @@ Re-init: `npm run init -- --role=host --port=3001 --name=host --force` (requires
 | `standalone` | Single app; demo home; no MF remotes/exposes |
 | `host` | Host; optional remote slot(s) with `embedded={true}`; remotes map + generated loaders (empty until `--remote` or `add-remote`) |
 | `remote` | Dual-mode: `demoRemote` routes (`/route-1`, `/route-2`) + federated PascalCase expose → `FederatedRemoteApp.tsx` |
+| `hybrid` | Constitutional only (v2.2+): intermediate host / team shell — parent federated entry + child remotes via add-remote + standalone team chrome; **init/scaffold not shipped yet** |
 
 Init only writes `starter.role.json`, README, `.env` port, optional `package.json` name, and (host) `loaders.generated.ts`. It does **not** prune or restore `src/` — keep one role per clone; avoid switching.
 

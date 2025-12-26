@@ -1,18 +1,28 @@
 <!--
 Sync Impact Report
-- Version change: 2.0.1 → 2.1.0
-- Modified principles: none renamed
+- Version change: 2.1.0 → 2.2.0
+- Modified principles:
+  - I. Dual-Mode Portability (expanded: fourth role `hybrid`)
+  - III. Explicit Host/Remote Contracts (nested hybrid composition /
+    degrade-safely clarified)
+  - VI. Responsive Experience & PWA Readiness (hybrid embed + team chrome)
 - Added sections / material expansions:
-  - VI. Responsive Experience & PWA Readiness (new principle)
-  - Technology Constraints → Styling & a11y expanded for responsive layouts
+  - Hybrid role obligations under I, Technology Constraints, Quality Gates
 - Removed sections: none
-- Clarifications: none
+- Clarifications:
+  - One role per clone remains mandatory (including hybrid)
+  - React singleton sharing and typed contracts unchanged; nested
+    composition MUST degrade safely
 - Templates requiring updates:
-  - .specify/templates/plan-template.md ✅ (Constitution Check + Technical Context)
-  - .specify/templates/spec-template.md ✅ (Assumptions guidance)
-  - .specify/templates/tasks-template.md ✅ (polish / verification path note)
+  - .specify/templates/plan-template.md ✅
+  - .specify/templates/spec-template.md ✅
+  - .specify/templates/tasks-template.md ✅
   - .cursor/skills/speckit-* ✅ reviewed (no skill edits required)
-- Follow-up TODOs: none deferred
+- Runtime guidance:
+  - AGENTS.md ✅ (role list + hybrid pointer)
+  - README.md ✅ (constitutional role list; scaffold deferred note)
+- Follow-up TODOs: hybrid init/scaffold/add-remote implementation is
+  out of scope for this amendment (governance only)
 -->
 
 # Starter MFE Constitution
@@ -22,56 +32,86 @@ Sync Impact Report
 ### I. Dual-Mode Portability
 
 Each generated repository MUST contain one independently buildable and
-deployable React application with an explicit role: host, remote, or
-standalone.
+deployable React application with an explicit role: host, remote,
+standalone, or hybrid.
 
+- Exactly one role per clone. Init and tooling MUST NOT mix roles in a
+  single repository.
 - A remote repository MUST run in standalone development/test mode and as a
   federated remote without forking feature or domain logic.
 - A host repository MUST run independently while loading remotes through
   configuration; it MUST NOT contain remote implementation code.
 - A standalone repository MAY omit federation configuration, while preserving
-  the canonical application structure so it can evolve into a host or remote.
+  the canonical application structure so it can evolve into a host, remote,
+  or hybrid.
+- A hybrid repository (intermediate host / team shell) MUST:
+  - Expose a stable federated entry for consumption by a parent host
+    (remote-like expose contract).
+  - Consume child remotes via configuration and host-style add-remote
+    tooling (MUST NOT embed child remote source trees).
+  - Run standalone for local team development without requiring a parent
+    host.
+  - Own team layout, theme tokens, and navigation when running standalone
+    and when embedding child remotes inside its mount boundary.
+  - When embedded in a parent shell, respect parent PWA/theme ownership via
+    the public `embedded={true}` contract (no competing document-level
+    PWA/theme takeover); still apply team visual chrome (layout, tokens,
+    nav) inside its own mount boundary.
 - Feature UI and domain logic MUST live in modules that do not assume a
   specific host or sole ownership of the page.
-- Host-only and remote-only wiring (bootstrap, Module Federation config,
-  routing mount points) MUST stay in thin adapters at the edges.
-- A remote change that breaks standalone OR federated operation is a
-  constitution violation unless documented and justified in Complexity
+- Host-only, remote-only, and hybrid edge wiring (bootstrap, Module
+  Federation config, routing mount points, add-remote registration) MUST
+  stay in thin adapters at the edges.
+- A remote or hybrid change that breaks standalone OR federated operation
+  is a constitution violation unless documented and justified in Complexity
   Tracking.
+- Nested composition (parent host → hybrid → child remote) MUST degrade
+  safely: missing or failing child remotes MUST NOT take down the hybrid;
+  a missing or failing hybrid MUST NOT take down the parent host.
 
-Rationale: One app per repository gives hosts and remotes independent
-ownership and deployment while dual-mode remotes remain locally operable.
+Rationale: One app per repository gives independent ownership and
+deployment. Hybrid enables team shells that are both composees and
+composers without forking dual-mode portability.
 
 ### II. Shared Runtime Singletons
 
 Framework and peer runtimes that must be unique in the browser (at minimum
-`react` and `react-dom`) MUST be shared as singletons across host and remotes.
+`react` and `react-dom`) MUST be shared as singletons across host, hybrid,
+and remotes.
 
 - Shared dependency versions MUST be declared explicitly and negotiated;
   silent duplication of React (or equivalent) is forbidden.
 - New shared peers require a documented ownership decision (who provides them,
   version range, and upgrade policy).
-- Remotes MUST NOT bundle a second copy of a singleton-shared package for
-  convenience.
+- Remotes and hybrids MUST NOT bundle a second copy of a singleton-shared
+  package for convenience.
 
 Rationale: Duplicate React instances cause broken hooks, context loss, and
-bloated bundles—the classic MFE failure mode.
+bloated bundles—the classic MFE failure mode. Nested hybrid composition
+amplifies the cost of duplication.
 
 ### III. Explicit Host/Remote Contracts
 
-Boundaries between host and remotes MUST be typed, versioned, and documented
-before implementation.
+Boundaries between hosts, hybrids, and remotes MUST be typed, versioned, and
+documented before implementation.
 
-- Each exposed remote module MUST have a declared public contract (props/events
-  or equivalent) and a stable export name.
-- Contract changes that break consumers are MAJOR; additive compatible changes
-  are MINOR; clarifications are PATCH.
-- Runtime loading MUST degrade safely: missing or failing remotes MUST show a
-  defined fallback; uncaught remote failures MUST NOT take down the host.
+- Each exposed module (remote or hybrid federated entry) MUST have a
+  declared public contract (props/events or equivalent) and a stable export
+  name.
+- Contract changes that break consumers are MAJOR; additive compatible
+  changes are MINOR; clarifications are PATCH.
+- Runtime loading MUST degrade safely: missing or failing remotes (including
+  children of a hybrid) MUST show a defined fallback; uncaught remote
+  failures MUST NOT take down the composing shell (host or hybrid).
 - Cross-app communication MUST use explicit contracts (props, custom events,
   or a documented shared bus)—not undocumented globals.
+- Nested composition MUST use the same contract discipline at every level
+  (parent↔hybrid and hybrid↔child); undocumented globals for nest detection
+  are forbidden. Prefer `embedded?: boolean` (or an equivalent documented
+  prop) for embed-mode suppression of document-level ownership.
 
-Rationale: Implicit coupling is the main source of production MFE incidents.
+Rationale: Implicit coupling is the main source of production MFE incidents;
+nested shells multiply the blast radius without typed boundaries.
 
 ### IV. Composition-First UI
 
@@ -94,19 +134,22 @@ visual taxonomies do not.
 Behavior MUST be independently testable at unit, contract, and mode levels.
 
 - Domain and UI logic MUST be unit-testable without a running federation host.
-- Host/remote contracts MUST have contract or integration coverage when
+- Host/hybrid/remote contracts MUST have contract or integration coverage when
   federation is in scope for the feature.
 - Standalone smoke paths and federated load paths MUST both be exercisable in
-  CI (or an explicitly deferred equivalent with a tracked follow-up).
-- Tests that only pass in one mode are insufficient for dual-mode features.
+  CI (or an explicitly deferred equivalent with a tracked follow-up). Hybrid
+  MUST cover standalone, parent-embedded, and child-remote composition paths
+  when those modes are in scope.
+- Tests that only pass in one mode are insufficient for dual-mode or
+  multi-mode features.
 
 Rationale: Isolation that cannot be verified will regress under independent
-remote deploys.
+remote deploys and nested shells.
 
 ### VI. Responsive Experience & PWA Readiness
 
 Frontend experiences MUST be mobile-responsive and Progressive Web App (PWA)
-capable across repository roles (host, remote, and standalone).
+capable across repository roles (host, remote, standalone, and hybrid).
 
 - Layouts and shared UI MUST remain usable on small viewports (phone-width)
   without requiring horizontal scrolling for primary tasks, unless a Complexity
@@ -120,17 +163,20 @@ capable across repository roles (host, remote, and standalone).
   installable/display identity (name, icons, display mode), and a service worker
   (or equivalent) that enables at least offline shell/caching for the app shell
   assets appropriate to the repository role.
-- Host and remote PWAs MUST NOT assume exclusive control of the browser when
-  composed; remotes MUST remain safe when embedded (no conflicting
-  full-document PWA takeovers that break the host). Prefer host-owned
-  install/offline UX when federated; remotes MAY still be PWA-capable in
-  standalone mode.
+- Host, hybrid, and remote PWAs MUST NOT assume exclusive control of the
+  browser when composed. Prefer outermost-shell-owned install/offline UX when
+  federated (parent host over hybrid; hybrid over child remotes when the hybrid
+  is the standalone entry). Remotes and hybrids MUST remain safe when embedded
+  (`embedded={true}`): no conflicting full-document PWA or document-theme
+  takeovers. Hybrids MAY still own team theme tokens and chrome inside their
+  mount boundary while embedded.
+- Remotes and hybrids MAY still be fully PWA-capable in standalone mode.
 - New UI work MUST state responsive and PWA impact in plans/PRs (verified,
   deferred with follow-up, or N/A with justification).
 
 Rationale: This starter targets real-world multi-repo frontends used on phones
 and desktops; installability and resilient loading are part of product quality,
-not optional polish.
+not optional polish. Nested shells need clear document-ownership rules.
 
 ## Technology Constraints
 
@@ -138,8 +184,8 @@ not optional polish.
 - **Packaging**: Federation MUST use Webpack Module Federation (not alternate
   federation runtimes unless Complexity Tracking justifies an exception).
   The production topology MUST be multi-repository:
-  - one repository for the host;
-  - one repository for each remote;
+  - one repository for the host (or hybrid acting as a team shell);
+  - one repository for each remote (and each nested hybrid);
   - one root `src/` per application repository;
   - no required `apps/host`, `apps/remote-*`, or workspace `packages/` wrapper.
   Shared UI, configuration, and typed remote contracts MUST be published and
@@ -152,7 +198,7 @@ not optional polish.
 src/
 ├── main.tsx              # MF-safe async entry (import bootstrap)
 ├── bootstrap.tsx         # createRoot + top-level providers
-├── app/                  # host: App, providers, routes
+├── app/                  # host/hybrid: App, providers, routes
 ├── features/             # domain modules (public index.ts per feature)
 ├── pages/                # route-level screens
 ├── layouts/              # page chrome
@@ -165,24 +211,27 @@ src/
 
   Rules for that layout:
   - Domain logic and feature UI MUST live under `features/<name>/` with a
-    public `index.ts` (the natural unit for remote `exposes`).
+    public `index.ts` (the natural unit for remote/hybrid `exposes`).
   - Feature-specific api/hooks/services/types MUST stay inside that feature.
-  - Host concerns (providers, route tables) MUST stay under `app/`.
+  - Host and hybrid shell concerns (providers, route tables, remote
+    registration) MUST stay under `app/`.
   - Shared helpers MUST live under `core/` — do not add a parallel `lib/` for
     the same role.
   - Root `services/` is for cross-feature infra only, not domain services.
 - **Styling, a11y & responsive**: UI MUST meet baseline accessibility
   expectations (keyboard reachability, semantic structure, discernible names)
   and MUST be mobile-responsive for primary flows. Visual systems SHOULD avoid
-  one-off snowflake patterns that cannot be shared across remotes.
+  one-off snowflake patterns that cannot be shared across remotes. Hybrid
+  team tokens/layout/nav are owned by the hybrid within its mount boundary.
 - **PWA**: Each application repository MUST include manifest + icons + service
   worker (or equivalent) baseline as required by Principle VI; federated
-  composition MUST prefer host-owned install/offline UX.
+  composition MUST prefer outermost-shell-owned install/offline UX.
 - **Performance**: Avoid unnecessary waterfalls and duplicate framework weight;
-  measure remote load cost when adding new federated surfaces.
-- **Secrets & config**: No secrets in client bundles; environment-specific host
-  and remote URLs MUST be configuration, not hard-coded production hosts in
-  shared packages.
+  measure remote load cost when adding new federated surfaces (including
+  hybrid→child and parent→hybrid).
+- **Secrets & config**: No secrets in client bundles; environment-specific host,
+  hybrid, and remote URLs MUST be configuration, not hard-coded production
+  hosts in shared packages.
 
 ## Quality Gates & Workflow
 
@@ -192,8 +241,10 @@ src/
 - Every implementation plan MUST pass the Constitution Check gates before
   Phase 0 research is treated as complete, and again after Phase 1 design.
 - Plans, PRs, and agent implementations MUST state the repository role
-  (host, remote, or standalone). Remote changes MUST state standalone and
-  federated impact and MUST NOT silently drop either mode.
+  (host, remote, standalone, or hybrid). Remote and hybrid changes MUST state
+  standalone and federated impact and MUST NOT silently drop either mode.
+  Hybrid changes MUST also state child-remote composition impact and
+  parent-embed behavior (`embedded={true}` / team chrome boundary).
 - Plans, PRs, and agent implementations MUST state responsive and PWA impact
   (verified, deferred with tracked follow-up, or justified N/A).
 - Complexity beyond these principles MUST be recorded in the plan's Complexity
@@ -221,4 +272,4 @@ Compliance:
 - Runtime guidance may live in README or agent skills; those documents MUST NOT
   contradict this constitution. On conflict, this file wins.
 
-**Version**: 2.1.0 | **Ratified**: 2026-07-30 | **Last Amended**: 2026-07-31
+**Version**: 2.2.0 | **Ratified**: 2026-07-30 | **Last Amended**: 2026-08-02

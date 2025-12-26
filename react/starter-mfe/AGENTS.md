@@ -24,13 +24,17 @@ repository. Humans should follow the same rules; full detail lives under `docs/`
 - Put `API_BASE_URL` and ports in `.env` (not hardcoded in UI code).
 - Prefer design tokens (`var(--…)`) over hardcoded colors/spacing; see
   `docs/ui-context.md`.
+- Prefer one role per clone (`standalone` | `host` | `remote` | `hybrid`);
+  init does not prune/restore `src/` (no `templates/role-assets`). Hybrid is
+  constitutional (intermediate host / team shell); scaffold may be deferred—
+  see `.specify/memory/constitution.md`.
+- Host-only (and hybrid when scaffolded): use `npm run add-remote` to append
+  remotes and optional `remoteProps`; restart afterward. Per-alias props bake
+  via `__STARTER_REMOTE_PROPS__` / `getRemoteProps` in `remotes.ts`.
 - Keep federated Demo suppression via `embedded={true}` on the Demo module;
-  do not invent undocumented globals for host detection.
-- Prefer one role per clone; init does not prune/restore `src/` (no
-  `templates/role-assets`).
-- Host-only: use `npm run add-remote` to append remotes and optional
-  `remoteProps`; restart the host afterward. Per-alias props bake via
-  `__STARTER_REMOTE_PROPS__` / `getRemoteProps` in `remotes.ts`.
+  do not invent undocumented globals for host detection. Hybrids follow the
+  same embed contract toward a parent shell while keeping team chrome inside
+  their mount boundary.
 - Do not commit secrets; `.env` is gitignored — update `.env.example` when
   adding new env keys.
 - Do not create commits unless the user explicitly asks.

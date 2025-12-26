@@ -29,15 +29,21 @@ description: "Task list template for feature implementation"
   fallbacks are configuration; remote source code is never added here
 - **Remote repository**: remote code remains in root `src/`; tasks cover both
   standalone operation and federated exposes
+- **Hybrid repository**: hybrid code remains in root `src/`; tasks cover
+  standalone team shell, federated entry for a parent host, child remotes via
+  configuration/add-remote (no child source trees), team layout/tokens/nav,
+  and embed-mode `embedded={true}` (parent PWA/theme; team chrome in mount
+  boundary). Nested composition MUST include degrade-safe fallbacks
 - **Standalone repository**: root `src/`; federation tasks are omitted unless
-  this repository is being converted to a host or remote
+  this repository is being converted to a host, remote, or hybrid
 - **Shared code/contracts**: consume versioned packages; do not create
   monorepo `apps/` or workspace `packages/` folders
 - Paths shown below assume this single-application repository layout
 - Domain work belongs under `features/<name>/` with a public `index.ts`
 - When federation is in scope, include tasks for contract artifacts, singleton
   shared deps, external contract package compatibility, feature exposes, and
-  both standalone and federated verification paths
+  both standalone and federated verification paths (for hybrid: also
+  parent-embed and child-remote composition paths)
 - Include responsive verification for primary flows (phone-width) and PWA
   baseline tasks (manifest, icons, service worker / equivalent) unless
   Complexity Tracking defers them with a tracked follow-up
