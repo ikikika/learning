@@ -17,7 +17,7 @@ Export or document `CONTRACT_VERSION = '1.0.0'` (in-repo; published package defe
 
 ## Routing
 
-- Federated path nests under shell `remote/:alias/*` (or equivalent) using the shell router—same nesting idea as `FederatedRemoteApp`.
+- Federated path nests under shell `app/:alias/*` using the shell router—same nesting idea as `FederatedRemoteApp`. Nested leaf under hybrid: `/app/<hybrid>/<leaf>/…` (hybrid child mount is bare `:alias/*`).
 - Own-app hybrid uses `App.tsx` + `hybridRoutes` (BrowserRouter via providers)—**not** this module.
 
 ## Composer duties when mounting hybrid

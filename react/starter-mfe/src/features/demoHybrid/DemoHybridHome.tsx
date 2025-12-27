@@ -65,10 +65,8 @@ export function DemoHybridHome({
             </li>
             {REMOTE_SLOTS.map((slot) => (
               <li key={slot.alias}>
-                <NavLink
-                  to={`remote/${slot.alias}`}
-                  className={navClassName}
-                >
+                {/* Bare alias → `/app/<hybrid>/<leaf>/…` when embedded */}
+                <NavLink to={slot.alias} className={navClassName}>
                   {slot.name}
                 </NavLink>
               </li>

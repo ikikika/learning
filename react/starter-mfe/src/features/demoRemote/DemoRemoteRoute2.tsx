@@ -14,7 +14,7 @@ export function DemoRemoteRoute2() {
         Second sample remote page. Reachable by URL when the remote runs as its
         own app (for example <code>/route-2</code>), or via the Route 1 link
         when embedded (composer address becomes{' '}
-        <code>/remote/…/route-2</code>, including nested hybrid mounts).
+        <code>/app/…/route-2</code>, including nested hybrid mounts).
       </p>
       <p className={styles.nav}>
         <Link to="../route-1" data-testid="demo-remote-to-route-1">

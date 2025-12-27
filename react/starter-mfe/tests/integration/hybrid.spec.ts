@@ -16,8 +16,8 @@ test.describe('hybrid smoke', () => {
     await expect(page.getByTestId('hybrid-welcome')).toBeVisible();
     await expect(page.getByTestId('remote-fallback')).toHaveCount(0);
 
-    // Empty remote URL → fallback (must be on remote panel route)
-    await page.goto('/remote/demoRemote?remoteUrl=');
+    // Empty remote URL → fallback (must be on leaf panel route; hybrid own-app uses bare `:alias`)
+    await page.goto('/demoRemote?remoteUrl=');
     await expect(page.getByTestId('demo-hybrid-home-page')).toBeVisible();
     await expect(page.getByTestId('remote-fallback')).toBeVisible();
     await expect(page.getByTestId('remote-fallback')).toContainText(
@@ -25,13 +25,13 @@ test.describe('hybrid smoke', () => {
     );
 
     // Invalid URL
-    await page.goto('/remote/demoRemote?remoteUrl=not-a-url');
+    await page.goto('/demoRemote?remoteUrl=not-a-url');
     await expect(page.getByTestId('remote-fallback')).toContainText(
       /empty or invalid/i,
     );
 
     // Unreachable remote (nothing listening on configured remoteEntry)
-    await page.goto('/remote/demoRemote');
+    await page.goto('/demoRemote');
     await expect(page.getByTestId('remote-fallback')).toBeVisible({
       timeout: 15_000,
     });

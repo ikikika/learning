@@ -11,7 +11,7 @@ export type FederatedRemoteAppProps = {
 
 /**
  * Remote-only Module Federation entry.
- * Uses the host BrowserRouter (host `remote/:alias/*`) so in-remote
+ * Uses the composer BrowserRouter (shell `app/:alias/*` or hybrid `:alias/*`) so in-remote
  * navigation updates the address bar. Does not replace App.tsx for
  * host or standalone own-app entry.
  */

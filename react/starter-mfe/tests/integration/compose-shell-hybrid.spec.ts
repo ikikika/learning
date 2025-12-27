@@ -26,11 +26,11 @@ test.describe('compose smoke (host + hybrid)', () => {
     await page.getByLabel('Use dark theme').click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
-    await page.locator('nav a[href="/remote/demoHybrid"]').click();
+    await page.locator('nav a[href="/app/demoHybrid"]').click();
     await expect(page.getByTestId('demo-hybrid-header-band')).toBeVisible({
       timeout: 45_000,
     });
-    await expect(page).toHaveURL(/\/remote\/demoHybrid/);
+    await expect(page).toHaveURL(/\/app\/demoHybrid/);
 
     // The embedded hybrid never renders its own theme toggle — `embedded`
     // is authoritative and forces `showThemeToggle` off. The page-level

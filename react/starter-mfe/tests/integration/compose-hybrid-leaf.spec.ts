@@ -25,8 +25,8 @@ test.describe('compose smoke (hybrid + remote leaf)', () => {
     await expect(page.getByTestId('demo-hybrid-header-band')).toBeVisible();
     await expect(page.getByTestId('hybrid-welcome')).toBeVisible();
 
-    await page.locator('nav a[href$="/remote/demoRemote"]').click();
-    await expect(page).toHaveURL(/\/remote\/demoRemote/);
+    await page.locator('nav a[href="/demoRemote"]').click();
+    await expect(page).toHaveURL(/\/demoRemote/);
 
     // Hybrid chrome stays mounted around the leaf panel
     await expect(page.getByTestId('demo-hybrid-header-band')).toBeVisible();
@@ -47,7 +47,7 @@ test.describe('compose smoke (hybrid + remote leaf)', () => {
       'compose harness did not set PLAYWRIGHT_HYBRID_URL',
     );
 
-    await page.goto(`${HYBRID_URL}/remote/demoRemote?remoteUrl=`);
+    await page.goto(`${HYBRID_URL}/demoRemote?remoteUrl=`);
     await expect(page.getByTestId('demo-hybrid-header-band')).toBeVisible();
     await expect(page.getByTestId('remote-fallback')).toBeVisible();
     await expect(page.getByTestId('remote-fallback')).toContainText(

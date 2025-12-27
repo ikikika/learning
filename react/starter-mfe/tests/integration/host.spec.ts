@@ -16,7 +16,7 @@ test.describe('host smoke', () => {
     await expect(page.getByTestId('remote-fallback')).toHaveCount(0);
 
     // Empty remote URL → fallback (must be on remote panel route)
-    await page.goto('/remote/demoRemote?remoteUrl=');
+    await page.goto('/app/demoRemote?remoteUrl=');
     await expect(page.getByTestId('demo-host-home-page')).toBeVisible();
     await expect(page.getByTestId('remote-fallback')).toBeVisible();
     await expect(page.getByTestId('remote-fallback')).toContainText(
@@ -24,13 +24,13 @@ test.describe('host smoke', () => {
     );
 
     // Invalid URL
-    await page.goto('/remote/demoRemote?remoteUrl=not-a-url');
+    await page.goto('/app/demoRemote?remoteUrl=not-a-url');
     await expect(page.getByTestId('remote-fallback')).toContainText(
       /empty or invalid/i,
     );
 
     // Unreachable remote (nothing listening on configured remoteEntry)
-    await page.goto('/remote/demoRemote');
+    await page.goto('/app/demoRemote');
     await expect(page.getByTestId('remote-fallback')).toBeVisible({
       timeout: 15_000,
     });

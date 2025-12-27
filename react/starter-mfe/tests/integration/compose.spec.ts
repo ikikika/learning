@@ -27,7 +27,7 @@ test.describe('compose smoke (two workspaces)', () => {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
     const remoteNav = page.locator(
-      '[data-testid="demo-host-home-page"] nav a[href^="/remote/"]',
+      '[data-testid="demo-host-home-page"] nav a[href^="/app/"]',
     );
     if (await remoteNav.count()) {
       await remoteNav.first().click();
@@ -58,25 +58,25 @@ test.describe('compose smoke (two workspaces)', () => {
       timeout: 30_000,
     });
 
-    await page.locator('nav a[href="/remote/demoRemote"]').click();
+    await page.locator('nav a[href="/app/demoRemote"]').click();
     await expect(page.getByTestId('demo-remote-route-1')).toBeVisible({
       timeout: 45_000,
     });
-    await expect(page).toHaveURL(/\/remote\/demoRemote\/route-1/);
+    await expect(page).toHaveURL(/\/app\/demoRemote\/route-1/);
     await expect(page.getByTestId('demo-remote-host-title')).toHaveText(
       'From Host A',
     );
 
     await page.getByTestId('demo-remote-to-route-2').click();
     await expect(page.getByTestId('demo-remote-route-2')).toBeVisible();
-    await expect(page).toHaveURL(/\/remote\/demoRemote\/route-2/);
+    await expect(page).toHaveURL(/\/app\/demoRemote\/route-2/);
     await expect(page.getByTestId('demo-host-home-page')).toBeVisible();
 
     // Unmount first remote fully before loading second alias
     await page.locator('nav a[href="/"]').click();
     await expect(page.getByTestId('host-welcome')).toBeVisible();
 
-    await page.locator('nav a[href="/remote/billingRemote"]').click();
+    await page.locator('nav a[href="/app/billingRemote"]').click();
     await expect(page.getByTestId('demo-remote-route-1')).toBeVisible({
       timeout: 45_000,
     });

@@ -51,7 +51,7 @@ Runtime mount in the host panel (not persisted).
 
 | Field | Type | Rules |
 |-------|------|--------|
-| alias | string | From route `/remote/:alias` |
+| alias | string | From route `/app/:alias` |
 | embedded | boolean | Always `true` from host |
 | props | object | From `remoteProps[alias]` or `{}`; `embedded` key stripped if present |
 

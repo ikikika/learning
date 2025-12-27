@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router';
+import { composeChildPath } from '../../core/constants/composeRoutes';
 import { REMOTE_SLOTS } from '../../core/constants/remotes';
 import styles from './DemoHost.module.scss';
 
@@ -10,6 +11,7 @@ function navClassName({ isActive }: { isActive: boolean }): string {
 
 /**
  * Two-pane host chrome: left nav from REMOTE_SLOTS + right panel Outlet.
+ * Composed children live under `/app/:alias/*`.
  */
 export function DemoHost() {
   return (
@@ -24,7 +26,7 @@ export function DemoHost() {
           {REMOTE_SLOTS.map((slot) => (
             <li key={slot.alias}>
               <NavLink
-                to={`/remote/${slot.alias}`}
+                to={composeChildPath(slot.alias)}
                 className={navClassName}
               >
                 {slot.name}

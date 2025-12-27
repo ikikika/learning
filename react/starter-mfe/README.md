@@ -99,7 +99,7 @@ Init only writes `starter.role.json`, README, `.env` port, optional `package.jso
 ## Public federated expose
 
 - Expose key: PascalCase of init `--name` (e.g. `my-checkout` → `./MyCheckout`)
-- Remote module: `src/app/FederatedRemoteApp.tsx` (default + named export; accepts `embedded?: boolean` and optional sample `title?: string`; nested under host `/remote/:alias/*`)
+- Remote module: `src/app/FederatedRemoteApp.tsx` (default + named export; accepts `embedded?: boolean` and optional sample `title?: string`; nested under shell `/app/:alias/*`, or `/app/<hybrid>/<leaf>/…` when the shell mounts a hybrid)
 - Hybrid module: `src/app/FederatedHybridApp.tsx` (contract `1.0.0`; `embedded={true}` suppresses hybrid theme toggle; keeps hybrid chrome in-boundary including `demo-hybrid-header-band`)
 - Composer MUST pass `embedded={true}` when mounting (LoadRemote does this; bag cannot override)
 - Providers / PWA apply on own-app entry (`App.tsx` + role routes), not via the federated expose
@@ -142,7 +142,7 @@ npx playwright install chromium
 
 Primary flows verified at phone-width (~375px) across standalone, host, remote-standalone, and hybrid without primary horizontal scroll. Full three-process shell→hybrid→leaf CI is deferred; pair covers run via `test:compose`.
 
-Dev note: webpack `publicPath` is absolute in development so refreshing nested host URLs (e.g. `/remote/demoRemote/route-1`) still loads host chunks correctly.
+Dev note: webpack `publicPath` is absolute in development so refreshing nested host URLs (e.g. `/app/demoRemote/route-1` or `/app/demoHybrid/demoRemote/route-1`) still loads host chunks correctly.
 
 ## Performance
 

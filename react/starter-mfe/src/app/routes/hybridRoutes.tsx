@@ -9,7 +9,9 @@ import {
 
 const hybridPageChildren: RouteObject[] = [
   { index: true, element: <HybridWelcome /> },
-  { path: 'remote/:alias/*', element: <HybridRemotePanel /> },
+  // Bare `:alias/*` so under shell `/app/<hybrid>/…` leaf URLs are
+  // `/app/<hybrid>/<leaf>/route-1` (no repeated mount keyword).
+  { path: ':alias/*', element: <HybridRemotePanel /> },
 ];
 
 /**
@@ -32,7 +34,7 @@ export const routes: RouteObject[] = [
 export const hybridRoutes = routes;
 
 /**
- * Relative routes for federated embed under a composer's `remote/:alias/*`.
+ * Relative routes for federated embed under the shell's `app/:alias/*`.
  * Participates in the composer's BrowserRouter so the address bar updates
  * (same nesting idea as `remoteRoutes`' `embeddedRoutes`).
  *
@@ -46,7 +48,7 @@ export function buildEmbeddedHybridRoutes(
 ): RouteObject[] {
   // Pathless layout (same idea as remote `embeddedRoutes`) so nested
   // `useRoutes` matches the remaining splat under the composer's
-  // `remote/:alias/*` instead of resetting to absolute `/`.
+  // `app/:alias/*` instead of resetting to absolute `/`.
   return [
     {
       element: (

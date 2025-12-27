@@ -16,7 +16,7 @@ module.exports = () => {
     devtool: 'eval-source-map',
     output: {
       filename: '[name].js',
-      // Absolute publicPath so nested host URLs (e.g. /remote/:alias/route-1)
+      // Absolute publicPath so nested host URLs (e.g. /app/:alias/route-1)
       // still resolve chunks from the origin root after refresh. Remotes also
       // need this because remoteEntry is injected via a dynamic <script>
       // where document.currentScript is null.

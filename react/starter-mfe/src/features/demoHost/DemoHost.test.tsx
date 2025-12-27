@@ -52,7 +52,7 @@ describe('DemoHost', () => {
     render(<DemoHost />);
     expect(screen.getByRole('link', { name: 'Billing' })).toHaveAttribute(
       'href',
-      '/remote/billingRemote',
+      '/app/billingRemote',
     );
   });
 });

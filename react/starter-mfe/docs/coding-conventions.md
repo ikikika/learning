@@ -52,7 +52,8 @@ src/features/<name>/
   when embedded, host owns document theme / PWA. Remote sample UI lives in
   `features/demoRemote` (not `features/demo`). Host and remotes share
   singleton `react`, `react-dom`, and `react-router` so embedded routes update
-  the host address bar under `/remote/:alias/*`.
+  the host address bar under `/app/:alias/*` (nested hybrid→leaf:
+  `/app/<hybrid>/<leaf>/…`).
 - Init does not prune/restore `src/`; sample assets for host, demo, and
   demoRemote coexist under `src/`. Prefer not switching roles on the same clone.
 

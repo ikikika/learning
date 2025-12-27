@@ -70,7 +70,7 @@ describe('DemoHybridHome', () => {
     );
     expect(screen.getByRole('link', { name: 'Billing' })).toHaveAttribute(
       'href',
-      'remote/billingRemote',
+      'billingRemote',
     );
   });
 

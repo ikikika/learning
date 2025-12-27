@@ -21,8 +21,9 @@ export const routes: RouteObject[] = [
 ];
 
 /**
- * Relative routes for federated embed under host `remote/:alias/*`.
- * Participates in the host BrowserRouter so the address bar updates.
+ * Relative routes for federated embed under shell `app/:alias/*`
+ * (or hybrid bare `:alias/*`). Participates in the composer BrowserRouter
+ * so the address bar updates.
  */
 export const embeddedRoutes: RouteObject[] = remotePageChildren;
 
