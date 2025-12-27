@@ -11,6 +11,10 @@ Higher-level product/architecture principles live in
 - **Do not hardcode API paths** in components. Define routes in
   `src/core/constants/apiRoutes.ts` and build full URLs with `apiUrl()` from
   `src/services/httpClient.ts`.
+- **Do not hardcode app URL path segments** (compose mount, leaf routes) in
+  components or `RouteObject` tables. Define them in
+  `src/core/constants/routePaths.ts` and reference `routePaths` /
+  `composeChildPath` / `remoteSiblingPath`.
 - **Do not call APIs inside presentational components** (including via
   `useEffect` in the component body). Prefer:
   - `src/features/<feature>/api/` — pure request functions (e.g. `getPost`)

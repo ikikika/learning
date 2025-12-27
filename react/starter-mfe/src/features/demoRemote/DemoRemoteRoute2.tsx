@@ -1,4 +1,8 @@
 import { Link } from 'react-router';
+import {
+  remoteSiblingPath,
+  routePaths,
+} from '../../core/constants/routePaths';
 import styles from './DemoRemoteRoute2.module.scss';
 
 /**
@@ -12,12 +16,16 @@ export function DemoRemoteRoute2() {
       <h1 className={styles.title}>Route 2</h1>
       <p className={styles.copy}>
         Second sample remote page. Reachable by URL when the remote runs as its
-        own app (for example <code>/route-2</code>), or via the Route 1 link
-        when embedded (composer address becomes{' '}
-        <code>/app/…/route-2</code>, including nested hybrid mounts).
+        own app (for example <code>/{routePaths.remote.route2}</code>), or via
+        the Route 1 link when embedded (composer address becomes{' '}
+        <code>/{routePaths.compose.segment}/…/{routePaths.remote.route2}</code>,
+        including nested hybrid mounts).
       </p>
       <p className={styles.nav}>
-        <Link to="../route-1" data-testid="demo-remote-to-route-1">
+        <Link
+          to={remoteSiblingPath(routePaths.remote.route1)}
+          data-testid="demo-remote-to-route-1"
+        >
           Back to Route 1
         </Link>
       </p>

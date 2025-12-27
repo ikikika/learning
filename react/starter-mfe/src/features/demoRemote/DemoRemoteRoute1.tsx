@@ -1,4 +1,8 @@
 import { Link } from 'react-router';
+import {
+  remoteSiblingPath,
+  routePaths,
+} from '../../core/constants/routePaths';
 import { useHostProps } from './HostPropsContext';
 import styles from './DemoRemoteRoute1.module.scss';
 
@@ -24,7 +28,10 @@ export function DemoRemoteRoute1() {
         its own or is loaded into a host panel.
       </p>
       <p className={styles.nav}>
-        <Link to="../route-2" data-testid="demo-remote-to-route-2">
+        <Link
+          to={remoteSiblingPath(routePaths.remote.route2)}
+          data-testid="demo-remote-to-route-2"
+        >
           Go to Route 2
         </Link>
       </p>

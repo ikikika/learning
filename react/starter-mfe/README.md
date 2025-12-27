@@ -99,7 +99,7 @@ Init only writes `starter.role.json`, README, `.env` port, optional `package.jso
 ## Public federated expose
 
 - Expose key: PascalCase of init `--name` (e.g. `my-checkout` → `./MyCheckout`)
-- Remote module: `src/app/FederatedRemoteApp.tsx` (default + named export; accepts `embedded?: boolean` and optional sample `title?: string`; nested under shell `/app/:alias/*`, or `/app/<hybrid>/<leaf>/…` when the shell mounts a hybrid)
+- Remote module: `src/app/FederatedRemoteApp.tsx` (default + named export; accepts `embedded?: boolean` and optional sample `title?: string`; nested under shell compose mount from `routePaths` — `/app/:alias/*`, or `/app/<hybrid>/<leaf>/…` when the shell mounts a hybrid)
 - Hybrid module: `src/app/FederatedHybridApp.tsx` (contract `1.0.0`; `embedded={true}` suppresses hybrid theme toggle; keeps hybrid chrome in-boundary including `demo-hybrid-header-band`)
 - Composer MUST pass `embedded={true}` when mounting (LoadRemote does this; bag cannot override)
 - Providers / PWA apply on own-app entry (`App.tsx` + role routes), not via the federated expose

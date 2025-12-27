@@ -20,6 +20,8 @@ repository. Humans should follow the same rules; full detail lives under `docs/`
 ## Must follow
 
 - Do **not** hardcode API paths in components — use `apiRoutes` + `apiUrl()`.
+- Do **not** hardcode app URL path segments — use `routePaths` /
+  `composeChildPath` / `remoteSiblingPath`.
 - Do **not** call APIs in a component `useEffect` — use `features/*/api` +
   `features/*/hooks`; components render from hooks/props only.
 - Put `API_BASE_URL` and ports in `.env` (not hardcoded in UI code).
@@ -47,6 +49,7 @@ repository. Humans should follow the same rules; full detail lives under `docs/`
 | UI / tokens / components | `docs/ui-context.md` |
 | Constitution | `.specify/memory/constitution.md` |
 | API routes | `src/core/constants/apiRoutes.ts` |
+| App URL paths | `src/core/constants/routePaths.ts` |
 | HTTP client | `src/services/httpClient.ts` |
 | Env injection | `scripts/load-env.cjs`, `config/webpack.*.js` |
 | Sample feature (standalone) | `src/features/demo/` |

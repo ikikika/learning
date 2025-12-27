@@ -1,4 +1,8 @@
 import { render, screen } from '@testing-library/react';
+import {
+  remoteSiblingPath,
+  routePaths,
+} from '../../core/constants/routePaths';
 import { DemoRemoteRoute1 } from './DemoRemoteRoute1';
 import { HostPropsProvider } from './HostPropsContext';
 
@@ -27,7 +31,7 @@ describe('DemoRemoteRoute1', () => {
     expect(screen.queryByTestId('demo-remote-host-title')).toBeNull();
     expect(screen.getByTestId('demo-remote-to-route-2')).toHaveAttribute(
       'href',
-      '../route-2',
+      remoteSiblingPath(routePaths.remote.route2),
     );
   });
 

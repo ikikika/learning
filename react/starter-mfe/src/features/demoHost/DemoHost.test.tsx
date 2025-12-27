@@ -1,4 +1,8 @@
 import { render, screen } from '@testing-library/react';
+import {
+  composeChildPath,
+  routePaths,
+} from '../../core/constants/routePaths';
 import { DemoHost } from './DemoHost';
 
 jest.mock('react-router', () => ({
@@ -44,7 +48,7 @@ describe('DemoHost', () => {
     render(<DemoHost />);
     expect(screen.getByRole('link', { name: 'Host' })).toHaveAttribute(
       'href',
-      '/',
+      routePaths.root,
     );
   });
 
@@ -52,7 +56,7 @@ describe('DemoHost', () => {
     render(<DemoHost />);
     expect(screen.getByRole('link', { name: 'Billing' })).toHaveAttribute(
       'href',
-      '/app/billingRemote',
+      composeChildPath('billingRemote'),
     );
   });
 });
