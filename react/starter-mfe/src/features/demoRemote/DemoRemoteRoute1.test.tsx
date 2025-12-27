@@ -15,7 +15,6 @@ jest.mock('react-router', () => ({
       {children}
     </a>
   ),
-  useParams: () => ({}),
 }));
 
 describe('DemoRemoteRoute1', () => {
@@ -26,6 +25,10 @@ describe('DemoRemoteRoute1', () => {
       screen.getByRole('heading', { name: 'Route 1' }),
     ).toBeInTheDocument();
     expect(screen.queryByTestId('demo-remote-host-title')).toBeNull();
+    expect(screen.getByTestId('demo-remote-to-route-2')).toHaveAttribute(
+      'href',
+      '../route-2',
+    );
   });
 
   it('shows demo-remote-host-title when context title is set', () => {

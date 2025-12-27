@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /**
- * Host-only CLI: append one remote to starter.role.json remotes[],
+ * Host or hybrid CLI: append one remote to starter.role.json remotes[],
  * write .env[urlEnv], regenerate loaders, optional remoteProps[alias].
  * Flags preferred for CI; missing required values prompt when stdin is a TTY.
  * @see specs/004-host-add-remote/contracts/add-remote-cli.md
+ * @see specs/005-hybrid-role-scaffold/contracts/add-remote-host-hybrid.md
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -332,9 +333,9 @@ async function main() {
     fail('starter.role.json is not valid JSON');
   }
 
-  if (meta.role !== 'host') {
+  if (meta.role !== 'host' && meta.role !== 'hybrid') {
     fail(
-      `add-remote is host-only (current role: ${meta.role ?? 'unknown'}). No files were written.`,
+      `add-remote requires role host or hybrid (current role: ${meta.role ?? 'unknown'}). No files were written.`,
     );
   }
 
@@ -420,7 +421,7 @@ async function main() {
     console.log(`remoteProps.${entry.alias}=${JSON.stringify(propsBag)}`);
   }
   console.log(
-    'Restart the host (npm start) so webpack remotes map and baked props refresh.',
+    'Restart the composer (npm start) so webpack remotes map and baked props refresh.',
   );
 }
 

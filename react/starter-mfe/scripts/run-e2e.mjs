@@ -19,6 +19,7 @@ const ROLE_PORTS = {
   standalone: 3000,
   host: 3001,
   remote: 3002,
+  hybrid: 3003,
 };
 
 function init(role) {
@@ -28,8 +29,8 @@ function init(role) {
     `--role=${role}`,
     `--port=${port}`,
   ];
-  // Host e2e exercises LoadRemote fallbacks — add a slot explicitly (init defaults to none).
-  if (role === 'host') {
+  // Host/hybrid e2e exercises LoadRemote fallbacks — add a slot explicitly (init defaults to none).
+  if (role === 'host' || role === 'hybrid') {
     args.push('--remote=demoRemote:demoRemote');
   }
   if (fs.existsSync(path.join(ROOT, 'starter.role.json'))) {
@@ -60,6 +61,7 @@ const roles = [
   { role: 'standalone', project: 'standalone' },
   { role: 'host', project: 'host' },
   { role: 'remote', project: 'remote-standalone' },
+  { role: 'hybrid', project: 'hybrid' },
 ];
 
 for (const { role, project } of roles) {

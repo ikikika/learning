@@ -68,13 +68,13 @@ function snapshotFiles(cwd) {
   };
 }
 
-test('non-host role rejects with no file writes', () => {
+test('non-host, non-hybrid role rejects with no file writes', () => {
   withTempCopy((tmp) => {
     assert.equal(init(tmp, ['--role=remote', '--port=3002']).status, 0);
     const before = snapshotFiles(tmp);
     const r = addRemote(tmp, ['--alias=demoRemote', '--port=3002']);
     assert.notEqual(r.status, 0);
-    assert.match(r.stderr, /host-only/i);
+    assert.match(r.stderr, /requires role host or hybrid/i);
     const after = snapshotFiles(tmp);
     assert.equal(after.meta, before.meta);
     assert.equal(after.env, before.env);
@@ -88,9 +88,30 @@ test('standalone role rejects with no file writes', () => {
     const before = snapshotFiles(tmp);
     const r = addRemote(tmp, ['--alias=demoRemote', '--port=3002']);
     assert.notEqual(r.status, 0);
-    assert.match(r.stderr, /host-only/i);
+    assert.match(r.stderr, /requires role host or hybrid/i);
     const after = snapshotFiles(tmp);
     assert.equal(after.meta, before.meta);
+  });
+});
+
+test('hybrid role is allowed and writes remotes[], .env, and loaders', () => {
+  withTempCopy((tmp) => {
+    assert.equal(init(tmp, ['--role=hybrid', '--port=3003']).status, 0);
+    const before = snapshotFiles(tmp);
+    const r = addRemote(tmp, [
+      '--alias=demoRemote',
+      '--name=demoRemote',
+      '--port=3002',
+    ]);
+    assert.equal(r.status, 0, r.stderr);
+    const after = snapshotFiles(tmp);
+    assert.notEqual(after.meta, before.meta);
+
+    const meta = readMeta(tmp);
+    assert.equal(meta.role, 'hybrid');
+    assert.equal(meta.remotes.length, 1);
+    assert.equal(meta.remotes[0].alias, 'demoRemote');
+    assert.equal(meta.remotes[0].expose, './DemoRemote');
   });
 });
 

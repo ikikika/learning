@@ -1,4 +1,4 @@
-export type AppRole = 'standalone' | 'host' | 'remote';
+export type AppRole = 'standalone' | 'host' | 'remote' | 'hybrid';
 
 declare global {
   interface Window {
@@ -19,7 +19,8 @@ export function getAppRole(): AppRole {
   if (
     injected === 'standalone' ||
     injected === 'host' ||
-    injected === 'remote'
+    injected === 'remote' ||
+    injected === 'hybrid'
   ) {
     return injected;
   }

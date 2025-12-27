@@ -51,7 +51,7 @@ test('missing --role exits non-zero', () => {
   withTempCopy((tmp) => {
     const r = init(tmp, []);
     assert.notEqual(r.status, 0);
-    assert.match(r.stderr, /--role=standalone\|host\|remote required/);
+    assert.match(r.stderr, /--role=standalone\|host\|remote\|hybrid required/);
   });
 });
 
@@ -206,6 +206,50 @@ test('host accepts multiple --remote flags', () => {
     assert.match(loaders, /demoRemote\/Checkout/);
     assert.match(loaders, /billingRemote/);
     assert.match(loaders, /billingRemote\/Billing/);
+  });
+});
+
+test('--role=hybrid writes PORT_HYBRID, metadata, empty remotes[], and prints add-remote snippet', () => {
+  withTempCopy((tmp) => {
+    assert.equal(envPort(tmp, 'PORT_HYBRID'), '');
+    const r = init(tmp, ['--role=hybrid', '--port=3003']);
+    assert.equal(r.status, 0, r.stderr);
+    const meta = JSON.parse(
+      fs.readFileSync(path.join(tmp, 'starter.role.json'), 'utf8'),
+    );
+    assert.equal(meta.role, 'hybrid');
+    assert.equal(meta.expose, './DemoHybrid');
+    assert.deepEqual(meta.remotes, []);
+    assert.equal(envPort(tmp, 'PORT_HYBRID'), '3003');
+    assert.match(r.stdout, /PORT_HYBRID=3003/);
+    assert.match(
+      r.stdout,
+      /npm run add-remote -- --alias=\w+ --name=\S+ --port=3003 --expose=\.\/\w+ --federation-name=\w+ --url-env=\w+_URL/,
+    );
+  });
+});
+
+test('hybrid --remote writes remotes[] and generates loaders like host', () => {
+  withTempCopy((tmp) => {
+    const r = init(tmp, [
+      '--role=hybrid',
+      '--port=3003',
+      '--name=demo-hybrid',
+      '--remote=demoRemote:demoRemote',
+    ]);
+    assert.equal(r.status, 0, r.stderr);
+    const meta = JSON.parse(
+      fs.readFileSync(path.join(tmp, 'starter.role.json'), 'utf8'),
+    );
+    assert.equal(meta.role, 'hybrid');
+    assert.equal(meta.expose, './DemoHybrid');
+    assert.equal(meta.remotes.length, 1);
+    assert.equal(meta.remotes[0].alias, 'demoRemote');
+    const loaders = fs.readFileSync(
+      path.join(tmp, 'src/app/remotes/loaders.generated.ts'),
+      'utf8',
+    );
+    assert.match(loaders, /demoRemote/);
   });
 });
 

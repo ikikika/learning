@@ -36,6 +36,7 @@ loadEnvFile();
 function portEnvKeyForRole(role) {
   if (role === 'host') return 'PORT_HOST';
   if (role === 'remote') return 'PORT_REMOTE';
+  if (role === 'hybrid') return 'PORT_HYBRID';
   return 'PORT_STANDALONE';
 }
 
@@ -57,6 +58,7 @@ function getPorts() {
     standalone: getPort('PORT_STANDALONE'),
     host: getPort('PORT_HOST'),
     remote: getPort('PORT_REMOTE'),
+    hybrid: getPort('PORT_HYBRID'),
   };
 }
 

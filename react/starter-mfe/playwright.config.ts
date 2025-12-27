@@ -69,8 +69,20 @@ export default defineConfig({
       testMatch: /\/remote-standalone\.spec\.ts$/,
     },
     {
+      name: 'hybrid',
+      testMatch: /\/hybrid\.spec\.ts$/,
+    },
+    {
       name: 'compose',
       testMatch: /\/compose\.spec\.ts$/,
+    },
+    {
+      name: 'compose-shell-hybrid',
+      testMatch: /\/compose-shell-hybrid\.spec\.ts$/,
+    },
+    {
+      name: 'compose-hybrid-leaf',
+      testMatch: /\/compose-hybrid-leaf\.spec\.ts$/,
     },
     {
       name: 'a11y',

@@ -70,7 +70,7 @@ test('success writes remotes[], .env urlEnv, and loaders.generated.ts', () => {
       '--port=3002',
     ]);
     assert.equal(r.status, 0, r.stderr);
-    assert.match(r.stdout, /Restart the host/i);
+    assert.match(r.stdout, /Restart the composer/i);
 
     const meta = readMeta(tmp);
     assert.equal(meta.role, 'host');
@@ -136,6 +136,36 @@ test('two sequential adds leave both aliases in meta and loaders', () => {
     );
     assert.match(loaders, /"demoRemote"/);
     assert.match(loaders, /"billingRemote"/);
+  });
+});
+
+test('hybrid workspace: writes remotes[], .env urlEnv, and loaders.generated.ts', () => {
+  withTempCopy((tmp) => {
+    assert.equal(init(tmp, ['--role=hybrid', '--port=3003']).status, 0);
+    const r = addRemote(tmp, [
+      '--alias=demoRemote',
+      '--name=demoRemote',
+      '--port=3002',
+    ]);
+    assert.equal(r.status, 0, r.stderr);
+    assert.match(r.stdout, /Restart the composer/i);
+
+    const meta = readMeta(tmp);
+    assert.equal(meta.role, 'hybrid');
+    assert.equal(meta.remotes.length, 1);
+    assert.equal(meta.remotes[0].alias, 'demoRemote');
+    assert.equal(meta.remotes[0].expose, './DemoRemote');
+
+    assert.equal(
+      envValue(tmp, 'DEMO_REMOTE_URL'),
+      'http://127.0.0.1:3002/remoteEntry.js',
+    );
+
+    const loaders = fs.readFileSync(
+      path.join(tmp, 'src/app/remotes/loaders.generated.ts'),
+      'utf8',
+    );
+    assert.match(loaders, /demoRemote/);
   });
 });
 

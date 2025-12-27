@@ -1,6 +1,17 @@
 #!/usr/bin/env node
 /**
- * Two temporary workspaces: host + remote, then run compose Playwright project.
+ * Multi-workspace compose harness. Spins up temporary role workspaces and
+ * runs the matching Playwright project against them.
+ *
+ * Modes (via `--mode=`):
+ *   - host-remote   (default target of `main()` alongside the others) — host
+ *     + remote workspaces, runs the `compose` project.
+ *   - shell-hybrid  — host + hybrid workspaces (host embeds the hybrid's
+ *     federated expose), runs the `compose-shell-hybrid` project.
+ *   - hybrid-leaf   — hybrid + remote workspaces (hybrid embeds the remote's
+ *     federated expose as a leaf), runs the `compose-hybrid-leaf` project.
+ *   - all           — runs all three modes sequentially (same as omitting
+ *     `--mode=` entirely).
  */
 import fs from 'node:fs';
 import os from 'node:os';
@@ -17,10 +28,11 @@ const ROOT = path.resolve(__dirname, '..');
 const host = getDevHost();
 
 /** Explicit compose ports — not read from .env (ports are empty until init). */
-const ports = { host: 3001, remote: 3002 };
-const demoRemoteUrl = `http://${host}:${ports.remote}/remoteEntry.js`;
-const hostUrl = `http://${host}:${ports.host}`;
-const remoteUrl = `http://${host}:${ports.remote}`;
+const PORTS = { host: 3001, remote: 3002, hybrid: 3003 };
+
+function urlFor(port) {
+  return `http://${host}:${port}`;
+}
 
 function run(cmd, args, opts = {}) {
   return new Promise((resolve, reject) => {
@@ -76,16 +88,54 @@ async function waitForUrl(url, timeoutMs = 90_000) {
   throw new Error(`Timeout waiting for ${url}`);
 }
 
-async function main() {
+function serve(cwd, env = {}) {
+  return spawn(
+    'npx',
+    ['webpack', 'serve', '--config', 'config/webpack.dev.js'],
+    {
+      cwd,
+      stdio: 'inherit',
+      env: { ...process.env, ...env },
+    },
+  );
+}
+
+function withCleanup(procs, dirs) {
+  let cleaned = false;
+  const cleanup = () => {
+    if (cleaned) return;
+    cleaned = true;
+    for (const p of procs) p.kill('SIGTERM');
+    for (const d of dirs) fs.rmSync(d, { recursive: true, force: true });
+  };
+  process.on('exit', cleanup);
+  const onSigint = () => {
+    cleanup();
+    process.exit(130);
+  };
+  process.on('SIGINT', onSigint);
+  return cleanup;
+}
+
+/**
+ * Original mode: temp host + remote workspaces, runs `compose` project.
+ * Host wires two aliases (demoRemote + billingRemote, sharing one remote
+ * container) to exercise per-remote props/titles.
+ */
+async function runHostRemote() {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'starter-mfe-compose-'));
   const hostDir = path.join(tmp, 'host');
   const remoteDir = path.join(tmp, 'remote');
   copyWorkspace(hostDir);
   copyWorkspace(remoteDir);
 
+  const demoRemoteUrl = `${urlFor(PORTS.remote)}/remoteEntry.js`;
+  const hostUrl = urlFor(PORTS.host);
+  const remoteUrl = urlFor(PORTS.remote);
+
   await run(
     'node',
-    ['scripts/init.mjs', '--role=host', `--port=${ports.host}`],
+    ['scripts/init.mjs', '--role=host', `--port=${PORTS.host}`],
     { cwd: hostDir },
   );
   await run(
@@ -94,7 +144,7 @@ async function main() {
       'scripts/add-remote.mjs',
       '--alias=demoRemote',
       '--name=demoRemote',
-      `--port=${ports.remote}`,
+      `--port=${PORTS.remote}`,
       '--props={"title":"From Host A"}',
     ],
     { cwd: hostDir },
@@ -107,50 +157,23 @@ async function main() {
       '--name=billing',
       '--federation-name=demoRemote',
       '--expose=./DemoRemote',
-      `--port=${ports.remote}`,
+      `--port=${PORTS.remote}`,
       '--props={"title":"Billing Slot"}',
     ],
     { cwd: hostDir },
   );
   await run(
     'node',
-    ['scripts/init.mjs', '--role=remote', `--port=${ports.remote}`],
+    ['scripts/init.mjs', '--role=remote', `--port=${PORTS.remote}`],
     { cwd: remoteDir },
   );
 
-  const remoteProc = spawn(
-    'npx',
-    ['webpack', 'serve', '--config', 'config/webpack.dev.js'],
-    {
-      cwd: remoteDir,
-      stdio: 'inherit',
-      env: { ...process.env, DEMO_REMOTE_URL: demoRemoteUrl },
-    },
-  );
-  const hostProc = spawn(
-    'npx',
-    ['webpack', 'serve', '--config', 'config/webpack.dev.js'],
-    {
-      cwd: hostDir,
-      stdio: 'inherit',
-      env: {
-        ...process.env,
-        DEMO_REMOTE_URL: demoRemoteUrl,
-        BILLING_REMOTE_URL: demoRemoteUrl,
-      },
-    },
-  );
-
-  const cleanup = () => {
-    hostProc.kill('SIGTERM');
-    remoteProc.kill('SIGTERM');
-    fs.rmSync(tmp, { recursive: true, force: true });
-  };
-  process.on('exit', cleanup);
-  process.on('SIGINT', () => {
-    cleanup();
-    process.exit(130);
+  const remoteProc = serve(remoteDir, { DEMO_REMOTE_URL: demoRemoteUrl });
+  const hostProc = serve(hostDir, {
+    DEMO_REMOTE_URL: demoRemoteUrl,
+    BILLING_REMOTE_URL: demoRemoteUrl,
   });
+  const cleanup = withCleanup([hostProc, remoteProc], [tmp]);
 
   try {
     await waitForUrl(remoteUrl);
@@ -169,6 +192,182 @@ async function main() {
   } finally {
     cleanup();
   }
+}
+
+/**
+ * Shell-hybrid mode: temp host + hybrid workspaces. The hybrid clone is
+ * initialized as a leaf-exposing role (`demo-hybrid`) and the host embeds
+ * it like any other federated remote via `add-remote`. Runs the
+ * `compose-shell-hybrid` project.
+ */
+async function runShellHybrid() {
+  const tmp = fs.mkdtempSync(
+    path.join(os.tmpdir(), 'starter-mfe-compose-shell-hybrid-'),
+  );
+  const hostDir = path.join(tmp, 'host');
+  const hybridDir = path.join(tmp, 'hybrid');
+  copyWorkspace(hostDir);
+  copyWorkspace(hybridDir);
+
+  const hybridEntryUrl = `${urlFor(PORTS.hybrid)}/remoteEntry.js`;
+  const hostUrl = urlFor(PORTS.host);
+  const hybridUrl = urlFor(PORTS.hybrid);
+
+  await run(
+    'node',
+    [
+      'scripts/init.mjs',
+      '--role=hybrid',
+      `--port=${PORTS.hybrid}`,
+      '--name=demo-hybrid',
+    ],
+    { cwd: hybridDir },
+  );
+  await run(
+    'node',
+    ['scripts/init.mjs', '--role=host', `--port=${PORTS.host}`],
+    { cwd: hostDir },
+  );
+  await run(
+    'node',
+    [
+      'scripts/add-remote.mjs',
+      '--alias=demoHybrid',
+      '--name=demo-hybrid',
+      `--port=${PORTS.hybrid}`,
+      '--props={"title":"Shell Embeds Hybrid"}',
+    ],
+    { cwd: hostDir },
+  );
+
+  const hybridProc = serve(hybridDir);
+  const hostProc = serve(hostDir, { DEMO_HYBRID_URL: hybridEntryUrl });
+  const cleanup = withCleanup([hostProc, hybridProc], [tmp]);
+
+  try {
+    await waitForUrl(hybridUrl);
+    await waitForUrl(hostUrl);
+
+    await run(
+      'npx',
+      ['playwright', 'test', '--project=compose-shell-hybrid'],
+      {
+        cwd: ROOT,
+        env: {
+          ...process.env,
+          PLAYWRIGHT_HOST_URL: hostUrl,
+          PLAYWRIGHT_HYBRID_URL: hybridUrl,
+          PLAYWRIGHT_SKIP_WEBSERVER: '1',
+          PLAYWRIGHT_BASE_URL: hostUrl,
+        },
+      },
+    );
+  } finally {
+    cleanup();
+  }
+}
+
+/**
+ * Hybrid-leaf mode: temp hybrid + remote workspaces. The hybrid clone embeds
+ * the remote as a leaf module (same `add-remote` contract as host). Runs the
+ * `compose-hybrid-leaf` project.
+ */
+async function runHybridLeaf() {
+  const tmp = fs.mkdtempSync(
+    path.join(os.tmpdir(), 'starter-mfe-compose-hybrid-leaf-'),
+  );
+  const hybridDir = path.join(tmp, 'hybrid');
+  const remoteDir = path.join(tmp, 'remote');
+  copyWorkspace(hybridDir);
+  copyWorkspace(remoteDir);
+
+  const demoRemoteUrl = `${urlFor(PORTS.remote)}/remoteEntry.js`;
+  const hybridUrl = urlFor(PORTS.hybrid);
+  const remoteUrl = urlFor(PORTS.remote);
+
+  await run(
+    'node',
+    ['scripts/init.mjs', '--role=hybrid', `--port=${PORTS.hybrid}`],
+    { cwd: hybridDir },
+  );
+  await run(
+    'node',
+    [
+      'scripts/add-remote.mjs',
+      '--alias=demoRemote',
+      '--name=demoRemote',
+      `--port=${PORTS.remote}`,
+      '--props={"title":"From Hybrid"}',
+    ],
+    { cwd: hybridDir },
+  );
+  await run(
+    'node',
+    ['scripts/init.mjs', '--role=remote', `--port=${PORTS.remote}`],
+    { cwd: remoteDir },
+  );
+
+  const remoteProc = serve(remoteDir, { DEMO_REMOTE_URL: demoRemoteUrl });
+  const hybridProc = serve(hybridDir, { DEMO_REMOTE_URL: demoRemoteUrl });
+  const cleanup = withCleanup([hybridProc, remoteProc], [tmp]);
+
+  try {
+    await waitForUrl(remoteUrl);
+    await waitForUrl(hybridUrl);
+
+    await run(
+      'npx',
+      ['playwright', 'test', '--project=compose-hybrid-leaf'],
+      {
+        cwd: ROOT,
+        env: {
+          ...process.env,
+          PLAYWRIGHT_HYBRID_URL: hybridUrl,
+          PLAYWRIGHT_REMOTE_URL: remoteUrl,
+          PLAYWRIGHT_SKIP_WEBSERVER: '1',
+          PLAYWRIGHT_BASE_URL: hybridUrl,
+        },
+      },
+    );
+  } finally {
+    cleanup();
+  }
+}
+
+const MODES = {
+  'host-remote': runHostRemote,
+  'shell-hybrid': runShellHybrid,
+  'hybrid-leaf': runHybridLeaf,
+};
+
+function parseMode(argv) {
+  for (const arg of argv) {
+    if (arg.startsWith('--mode=')) return arg.slice('--mode='.length);
+  }
+  return null;
+}
+
+async function main() {
+  const mode = parseMode(process.argv.slice(2));
+
+  if (mode && mode !== 'all') {
+    const fn = MODES[mode];
+    if (!fn) {
+      console.error(
+        `Unknown --mode=${mode}. Allowed: ${Object.keys(MODES).join(', ')}, all`,
+      );
+      process.exit(1);
+    }
+    await fn();
+    console.log(`Compose harness passed (mode=${mode})`);
+    return;
+  }
+
+  for (const [name, fn] of Object.entries(MODES)) {
+    console.log(`\n=== compose-harness: ${name} ===`);
+    await fn();
+  }
+  console.log('Compose harness passed (all modes)');
 }
 
 main().catch((err) => {

@@ -16,6 +16,7 @@ const ROLE_PORTS = {
   standalone: 3000,
   host: 3001,
   remote: 3002,
+  hybrid: 3003,
 };
 
 function init(role) {
@@ -31,7 +32,7 @@ function init(role) {
 }
 
 // AA audit against primary demo route for each role
-for (const role of ['standalone', 'host', 'remote']) {
+for (const role of ['standalone', 'host', 'remote', 'hybrid']) {
   const port = ROLE_PORTS[role];
   init(role);
   const r = spawnSync('npx', ['playwright', 'test', '--project=a11y'], {

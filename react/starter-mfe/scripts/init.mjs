@@ -29,7 +29,7 @@ const {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 
-const ALLOWED_ROLES = ['standalone', 'host', 'remote'];
+const ALLOWED_ROLES = ['standalone', 'host', 'remote', 'hybrid'];
 const ALLOWED_ROLE_SET = new Set(ALLOWED_ROLES);
 
 function parseFlagValue(argv, longName) {
@@ -75,6 +75,7 @@ function parseArgs(argv) {
 function portEnvKeyForRole(role) {
   if (role === 'host') return 'PORT_HOST';
   if (role === 'remote') return 'PORT_REMOTE';
+  if (role === 'hybrid') return 'PORT_HYBRID';
   return 'PORT_STANDALONE';
 }
 
@@ -179,7 +180,7 @@ async function resolveInteractive(args) {
   }
 
   if (!canPrompt()) {
-    if (!role) fail('--role=standalone|host|remote required');
+    if (!role) fail('--role=standalone|host|remote|hybrid required');
     if (portArg == null || portArg === '') {
       fail('--port=<number> required (1–65535)');
     }
@@ -272,8 +273,11 @@ function writeMetadata({ role, name, remotes }) {
   if (role === 'host') {
     meta.remotes = remotes;
   }
-  if (role === 'remote') {
+  if (role === 'remote' || role === 'hybrid') {
     meta.expose = toExposePath(name);
+  }
+  if (role === 'hybrid') {
+    meta.remotes = remotes;
   }
   fs.writeFileSync(
     path.join(ROOT, 'starter.role.json'),
@@ -322,7 +326,7 @@ async function main() {
   const portArg = resolved.portArg;
 
   if (!role) {
-    fail('--role=standalone|host|remote required');
+    fail('--role=standalone|host|remote|hybrid required');
   }
   if (!ALLOWED_ROLE_SET.has(role)) {
     fail(`Invalid --role. Allowed: ${ALLOWED_ROLES.join(', ')}`);
@@ -333,10 +337,10 @@ async function main() {
   assertValidName('--name', name);
 
   let remotes = [];
-  if (role === 'host') {
+  if (role === 'host' || role === 'hybrid') {
     remotes = buildHostRemotes({ remoteNameArg, remoteFlags });
   } else if (remoteNameArg || remoteFlags.length) {
-    fail('--remote / --remote-name are only valid with --role=host');
+    fail('--remote / --remote-name are only valid with --role=host or --role=hybrid');
   }
 
   const metaPath = path.join(ROOT, 'starter.role.json');
@@ -346,7 +350,7 @@ async function main() {
 
   // Role selection is metadata + webpack only. Live src/ keeps all sample
   // assets; do not prune/restore. Prefer one role per clone and avoid switching.
-  if (role === 'host') {
+  if (role === 'host' || role === 'hybrid') {
     writeLoadersGenerated(remotes, ROOT);
   }
 
@@ -361,7 +365,7 @@ async function main() {
   console.log(
     `Initialized role: ${role}, name: ${name} (federation: ${fed}), ${portKey}=${port}`,
   );
-  if (role === 'host') {
+  if (role === 'host' || role === 'hybrid') {
     for (const r of remotes) {
       console.log(
         `Remote: alias=${r.alias} federation=${r.federationName} expose=${r.expose} urlEnv=${r.urlEnv}`,
@@ -372,6 +376,17 @@ async function main() {
     const snippet = hostRemoteSnippetForApp(name);
     console.log(
       `Expose: ${toExposePath(name)} → ./src/app/FederatedRemoteApp.tsx`,
+    );
+    console.log('');
+    console.log('In your host clone, run:');
+    console.log(
+      `npm run add-remote -- --alias=${snippet.alias} --name=${snippet.name} --port=${port} --expose=${snippet.expose} --federation-name=${snippet.federationName} --url-env=${snippet.urlEnv}`,
+    );
+  }
+  if (role === 'hybrid') {
+    const snippet = hostRemoteSnippetForApp(name);
+    console.log(
+      `Expose: ${toExposePath(name)} → ./src/app/FederatedHybridApp.tsx`,
     );
     console.log('');
     console.log('In your host clone, run:');

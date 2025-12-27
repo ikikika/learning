@@ -1,0 +1,122 @@
+.root {
+  --hybrid-accent: #4338ca;
+  --hybrid-accent-contrast: #eef2ff;
+  --hybrid-band-bg: #1e293b;
+  --hybrid-band-text: #e2e8f0;
+  --hybrid-band-tag: #94a3b8;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  min-height: 100%;
+}
+
+:global([data-theme='dark']) .root {
+  --hybrid-accent: #a5b4fc;
+  --hybrid-accent-contrast: #1e1b4b;
+}
+
+.headerBand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--hybrid-band-bg);
+  color: var(--hybrid-band-text);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--hybrid-accent);
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.headerTitle {
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+}
+
+.headerTag {
+  font-size: 0.8125rem;
+  color: var(--hybrid-band-tag);
+}
+
+.headerHostTitle {
+  font-size: 0.8125rem;
+  color: var(--hybrid-accent-contrast);
+}
+
+.headerToggle {
+  flex-shrink: 0;
+}
+
+.body {
+  display: flex;
+  gap: var(--space-4);
+  align-items: stretch;
+  width: 100%;
+  min-height: 100%;
+}
+
+.nav {
+  flex: 0 0 12rem;
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navLink {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text);
+  text-decoration: none;
+  border-radius: var(--radius);
+}
+
+.navLink:hover {
+  background: var(--color-bg);
+}
+
+.navLinkActive {
+  color: var(--hybrid-accent);
+  background: var(--color-bg);
+  font-weight: 600;
+}
+
+.panel {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 480px) {
+  .headerBand {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .body {
+    flex-direction: column;
+  }
+
+  .nav {
+    flex: none;
+    width: 100%;
+  }
+}

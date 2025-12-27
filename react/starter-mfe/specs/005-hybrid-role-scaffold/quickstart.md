@@ -9,7 +9,7 @@ Validation scenarios after implementation. Prefer contract tests + Playwright ov
 
 - Node ≥20, `npm install`
 - Clean or `--force` init allowed on the clone under test
-- For pair compose: ability to run two temp workspaces (pattern: existing `compose-harness`)
+- For pair compose: `npm run test:compose` (runs host+remote, shell+hybrid, hybrid+leaf)
 
 ## V1 — Hybrid init + standalone smoke
 
@@ -22,51 +22,34 @@ npm start
 ```
 
 **Expect**:
-- Hybrid chrome loads (nav+panel); empty child state usable
-- Distinct from host sample (tokens/branding + layout cue / test id)
+- Hybrid chrome loads (`demo-hybrid-home-page`, `demo-hybrid-header-band`); empty child state usable
+- Distinct from host sample (tokens/branding + header band)
 - Theme toggle works; `data-theme` behaves like other own-app roles
 - Phone-width (~375px): no primary horizontal scroll
-- PWA artifacts present (manifest / SW registration path)
+- PWA / offline banner same as other own-app roles
 
-**Automated**: `tests/contract/init-cli.test.mjs` (hybrid + snippet); `tests/integration/hybrid.spec.ts`
+**Automated**: `tests/contract/init-cli.test.mjs` (hybrid + snippet); `tests/integration/hybrid.spec.ts`; `npm run test:a11y` (hybrid role)
 
 ## V2 — Hybrid + leaf pair
 
 ```bash
-# Workspace A: hybrid (from V1 or harness)
-# Workspace B: remote leaf
-npm run init -- --role=remote --port=3002 --name=demo-remote   # in leaf clone
-
-# In hybrid clone:
-npm run add-remote -- --alias=demoRemote --name=demo-remote --port=3002 \
-  --expose=./DemoRemote --federation-name=demoRemote --url-env=DEMO_REMOTE_URL
-# Restart hybrid; start leaf
+npm run test:compose -- --mode=hybrid-leaf
+# or full: npm run test:compose
 ```
 
-**Expect**:
-- Child appears in hybrid nav; selecting it mounts with hybrid chrome visible
-- Leaf gets `embedded={true}` (no document theme takeover by leaf)
-- Stop leaf → hybrid shows fallback within ~3s; hybrid nav still works
+**Expect**: child mounts inside hybrid chrome; fallback when leaf down; hybrid interactive.
 
-**Automated**: hybrid+leaf compose pair (new harness/spec)
+**Automated**: `tests/integration/compose-hybrid-leaf.spec.ts` via compose harness
 
 ## V3 — Shell + hybrid pair
 
 ```bash
-# Workspace A: host/shell
-npm run init -- --role=host --port=3001 --name=shell
-# Workspace B: hybrid (running on 3003)
-# In host: paste add-remote snippet from hybrid init (or equivalent flags)
-# Restart host; start hybrid
+npm run test:compose -- --mode=shell-hybrid
 ```
 
-**Expect**:
-- Host slot loads hybrid with `embedded={true}`
-- Host owns document `data-theme` / PWA install UX
-- Hybrid theme toggle **not** visible; hybrid chrome still visible in panel
-- Stop hybrid → host fallback; host nav still works
+**Expect**: shell owns document theme; hybrid theme toggle suppressed; `demo-hybrid-header-band` visible in panel.
 
-**Automated**: shell+hybrid compose pair (new harness/spec)
+**Automated**: `tests/integration/compose-shell-hybrid.spec.ts`
 
 ## V4 — add-remote role gate
 
@@ -75,14 +58,14 @@ npm run init -- --role=host --port=3001 --name=shell
 npm run add-remote -- --alias=x --port=3002 --name=x
 # Expect: non-zero, no writes
 
-# On host and hybrid: valid flags succeed (host regression + hybrid path)
+# On host and hybrid: valid flags succeed
 ```
 
 **Automated**: `tests/contract/add-remote-cli.test.mjs`
 
 ## V5 — Non-regression
 
-Re-run existing standalone, host, remote-standalone smokes and host compose as today.
+Re-run existing standalone, host, remote-standalone smokes and host compose as today (`npm run test:e2e`, `npm run test:compose -- --mode=host-remote`).
 
 **Expect**: SC-007 — no intentional regressions.
 

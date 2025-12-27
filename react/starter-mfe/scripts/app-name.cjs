@@ -7,6 +7,7 @@ const DEFAULT_NAMES = {
   standalone: 'standalone',
   host: 'host',
   remote: 'demo-remote',
+  hybrid: 'demo-hybrid',
 };
 
 const DEFAULT_REMOTE_NAME = 'demoRemote';

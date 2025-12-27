@@ -90,6 +90,18 @@ function federationOptions(
     };
   }
 
+  if (role === 'hybrid') {
+    return {
+      name: federationName,
+      filename: 'remoteEntry.js',
+      remotes: buildRemotesMap(remoteEntries, urlsByAlias),
+      exposes: {
+        [expose]: './src/app/FederatedHybridApp.tsx',
+      },
+      shared,
+    };
+  }
+
   return {
     name: federationName,
     filename: 'remoteEntry.js',
@@ -104,7 +116,8 @@ function getAppContext() {
   const role = meta.role || 'standalone';
   const federationName = resolveFederationName(meta);
   const expose = resolveExpose(meta);
-  const remoteEntries = role === 'host' ? remotesFromMeta(meta) : [];
+  const remoteEntries =
+    role === 'host' || role === 'hybrid' ? remotesFromMeta(meta) : [];
   const urlsByAlias = getRemoteUrlsByAlias(remoteEntries);
   const appTitle = meta.name || defaultNameForRole(role);
   const port = getPortForRole(role);
@@ -153,7 +166,9 @@ function createCommonConfig(ctx) {
             ? path.join(ROOT, 'src/app/routes/hostRoutes.tsx')
             : role === 'remote'
               ? path.join(ROOT, 'src/app/routes/remoteRoutes.tsx')
-              : path.join(ROOT, 'src/app/routes/standaloneRoutes.tsx'),
+              : role === 'hybrid'
+                ? path.join(ROOT, 'src/app/routes/hybridRoutes.tsx')
+                : path.join(ROOT, 'src/app/routes/standaloneRoutes.tsx'),
       },
     },
     module: {
@@ -215,7 +230,7 @@ function createCommonConfig(ctx) {
         ),
         __STARTER_REMOTES_URLS__: JSON.stringify(urlsByAlias),
         __STARTER_REMOTE_PROPS__: JSON.stringify(
-          role === 'host' &&
+          (role === 'host' || role === 'hybrid') &&
             meta.remoteProps &&
             typeof meta.remoteProps === 'object'
             ? meta.remoteProps

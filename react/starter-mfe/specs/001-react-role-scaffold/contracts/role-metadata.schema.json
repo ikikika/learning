@@ -8,7 +8,7 @@
   "properties": {
     "role": {
       "type": "string",
-      "enum": ["standalone", "host", "remote"],
+      "enum": ["standalone", "host", "remote", "hybrid"],
       "description": "Exactly one repository role after init"
     },
     "name": {
@@ -24,11 +24,11 @@
     "expose": {
       "type": "string",
       "minLength": 1,
-      "description": "Remote only: MF expose key (PascalCase of name, e.g. ./Checkout)"
+      "description": "Remote or hybrid: MF expose key (PascalCase of name, e.g. ./Checkout)"
     },
     "remotes": {
       "type": "array",
-      "description": "Host only: federated remotes loaded by this host",
+      "description": "Host or hybrid: federated remotes loaded by this composer",
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -59,7 +59,7 @@
     },
     "remoteProps": {
       "type": "object",
-      "description": "Optional per-alias host props bags (host). Keys are remote aliases; values are JSON objects. Additive on schema version 1; keys not in remotes[].alias are ignored at runtime.",
+      "description": "Optional per-alias props bags (host or hybrid). Keys are remote aliases; values are JSON objects. Additive on schema version 1; keys not in remotes[].alias are ignored at runtime.",
       "additionalProperties": {
         "type": "object"
       }

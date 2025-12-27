@@ -13,8 +13,9 @@ repository. Humans should follow the same rules; full detail lives under `docs/`
    theming, or shared components.
 4. For role / MFE / layout principles, see
    [`.specify/memory/constitution.md`](./.specify/memory/constitution.md).
-5. Prefer matching existing patterns under `src/features/demo/` (standalone)
-   or `src/features/demoRemote/` (remote) when adding features.
+5. Prefer matching existing patterns under `src/features/demo/` (standalone),
+   `src/features/demoHost/` (host), `src/features/demoRemote/` (remote), or
+   `src/features/demoHybrid/` (hybrid) when adding features.
 
 ## Must follow
 
@@ -25,16 +26,14 @@ repository. Humans should follow the same rules; full detail lives under `docs/`
 - Prefer design tokens (`var(--…)`) over hardcoded colors/spacing; see
   `docs/ui-context.md`.
 - Prefer one role per clone (`standalone` | `host` | `remote` | `hybrid`);
-  init does not prune/restore `src/` (no `templates/role-assets`). Hybrid is
-  constitutional (intermediate host / team shell); scaffold may be deferred—
-  see `.specify/memory/constitution.md`.
-- Host-only (and hybrid when scaffolded): use `npm run add-remote` to append
-  remotes and optional `remoteProps`; restart afterward. Per-alias props bake
-  via `__STARTER_REMOTE_PROPS__` / `getRemoteProps` in `remotes.ts`.
-- Keep federated Demo suppression via `embedded={true}` on the Demo module;
-  do not invent undocumented globals for host detection. Hybrids follow the
-  same embed contract toward a parent shell while keeping team chrome inside
-  their mount boundary.
+  init does not prune/restore `src/` (no `templates/role-assets`).
+- Host or hybrid: use `npm run add-remote` to append remotes and optional
+  `remoteProps`; restart afterward. Per-alias props bake via
+  `__STARTER_REMOTE_PROPS__` / `getRemoteProps` in `remotes.ts`.
+- Keep federated suppression via `embedded={true}` on remote/hybrid exposes;
+  do not invent undocumented globals for host detection. Hybrid keeps chrome
+  (`demo-hybrid-header-band`) in its mount boundary and suppresses its theme
+  toggle when embedded.
 - Do not commit secrets; `.env` is gitignored — update `.env.example` when
   adding new env keys.
 - Do not create commits unless the user explicitly asks.
@@ -53,3 +52,4 @@ repository. Humans should follow the same rules; full detail lives under `docs/`
 | Sample feature (standalone) | `src/features/demo/` |
 | Sample feature (host) | `src/features/demoHost/` |
 | Sample feature (remote) | `src/features/demoRemote/` |
+| Sample feature (hybrid) | `src/features/demoHybrid/` |
