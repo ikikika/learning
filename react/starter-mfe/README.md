@@ -43,6 +43,7 @@ Init flags (optional on a TTY — missing values are prompted):
 | `--remote` | Host or hybrid, repeatable: `alias:name[:expose[:urlEnv]]`. Builds `remotes[]` in `starter.role.json`. Omit for an empty composer |
 | `--remote-name` | Host or hybrid shorthand for one `demoRemote:<name>` entry (not with `--remote`) |
 | `--force` | Required to re-init when `starter.role.json` exists |
+| `--prune-other-roles` | Opt-in: delete other-role sample assets + related tests (CI / non-TTY). On a TTY, init also asks after success |
 
 Example multi-repo naming:
 
@@ -94,7 +95,7 @@ Re-init: `npm run init -- --role=host --port=3001 --name=host --force` (requires
 | `remote` | Dual-mode leaf: `demoRemote` routes (`/route-1`, `/route-2`) + federated PascalCase expose → `FederatedRemoteApp.tsx` |
 | `hybrid` | Intermediate shell: `demoHybrid` chrome (`demo-hybrid-header-band`) + remotes map + federated expose → `FederatedHybridApp.tsx`; prints host `add-remote` snippet; `add-remote` for child modules |
 
-Init only writes `starter.role.json`, README, `.env` port, optional `package.json` name, and (host/hybrid) `loaders.generated.ts`. It does **not** prune or restore `src/` — keep one role per clone; avoid switching.
+Init only writes `starter.role.json`, README, `.env` port, optional `package.json` name, and (host/hybrid) `loaders.generated.ts`. It does **not** prune `src/` **by default** — sample assets for all roles coexist. Opt-in prune (TTY question after init, `--prune-other-roles`, or `npm run prune-other-roles`) removes other-role samples + related tests and sets `samplesPruned: true`. There is no restore (re-clone the starter). Prefer one role per clone; avoid switching.
 
 ## Public federated expose
 
@@ -124,7 +125,8 @@ Re-init remote/hybrid with a new `--name` (and `--force`); update composer `remo
 
 | Script | Purpose |
 |--------|---------|
-| `npm run init` | Role init (prompts on TTY; use `--role` / `--port` in CI) |
+| `npm run init` | Role init (prompts on TTY; use `--role` / `--port` in CI; optional prune prompt / `--prune-other-roles`) |
+| `npm run prune-other-roles` | After init: remove other-role sample assets + related tests |
 | `npm run add-remote` | Host or hybrid: append one remote (+ optional `--props`); prompts on TTY when flags omitted; restart composer after |
 | `npm start` / `npm run build` | Dev / production |
 | `npm test` | Jest unit tests + contract tests |

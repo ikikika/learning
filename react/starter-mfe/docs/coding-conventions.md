@@ -58,8 +58,10 @@ src/features/<name>/
   singleton `react`, `react-dom`, and `react-router` so embedded routes update
   the host address bar under `/app/:alias/*` (nested hybrid→leaf:
   `/app/<hybrid>/<leaf>/…`).
-- Init does not prune/restore `src/`; sample assets for host, demo, and
-  demoRemote coexist under `src/`. Prefer not switching roles on the same clone.
+- Init does not prune/restore `src/` **by default**; sample assets for host,
+  demo, demoRemote, and demoHybrid coexist under `src/`. Opt-in prune:
+  post-init TTY prompt, `--prune-other-roles`, or `npm run prune-other-roles`.
+  Prefer not switching roles on the same clone.
 
 ## Styling & UI
 

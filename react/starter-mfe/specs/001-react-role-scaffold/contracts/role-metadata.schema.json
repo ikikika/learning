@@ -83,6 +83,10 @@
       "type": "string",
       "format": "date-time",
       "description": "Optional ISO-8601 timestamp of last successful init"
+    },
+    "samplesPruned": {
+      "type": "boolean",
+      "description": "True when other-role sample assets were removed via init --prune-other-roles, the post-init TTY prompt, or npm run prune-other-roles"
     }
   }
 }

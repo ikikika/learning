@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 /**
  * Init CLI — configures this repository as exactly one role.
- * Does not prune/restore src files (no templates). Role is metadata + webpack.
+ * Does not prune/restore src files by default (no templates). Role is metadata
+ * + webpack. Opt-in: TTY prompt or `--prune-other-roles` removes other-role
+ * sample assets + related tests.
  * Flags preferred for CI; missing required values prompt when stdin is a TTY.
  * @see specs/001-react-role-scaffold/contracts/init-cli.md
  */
@@ -11,6 +13,7 @@ import readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { pruneOtherRoleSamples } from './prune-other-role-samples.mjs';
 
 const require = createRequire(import.meta.url);
 const {
@@ -69,6 +72,7 @@ function parseArgs(argv) {
     remoteName: parseFlagValue(argv, 'remote-name'),
     remotes: parseFlagValues(argv, 'remote'),
     force: argv.includes('--force'),
+    pruneOtherRoles: argv.includes('--prune-other-roles'),
   };
 }
 
@@ -163,6 +167,15 @@ async function promptPort(rl) {
     if (n != null) return n;
     console.log('Enter an integer port from 1 to 65535.');
   }
+}
+
+async function promptPruneOtherRoles(rl) {
+  const answer = (
+    await promptLine(rl, 'Remove sample files for other roles? [y/N]: ')
+  )
+    .trim()
+    .toLowerCase();
+  return answer === 'y' || answer === 'yes';
 }
 
 /**
@@ -317,6 +330,7 @@ async function main() {
     remoteName: remoteNameArg,
     remotes: remoteFlags,
     force,
+    pruneOtherRoles: pruneFlag,
   } = args;
 
   const resolved = await resolveInteractive(args);
@@ -348,8 +362,8 @@ async function main() {
     fail('starter.role.json already exists; re-init requires --force');
   }
 
-  // Role selection is metadata + webpack only. Live src/ keeps all sample
-  // assets; do not prune/restore. Prefer one role per clone and avoid switching.
+  // Role selection is metadata + webpack. Live src/ keeps all sample assets
+  // unless the user opts into prune (TTY prompt or --prune-other-roles).
   if (role === 'host' || role === 'hybrid') {
     writeLoadersGenerated(remotes, ROOT);
   }
@@ -392,6 +406,23 @@ async function main() {
     console.log('In your host clone, run:');
     console.log(
       `npm run add-remote -- --alias=${snippet.alias} --name=${snippet.name} --port=${port} --expose=${snippet.expose} --federation-name=${snippet.federationName} --url-env=${snippet.urlEnv}`,
+    );
+  }
+
+  let shouldPrune = pruneFlag;
+  if (!shouldPrune && canPrompt()) {
+    const rl = readline.createInterface({ input, output });
+    try {
+      shouldPrune = await promptPruneOtherRoles(rl);
+    } finally {
+      rl.close();
+    }
+  }
+  if (shouldPrune) {
+    console.log('');
+    pruneOtherRoleSamples(ROOT, role);
+    console.log(
+      'Other-role sample files removed. Re-clone the starter to restore them.',
     );
   }
 }

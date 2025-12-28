@@ -3,11 +3,11 @@
 ## Command
 
 ```bash
-# Interactive (TTY): prompts for missing role / name / port
+# Interactive (TTY): prompts for missing role / name / port; then asks whether to prune other-role samples
 npm run init
 
 # Non-interactive (CI / scripts): flags required
-node scripts/init.mjs --role=<standalone|host|remote|hybrid> --port=<number> [--name=<appName>] [--remote=alias:name[:expose[:urlEnv]]]... [--remote-name=<remoteAppName>] [--force]
+node scripts/init.mjs --role=<standalone|host|remote|hybrid> --port=<number> [--name=<appName>] [--remote=alias:name[:expose[:urlEnv]]]... [--remote-name=<remoteAppName>] [--force] [--prune-other-roles]
 ```
 
 npm equivalent (e.g. `npm run init -- --role=host --port=3001 --remote=demoRemote:checkout`) MUST pass through flags.
@@ -22,6 +22,7 @@ npm equivalent (e.g. `npm run init -- --role=host --port=3001 --remote=demoRemot
 | `--remote` | `alias:name[:expose[:urlEnv]]` (repeatable) | No — **host or hybrid**. Default expose is PascalCase of `name`. When omitted (and no `--remote-name`), `remotes[]` is **empty** |
 | `--remote-name` | same rules as `--name` | No — **host or hybrid**; shorthand for a single `demoRemote:<name>` entry. Mutually exclusive with `--remote` |
 | `--force` | presence | When `starter.role.json` already exists |
+| `--prune-other-roles` | presence | Opt-in: delete sample assets + related tests for roles other than the selected one (no TTY prompt). Non-TTY never prunes unless this flag is set |
 
 ## Interactive prompts
 
@@ -31,8 +32,16 @@ When **stdin and stdout are TTYs** and a value is missing:
 2. **App name** — string; empty accepts the role default (does not rewrite `package.json` name unless the user typed a value or passed `--name`)
 3. **Port** — integer `1–65535`
 
+After a successful init (whether values came from flags or prompts), when **stdin and stdout are TTYs** and `--prune-other-roles` was **not** passed:
+
+4. **Prune other-role samples?** — `Remove sample files for other roles? [y/N]:`  
+   - Empty / `n` / `no` → keep all role samples (default)  
+   - `y` / `yes` → run the same prune as `--prune-other-roles` / `npm run prune-other-roles`
+
 Partial flags still work (e.g. `--role=host` prompts only for name + port).  
-When **not** a TTY (CI, piped stdin), missing `--role` / `--port` MUST fail with the same messages as before — no silent defaults for those.
+When **not** a TTY (CI, piped stdin), missing `--role` / `--port` MUST fail with the same messages as before — no silent defaults for those. Prune runs only with `--prune-other-roles`.
+
+Standalone re-run (after init): `npm run prune-other-roles` (reads `starter.role.json`, or pass `--role=`).
 
 ## Exit behavior
 
@@ -46,7 +55,7 @@ When **not** a TTY (CI, piped stdin), missing `--role` / `--port` MUST fail with
 | Both `--remote` and `--remote-name` | non-zero | Use one or the other |
 | Duplicate remote alias | non-zero | Duplicate alias |
 | Metadata exists, no `--force` | non-zero | Re-init requires `--force` |
-| Success | 0 | Writes metadata; updates README + `.env` port; host/hybrid regenerates loaders |
+| Success | 0 | Writes metadata; updates README + `.env` port; host/hybrid regenerates loaders; optional other-role sample prune |
 
 ## Side effects on success
 
@@ -54,9 +63,9 @@ When **not** a TTY (CI, piped stdin), missing `--role` / `--port` MUST fail with
 2. Update README role + app name + start instructions.
 3. Set the role’s port in `.env` (`PORT_STANDALONE` / `PORT_HOST` / `PORT_REMOTE` / `PORT_HYBRID`). `.env.example` leaves these blank; init creates `.env` from the example when missing and fills the active role’s key.
 4. When `--name` is provided **or** the user typed a non-default name at the prompt, set `package.json` `"name"` to that value.
-5. Webpack reads role / `remotes[]` / remote `expose` from metadata (no src file prune).
+5. Webpack reads role / `remotes[]` / remote `expose` from metadata (no automatic src file prune).
 6. Host/hybrid init regenerates `src/app/remotes/loaders.generated.ts` with a static `import()` per remote alias (empty registry when `remotes[]` is empty).
-7. **Does not** delete or restore live `src/` trees. Sample assets for all roles live under `src/` permanently; prefer one role per clone and avoid switching.
+7. **Does not** delete live `src/` trees **by default**. Sample assets for all roles live under `src/` unless the user opts in via the post-init TTY prune question, `--prune-other-roles`, or later `npm run prune-other-roles` (`scripts/prune-other-role-samples.mjs`). Opt-in prune removes other-role routes/features/pages/Federated samples, matching smoke/expose tests, compose integration specs, and `init-no-prune` contract; sets `samplesPruned: true` on metadata. There is no restore path (re-clone the starter).
 8. Remote and hybrid success stdout MUST print a copy-paste `npm run add-remote` command for a parent host (see [hybrid-init-cli.md](../../005-hybrid-role-scaffold/contracts/hybrid-init-cli.md) for hybrid detail).
 
 ## Role behavior (runtime)

@@ -9,6 +9,7 @@
   "scripts": {
     "init": "node scripts/init.mjs",
     "add-remote": "node scripts/add-remote.mjs",
+    "prune-other-roles": "node scripts/prune-other-role-samples.mjs",
     "start": "webpack serve --config config/webpack.dev.js",
     "build": "webpack --config config/webpack.prod.js",
     "test": "jest && node --test tests/contract/*.test.mjs",
