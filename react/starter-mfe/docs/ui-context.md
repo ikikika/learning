@@ -8,8 +8,8 @@
   RELATED DOCS (do not duplicate their jobs)
   - docs/coding-conventions.md        → code structure, data fetching, features
   - docs/project-overview.md          → product what/who/flows/scope
-  - specs/.../contracts/theming.md    → normative theme/token requirements
-  - specs/.../contracts/a11y-wcag.md  → WCAG AA CI requirements
+  - docs/contracts/theming.md         → normative theme/token requirements
+  - docs/contracts/a11y-wcag.md       → WCAG AA CI requirements
   - .specify/memory/constitution.md   → composition-first UI, responsive/PWA
 
   AFTER A SESSION that locks visual or component decisions, update this file
@@ -55,7 +55,7 @@ _TODO: Token naming rules, how to add a token, light vs dark overrides._
 
 <!--
   Document ThemeProvider behavior and federated ownership.
-  Align with contracts/theming.md — this file can summarize for UI work;
+  Align with docs/contracts/theming.md — this file can summarize for UI work;
   the contract remains the testable source of truth.
 -->
 
@@ -166,7 +166,7 @@ _TODO: Microcopy guidelines (optional)._
 |-----|------|
 | [coding-conventions.md](./coding-conventions.md) | Code structure & data fetching |
 | [project-overview.md](./project-overview.md) | Product framing |
-| [theming contract](../specs/001-react-role-scaffold/contracts/theming.md) | Normative theme/token rules |
-| [a11y contract](../specs/001-react-role-scaffold/contracts/a11y-wcag.md) | WCAG AA CI |
+| [theming contract](./contracts/theming.md) | Normative theme/token rules |
+| [a11y contract](./contracts/a11y-wcag.md) | WCAG AA CI |
 | [tokens.css](../src/styles/tokens.css) | Live token values |
 | [ThemeProvider](../src/app/providers/ThemeProvider.tsx) | Theme implementation |

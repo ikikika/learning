@@ -27,6 +27,15 @@ function withTempCopy(fn) {
     recursive: true,
     filter: (src) => !SKIP.has(path.basename(src)),
   });
+  // Seed Speckit pointer so prune can clear it (`.specify` is skipped above).
+  const specifyDir = path.join(tmp, '.specify');
+  fs.mkdirSync(specifyDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(specifyDir, 'feature.json'),
+    JSON.stringify({ feature_directory: 'specs/005-hybrid-role-scaffold' }) +
+      '\n',
+    'utf8',
+  );
   try {
     return fn(tmp);
   } finally {
@@ -77,6 +86,17 @@ test('init --prune-other-roles as host removes other role samples and keeps host
     assert.equal(exists(tmp, 'tests/integration/compose.spec.ts'), false);
     assert.equal(exists(tmp, 'tests/contract/init-no-prune.test.mjs'), false);
 
+    assert.equal(exists(tmp, 'specs'), true);
+    assert.equal(exists(tmp, 'specs/001-react-role-scaffold'), false);
+    assert.equal(exists(tmp, 'specs/004-host-add-remote'), false);
+    assert.equal(exists(tmp, 'specs/005-hybrid-role-scaffold'), false);
+    assert.deepEqual(
+      JSON.parse(
+        fs.readFileSync(path.join(tmp, '.specify', 'feature.json'), 'utf8'),
+      ),
+      {},
+    );
+
     const meta = readMeta(tmp);
     assert.equal(meta.role, 'host');
     assert.equal(meta.samplesPruned, true);
@@ -104,6 +124,8 @@ test('init --prune-other-roles as standalone removes host/remote/hybrid bundles'
     assert.equal(exists(tmp, 'src/app/FederatedHybridApp.tsx'), false);
     assert.equal(exists(tmp, 'tests/integration/host.spec.ts'), false);
     assert.equal(exists(tmp, 'tests/integration/compose-shell-hybrid.spec.ts'), false);
+    assert.equal(exists(tmp, 'specs/001-react-role-scaffold'), false);
+    assert.equal(exists(tmp, 'specs/005-hybrid-role-scaffold'), false);
 
     assert.equal(readMeta(tmp).samplesPruned, true);
   });

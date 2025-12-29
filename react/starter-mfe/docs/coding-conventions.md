@@ -60,7 +60,8 @@ src/features/<name>/
   `/app/<hybrid>/<leaf>/…`).
 - Init does not prune/restore `src/` **by default**; sample assets for host,
   demo, demoRemote, and demoHybrid coexist under `src/`. Opt-in prune:
-  post-init TTY prompt, `--prune-other-roles`, or `npm run prune-other-roles`.
+  post-init TTY prompt, `--prune-other-roles`, or `npm run prune-other-roles`
+  (also removes starter Speckit feature folders under `specs/`).
   Prefer not switching roles on the same clone.
 
 ## Styling & UI

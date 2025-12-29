@@ -16,8 +16,8 @@ Validation guide for `001-react-role-scaffold`. Implementation details live in
 - Role file: [contracts/role-metadata.schema.json](./contracts/role-metadata.schema.json)
 - `./Demo`: [contracts/remote-demo.md](./contracts/remote-demo.md)
 - PWA / offline: [contracts/pwa-connectivity.md](./contracts/pwa-connectivity.md)
-- Theming: [contracts/theming.md](./contracts/theming.md)
-- A11y CI: [contracts/a11y-wcag.md](./contracts/a11y-wcag.md)
+- Theming: [docs/contracts/theming.md](../../docs/contracts/theming.md)
+- A11y CI: [docs/contracts/a11y-wcag.md](../../docs/contracts/a11y-wcag.md)
 - Entities: [data-model.md](./data-model.md)
 
 ## Setup (per role)

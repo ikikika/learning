@@ -10,7 +10,8 @@
   - docs/ui-context.md         → tokens, theming, components
   - AGENTS.md                  → short agent checklist
   - .specify/memory/constitution.md → engineering principles
-  - specs/<feature>/spec.md → per-feature requirements (can link here)
+  - specs/<feature>/spec.md → per-feature requirements when using Speckit
+    (starter feature folders are removed on opt-in prune)
 
   AFTER A SESSION that changes product intent, update this file
   (same habit as updating coding-conventions.md / ui-context.md / AGENTS.md).
@@ -114,4 +115,5 @@ _TODO: Key terms (optional)._
 | [docs/ui-context.md](./ui-context.md) | UI / tokens / components |
 | [AGENTS.md](../AGENTS.md) | Agent must-follow checklist |
 | [Constitution](../.specify/memory/constitution.md) | Engineering principles |
-| [Feature specs](../specs/) | Per-feature requirements |
+| [Theming contract](./contracts/theming.md) | Theme / token rules |
+| [A11y contract](./contracts/a11y-wcag.md) | WCAG AA CI |

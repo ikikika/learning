@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 /**
  * Opt-in: remove sample assets + related tests for roles other than the
- * selected one. Idempotent. Does not restore files (re-clone starter if needed).
+ * selected one, and remove starter Speckit feature folders under specs/.
+ * Idempotent. Does not restore files (re-clone starter if needed).
  *
  * Usage:
  *   node scripts/prune-other-role-samples.mjs [--role=standalone|host|remote|hybrid]
  *   (role defaults to starter.role.json)
- *
- * @see specs/001-react-role-scaffold/contracts/init-cli.md
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -20,7 +19,7 @@ const ALLOWED_ROLES = ['standalone', 'host', 'remote', 'hybrid'];
 
 /**
  * Per-role sample bundles. On prune for role R, every path in other roles'
- * bundles is deleted, plus ALWAYS_ON_PRUNE extras.
+ * bundles is deleted, plus ALWAYS_ON_PRUNE extras and specs/* feature dirs.
  */
 export const ROLE_SAMPLE_BUNDLES = {
   standalone: [
@@ -104,7 +103,21 @@ export function markSamplesPruned(root) {
 }
 
 /**
- * Paths to delete when keeping only `keepRole`.
+ * Immediate child directories of `specs/` (starter Speckit feature folders).
+ * Leaves the `specs/` directory itself (and any loose files like `.gitkeep`).
+ */
+export function listSpecFeatureDirs(root) {
+  const specsDir = path.join(root, 'specs');
+  if (!fs.existsSync(specsDir)) return [];
+  return fs
+    .readdirSync(specsDir, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => path.join('specs', d.name));
+}
+
+/**
+ * Paths to delete when keeping only `keepRole` (role samples + compose extras).
+ * Spec feature dirs are resolved separately via {@link listSpecFeatureDirs}.
  */
 export function pathsToPrune(keepRole) {
   if (!ALLOWED_ROLES.includes(keepRole)) {
@@ -121,11 +134,21 @@ export function pathsToPrune(keepRole) {
 }
 
 /**
- * Delete other-role sample assets and related tests under `root`.
+ * Clear Speckit current-feature pointer when starter specs folders are removed.
+ */
+export function clearSpecifyFeaturePointer(root) {
+  const featureJson = path.join(root, '.specify', 'feature.json');
+  if (!fs.existsSync(featureJson)) return;
+  fs.writeFileSync(featureJson, '{}\n', 'utf8');
+}
+
+/**
+ * Delete other-role sample assets, related tests, and specs/* feature folders.
  * @returns {{ removed: string[], keptRole: string }}
  */
 export function pruneOtherRoleSamples(root, keepRole) {
-  const relativePaths = pathsToPrune(keepRole);
+  const specDirs = listSpecFeatureDirs(root);
+  const relativePaths = [...pathsToPrune(keepRole), ...specDirs];
   const removed = [];
   for (const rel of relativePaths) {
     const abs = path.join(root, rel);
@@ -133,6 +156,9 @@ export function pruneOtherRoleSamples(root, keepRole) {
     fs.rmSync(abs, { recursive: true, force: true });
     removed.push(rel);
     console.log(`Removed ${rel}`);
+  }
+  if (specDirs.length > 0) {
+    clearSpecifyFeaturePointer(root);
   }
   markSamplesPruned(root);
   return { removed, keptRole: keepRole };

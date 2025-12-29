@@ -28,8 +28,7 @@ function EmbeddedHybridRoutes({
 
 /**
  * Hybrid Module Federation entry (`FederatedHybridApp`, contract
- * v{@link CONTRACT_VERSION} — see
- * specs/005-hybrid-role-scaffold/contracts/hybrid-public-entry.md).
+ * v{@link CONTRACT_VERSION}).
  *
  * Uses the composer's router (host or another hybrid) so in-hybrid
  * navigation updates the address bar — same nesting idea as

@@ -30,7 +30,8 @@ repository. Humans should follow the same rules; full detail lives under `docs/`
 - Prefer one role per clone (`standalone` | `host` | `remote` | `hybrid`);
   init does not prune/restore `src/` **by default**. Opt-in:
   post-init TTY prompt, `--prune-other-roles`, or `npm run prune-other-roles`
-  (no restore — re-clone the starter if needed).
+  (also removes starter Speckit feature folders under `specs/`;
+  no restore — re-clone the starter if needed).
 - Host or hybrid: use `npm run add-remote` to append remotes and optional
   `remoteProps`; restart afterward. Per-alias props bake via
   `__STARTER_REMOTE_PROPS__` / `getRemoteProps` in `remotes.ts`.

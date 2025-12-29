@@ -3,9 +3,8 @@
  * Init CLI — configures this repository as exactly one role.
  * Does not prune/restore src files by default (no templates). Role is metadata
  * + webpack. Opt-in: TTY prompt or `--prune-other-roles` removes other-role
- * sample assets + related tests.
+ * sample assets + related tests and starter Speckit feature folders under specs/.
  * Flags preferred for CI; missing required values prompt when stdin is a TTY.
- * @see specs/001-react-role-scaffold/contracts/init-cli.md
  */
 import fs from 'node:fs';
 import path from 'node:path';

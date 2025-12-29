@@ -22,7 +22,7 @@ npm equivalent (e.g. `npm run init -- --role=host --port=3001 --remote=demoRemot
 | `--remote` | `alias:name[:expose[:urlEnv]]` (repeatable) | No — **host or hybrid**. Default expose is PascalCase of `name`. When omitted (and no `--remote-name`), `remotes[]` is **empty** |
 | `--remote-name` | same rules as `--name` | No — **host or hybrid**; shorthand for a single `demoRemote:<name>` entry. Mutually exclusive with `--remote` |
 | `--force` | presence | When `starter.role.json` already exists |
-| `--prune-other-roles` | presence | Opt-in: delete sample assets + related tests for roles other than the selected one (no TTY prompt). Non-TTY never prunes unless this flag is set |
+| `--prune-other-roles` | presence | Opt-in: delete sample assets + related tests for roles other than the selected one, and remove starter Speckit feature folders under `specs/` (no TTY prompt). Non-TTY never prunes unless this flag is set |
 
 ## Interactive prompts
 
@@ -65,7 +65,7 @@ Standalone re-run (after init): `npm run prune-other-roles` (reads `starter.role
 4. When `--name` is provided **or** the user typed a non-default name at the prompt, set `package.json` `"name"` to that value.
 5. Webpack reads role / `remotes[]` / remote `expose` from metadata (no automatic src file prune).
 6. Host/hybrid init regenerates `src/app/remotes/loaders.generated.ts` with a static `import()` per remote alias (empty registry when `remotes[]` is empty).
-7. **Does not** delete live `src/` trees **by default**. Sample assets for all roles live under `src/` unless the user opts in via the post-init TTY prune question, `--prune-other-roles`, or later `npm run prune-other-roles` (`scripts/prune-other-role-samples.mjs`). Opt-in prune removes other-role routes/features/pages/Federated samples, matching smoke/expose tests, compose integration specs, and `init-no-prune` contract; sets `samplesPruned: true` on metadata. There is no restore path (re-clone the starter).
+7. **Does not** delete live `src/` trees **by default**. Sample assets for all roles live under `src/` unless the user opts in via the post-init TTY prune question, `--prune-other-roles`, or later `npm run prune-other-roles` (`scripts/prune-other-role-samples.mjs`). Opt-in prune removes other-role routes/features/pages/Federated samples, matching smoke/expose tests, compose integration specs, `init-no-prune` contract, **and every immediate child directory under `specs/`** (starter Speckit feature folders; `specs/` itself remains). Sets `samplesPruned: true` on metadata. There is no restore path (re-clone the starter).
 8. Remote and hybrid success stdout MUST print a copy-paste `npm run add-remote` command for a parent host (see [hybrid-init-cli.md](../../005-hybrid-role-scaffold/contracts/hybrid-init-cli.md) for hybrid detail).
 
 ## Role behavior (runtime)

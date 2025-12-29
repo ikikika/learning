@@ -30,5 +30,5 @@ When no network is detected:
 
 Automated compose (host + remote from this starter) MUST assert host-owned
 install/offline PWA UX with no remote takeover (paired with document-theme
-assertions in [theming.md](./theming.md) / [remote-demo.md](./remote-demo.md)).
+assertions in [docs/contracts/theming.md](../../../docs/contracts/theming.md) / [remote-demo.md](./remote-demo.md)).
 Harness: two temporary workspaces per [remote-demo.md](./remote-demo.md).

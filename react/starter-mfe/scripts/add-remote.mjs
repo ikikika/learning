@@ -3,8 +3,6 @@
  * Host or hybrid CLI: append one remote to starter.role.json remotes[],
  * write .env[urlEnv], regenerate loaders, optional remoteProps[alias].
  * Flags preferred for CI; missing required values prompt when stdin is a TTY.
- * @see specs/004-host-add-remote/contracts/add-remote-cli.md
- * @see specs/005-hybrid-role-scaffold/contracts/add-remote-host-hybrid.md
  */
 import fs from 'node:fs';
 import path from 'node:path';

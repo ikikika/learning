@@ -27,10 +27,11 @@
 |------|----------------|
 | host | Owns composed experience (entry ThemeProvider) |
 | remote (standalone) | Full ThemeProvider + controls on standalone entry |
-| remote (embedded) | `./Demo` with `embedded={true}` MUST NOT take over document theme |
+| remote (embedded) | Federated expose with `embedded={true}` MUST NOT take over document theme |
+| hybrid (embedded) | Same: suppress hybrid theme toggle; keep hybrid chrome in-boundary |
 | standalone | Owns own ThemeProvider |
 
 ## Compose smoke
 
-Assert host-owned `data-theme` with no remote takeover
-([remote-demo.md](./remote-demo.md)).
+Assert host-owned `data-theme` with no remote/hybrid takeover when mounted
+with `embedded={true}`.
