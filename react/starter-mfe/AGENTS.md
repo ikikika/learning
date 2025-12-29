@@ -2,6 +2,8 @@
 
 Instructions for AI coding agents and automated contributors working in this
 repository. Humans should follow the same rules; full detail lives under `docs/`.
+If generic React or agent-skill advice conflicts with this repo’s docs, follow
+the repo docs.
 
 ## Before changing code
 
@@ -19,7 +21,8 @@ repository. Humans should follow the same rules; full detail lives under `docs/`
 
 ## Must follow
 
-- Do **not** hardcode API paths in components — use `apiRoutes` + `apiUrl()`.
+- Do **not** hardcode API paths in components — use `apiRoutes` /
+  path helpers (e.g. `postByIdPath`) + `apiUrl()`.
 - Do **not** hardcode app URL path segments — use `routePaths` /
   `composeChildPath` / `remoteSiblingPath`.
 - Do **not** call APIs in a component `useEffect` — use `features/*/api` +
