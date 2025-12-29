@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router';
-import { ThemeToggle } from '../../components/ThemeToggle';
-import { ConnectionRequired } from '../../components/ConnectionRequired';
-import { useOnlineStatus } from '../../core/hooks/useOnlineStatus';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { ConnectionRequired } from '@/components/ConnectionRequired';
+import { useOnlineStatus } from '@/core/hooks/useOnlineStatus';
 import styles from './MainLayout.module.scss';
 
 export function MainLayout() {

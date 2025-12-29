@@ -1,5 +1,5 @@
 import { useParams } from 'react-router';
-import { LoadRemote } from '../../app/remotes/loadRemote';
+import { LoadRemote } from '@/app/remotes/loadRemote';
 
 /**
  * Right-panel route: load a federated remote by `:alias`.

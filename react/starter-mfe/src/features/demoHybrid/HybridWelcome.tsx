@@ -1,4 +1,4 @@
-import { REMOTE_SLOTS } from '../../core/constants/remotes';
+import { REMOTE_SLOTS } from '@/core/constants/remotes';
 import styles from './HybridWelcome.module.scss';
 
 /**

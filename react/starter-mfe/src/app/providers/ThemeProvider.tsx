@@ -7,8 +7,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { THEME_STORAGE_KEY } from '../../core/constants/theme';
-import type { ThemeMode, ThemePreference } from '../../core/types/theme';
+import { THEME_STORAGE_KEY } from '@/core/constants/theme';
+import type { ThemeMode, ThemePreference } from '@/core/types/theme';
 
 type ThemeContextValue = {
   theme: ThemeMode;

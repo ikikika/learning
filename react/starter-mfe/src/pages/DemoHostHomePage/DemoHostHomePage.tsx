@@ -1,4 +1,4 @@
-import { DemoHost } from '../../features/demoHost';
+import { DemoHost } from '@/features/demoHost';
 
 /**
  * Host home — mounts demoHost chrome. Does not import features/demo.

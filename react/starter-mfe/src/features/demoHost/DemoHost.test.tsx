@@ -1,8 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import {
-  composeChildPath,
-  routePaths,
-} from '../../core/constants/routePaths';
+import { composeChildPath, routePaths } from '@/core/constants/routePaths';
 import { DemoHost } from './DemoHost';
 
 jest.mock('react-router', () => ({

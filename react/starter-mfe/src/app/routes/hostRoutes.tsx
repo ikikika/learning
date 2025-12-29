@@ -1,8 +1,8 @@
 import { RouteObject } from 'react-router';
-import { routePaths } from '../../core/constants/routePaths';
-import { MainLayout } from '../../layouts/MainLayout/MainLayout';
-import { DemoHostHomePage } from '../../pages/DemoHostHomePage/DemoHostHomePage';
-import { HostWelcome, RemotePanel } from '../../features/demoHost';
+import { routePaths } from '@/core/constants/routePaths';
+import { MainLayout } from '@/layouts/MainLayout/MainLayout';
+import { DemoHostHomePage } from '@/pages/DemoHostHomePage/DemoHostHomePage';
+import { HostWelcome, RemotePanel } from '@/features/demoHost';
 
 export const routes: RouteObject[] = [
   {

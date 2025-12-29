@@ -1,4 +1,4 @@
-import { Demo } from '../../features/demo';
+import { Demo } from '@/features/demo';
 import styles from './HomePage.module.scss';
 
 export function HomePage() {

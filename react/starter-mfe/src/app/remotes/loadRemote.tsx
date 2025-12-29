@@ -5,13 +5,8 @@ import {
   useMemo,
   type ReactNode,
 } from 'react';
-import {
-  getRemoteProps,
-  getRemoteSlot,
-  isValidRemoteUrl,
-  mergeRemoteMountProps,
-} from '../../core/constants/remotes';
-import { RemoteFallback } from '../../components/RemoteFallback';
+import { getRemoteProps, getRemoteSlot, isValidRemoteUrl, mergeRemoteMountProps } from '@/core/constants/remotes';
+import { RemoteFallback } from '@/components/RemoteFallback';
 import { remoteLoaders } from './loaders.generated';
 
 type DemoComponent = React.ComponentType<

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useRoutes } from 'react-router';
 import { buildEmbeddedHybridRoutes } from './routes/hybridRoutes';
-import { CONTRACT_VERSION } from '../features/demoHybrid';
+import { CONTRACT_VERSION } from '@/features/demoHybrid';
 
 export { CONTRACT_VERSION };
 

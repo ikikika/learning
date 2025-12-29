@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider, useTheme } from './ThemeProvider';
-import { THEME_STORAGE_KEY } from '../../core/constants/theme';
+import { THEME_STORAGE_KEY } from '@/core/constants/theme';
 
 function Probe() {
   const { theme, setTheme, useSystemTheme, preference } = useTheme();

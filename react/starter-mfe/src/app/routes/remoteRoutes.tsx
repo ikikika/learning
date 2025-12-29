@@ -1,7 +1,7 @@
 import { Navigate, Outlet, RouteObject } from 'react-router';
-import { routePaths } from '../../core/constants/routePaths';
-import { DemoRemoteRoute1Page } from '../../pages/DemoRemoteRoute1Page/DemoRemoteRoute1Page';
-import { DemoRemoteRoute2Page } from '../../pages/DemoRemoteRoute2Page/DemoRemoteRoute2Page';
+import { routePaths } from '@/core/constants/routePaths';
+import { DemoRemoteRoute1Page } from '@/pages/DemoRemoteRoute1Page/DemoRemoteRoute1Page';
+import { DemoRemoteRoute2Page } from '@/pages/DemoRemoteRoute2Page/DemoRemoteRoute2Page';
 
 const remotePageChildren: RouteObject[] = [
   {

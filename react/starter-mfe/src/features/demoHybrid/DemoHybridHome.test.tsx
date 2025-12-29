@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { ThemeProvider } from '../../app/providers/ThemeProvider';
+import { ThemeProvider } from '@/app/providers/ThemeProvider';
 import { DemoHybridHome } from './DemoHybridHome';
 
 jest.mock('react-router', () => ({

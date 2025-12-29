@@ -1,6 +1,6 @@
 import { useRoutes } from 'react-router';
 import { embeddedRoutes } from './routes/remoteRoutes';
-import { HostPropsProvider } from '../features/demoRemote/HostPropsContext';
+import { HostPropsProvider } from '@/features/demoRemote/HostPropsContext';
 
 export type FederatedRemoteAppProps = {
   /** Host passes `embedded={true}` when mounting the federated expose. */

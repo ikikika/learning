@@ -1,9 +1,6 @@
 import { NavLink, Outlet } from 'react-router';
-import {
-  composeChildPath,
-  routePaths,
-} from '../../core/constants/routePaths';
-import { REMOTE_SLOTS } from '../../core/constants/remotes';
+import { composeChildPath, routePaths } from '@/core/constants/routePaths';
+import { REMOTE_SLOTS } from '@/core/constants/remotes';
 import styles from './DemoHost.module.scss';
 
 function navClassName({ isActive }: { isActive: boolean }): string {

@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ThemeProvider } from '../../app/providers/ThemeProvider';
+import { ThemeProvider } from '@/app/providers/ThemeProvider';
 import { ThemeToggle } from './ThemeToggle';
-import { THEME_STORAGE_KEY } from '../../core/constants/theme';
+import { THEME_STORAGE_KEY } from '@/core/constants/theme';
 
 describe('ThemeToggle', () => {
   beforeEach(() => {

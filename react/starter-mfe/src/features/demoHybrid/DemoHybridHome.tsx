@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from 'react-router';
-import { REMOTE_SLOTS } from '../../core/constants/remotes';
-import { ThemeToggle } from '../../components/ThemeToggle';
+import { REMOTE_SLOTS } from '@/core/constants/remotes';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import styles from './DemoHybridHome.module.scss';
 
 export type DemoHybridHomeProps = {

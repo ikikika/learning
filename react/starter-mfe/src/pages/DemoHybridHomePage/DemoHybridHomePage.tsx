@@ -1,4 +1,4 @@
-import { DemoHybridHome } from '../../features/demoHybrid';
+import { DemoHybridHome } from '@/features/demoHybrid';
 
 /**
  * Hybrid own-app home — mounts demoHybrid chrome. `MainLayout` already

@@ -1,5 +1,5 @@
 import { useParams } from 'react-router';
-import { LoadRemote } from '../../app/remotes/loadRemote';
+import { LoadRemote } from '@/app/remotes/loadRemote';
 
 /**
  * Hybrid panel route: load a federated leaf module by `:alias`.

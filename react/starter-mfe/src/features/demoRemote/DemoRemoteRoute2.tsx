@@ -1,8 +1,5 @@
 import { Link } from 'react-router';
-import {
-  remoteSiblingPath,
-  routePaths,
-} from '../../core/constants/routePaths';
+import { remoteSiblingPath, routePaths } from '@/core/constants/routePaths';
 import styles from './DemoRemoteRoute2.module.scss';
 
 /**

@@ -1,5 +1,5 @@
 import { Button } from '../Button';
-import { useTheme } from '../../app/providers/ThemeProvider';
+import { useTheme } from '@/app/providers/ThemeProvider';
 import styles from './ThemeToggle.module.scss';
 import type { ThemeToggleProps } from './types';
 

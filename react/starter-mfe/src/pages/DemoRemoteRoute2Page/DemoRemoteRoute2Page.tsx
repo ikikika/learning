@@ -1,4 +1,4 @@
-import { DemoRemoteRoute2 } from '../../features/demoRemote';
+import { DemoRemoteRoute2 } from '@/features/demoRemote';
 
 /**
  * Remote sample page — Route 2.

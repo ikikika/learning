@@ -1,8 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import {
-  remoteSiblingPath,
-  routePaths,
-} from '../../core/constants/routePaths';
+import { remoteSiblingPath, routePaths } from '@/core/constants/routePaths';
 import { DemoRemoteRoute1 } from './DemoRemoteRoute1';
 import { HostPropsProvider } from './HostPropsContext';
 
