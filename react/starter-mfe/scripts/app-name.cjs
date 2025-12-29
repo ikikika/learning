@@ -1,4 +1,7 @@
 /**
+ * DO NOT PRUNE THIS FILE.
+ * Used by webpack + init/add-remote naming helpers
+ * 
  * Shared app / Module Federation name helpers (CJS for webpack + init).
  */
 

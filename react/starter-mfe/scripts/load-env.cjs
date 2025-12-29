@@ -1,4 +1,7 @@
 /**
+ * DO NOT PRUNE THIS FILE.
+ * Loaded by webpack (config/webpack.common.js) and by test runners
+ * 
  * Load repo-root `.env` into process.env (does not override non-empty env).
  * Shared by webpack (CJS) and Node scripts.
  */

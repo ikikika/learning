@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 /**
+ * DO NOT PRUNE THIS FILE.
+ * Normal way to append remotes after init (npm run add-remote)
+ * 
  * Host or hybrid CLI: append one remote to starter.role.json remotes[],
  * write .env[urlEnv], regenerate loaders, optional remoteProps[alias].
  * Flags preferred for CI; missing required values prompt when stdin is a TTY.

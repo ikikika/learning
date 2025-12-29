@@ -1,4 +1,7 @@
 /**
+ * DO NOT PRUNE THIS FILE.
+ * Webpack remotes map + regenerating loaders.generated.ts
+ * 
  * Host remotes[] helpers shared by init + webpack (CJS).
  */
 const {
