@@ -15,6 +15,34 @@ hybrid → leaf remotes. Multi-repo: one role per clone.
 
 After a design or coding session that locks new decisions, update the matching docs (e.g. ask the agent: “Update `docs/coding-conventions.md`, `docs/ui-context.md`, `docs/project-overview.md`, and/or `AGENTS.md` with the decisions from this session.”).
 
+## Speckit (optional)
+
+This starter already includes Speckit scaffolding under `.specify/` (constitution, templates, workflows). Install the **Specify CLI** if you want to author features with Speckit (`specify` → plan → tasks → implement) from any supported coding agent — not Cursor-only.
+
+Requires [uv](https://docs.astral.sh/uv/) (or install `specify-cli` via pipx/pip — see [Spec Kit installation](https://github.github.io/spec-kit/installation.html)).
+
+```bash
+# CLI (pin a release tag from https://github.com/github/spec-kit/releases, keep the leading v)
+uv tool install specify-cli --from git+https://github.com/github/spec-kit.git@v0.14.2
+# or latest from PyPI:
+# uv tool install specify-cli
+
+specify version
+specify integration list   # e.g. copilot, claude, gemini, cursor-agent, …
+```
+
+In this repo (already initialized), pick the integration for **your** editor/agent if you need to refresh agent skills/prompts:
+
+```bash
+# From the clone root — merge/overwrite integration files for your agent
+specify init --here --force --integration copilot
+# examples: --integration claude | gemini | cursor-agent | …
+```
+
+Then use Speckit’s slash commands / skills in that agent (names vary by integration, e.g. `/speckit-specify`). New feature specs go under `specs/`. Opt-in role prune deletes starter Speckit **feature** folders under `specs/` but leaves `.specify/` (and your chosen integration’s skill/prompt files) in place.
+
+Full reference: [github/spec-kit](https://github.com/github/spec-kit).
+
 <!-- ROLE:START -->
 **Active role:** `remote`
 
