@@ -1,11 +1,10 @@
+import { Component, Suspense, lazy, useMemo, type ReactNode } from 'react';
 import {
-  Component,
-  Suspense,
-  lazy,
-  useMemo,
-  type ReactNode,
-} from 'react';
-import { getRemoteProps, getRemoteSlot, isValidRemoteUrl, mergeRemoteMountProps } from '@/core/constants/remotes';
+  getRemoteProps,
+  getRemoteSlot,
+  isValidRemoteUrl,
+  mergeRemoteMountProps,
+} from '@/core/constants/remotes';
 import { RemoteFallback } from '@/components/RemoteFallback';
 import { remoteLoaders } from './loaders.generated';
 
@@ -59,18 +58,14 @@ export function LoadRemote({ alias }: LoadRemoteProps) {
     return lazy(async () => {
       const mod = await loader();
       const exposeName = expose.startsWith('./') ? expose.slice(2) : expose;
-      const Comp = (
-        mod.default ??
-        mod[exposeName] ??
-        mod.App ??
-        mod.Demo
-      ) as DemoComponent | undefined;
+      const Comp = (mod.default ?? mod[exposeName] ?? mod.App ?? mod.Demo) as
+        DemoComponent | undefined;
       if (!Comp) {
         throw new Error(`Remote ${alias} export missing`);
       }
       return { default: Comp };
     });
-  }, [alias, loader, slot, urlOk, url]);
+  }, [alias, loader, slot, urlOk]);
 
   if (!slot) {
     return (
@@ -90,9 +85,7 @@ export function LoadRemote({ alias }: LoadRemoteProps) {
 
   if (!urlOk) {
     return (
-      <RemoteFallback
-        reason="Remote URL is empty or invalid. Configure a valid remoteEntry URL."
-      />
+      <RemoteFallback reason="Remote URL is empty or invalid. Configure a valid remoteEntry URL." />
     );
   }
 
