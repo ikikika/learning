@@ -108,12 +108,12 @@ _TODO: Key terms (optional)._
   Keep this table updated as docs grow.
 -->
 
-| Doc | Role |
-|-----|------|
-| [README.md](../README.md) | Quick start & scripts |
-| [docs/coding-conventions.md](./coding-conventions.md) | Coding conventions |
-| [docs/ui-context.md](./ui-context.md) | UI / tokens / components |
-| [AGENTS.md](../AGENTS.md) | Agent must-follow checklist |
-| [Constitution](../.specify/memory/constitution.md) | Engineering principles |
-| [Theming contract](./contracts/theming.md) | Theme / token rules |
-| [A11y contract](./contracts/a11y-wcag.md) | WCAG AA CI |
+| Doc                                                   | Role                        |
+| ----------------------------------------------------- | --------------------------- |
+| [README.md](../README.md)                             | Quick start & scripts       |
+| [docs/coding-conventions.md](./coding-conventions.md) | Coding conventions          |
+| [docs/ui-context.md](./ui-context.md)                 | UI / tokens / components    |
+| [AGENTS.md](../AGENTS.md)                             | Agent must-follow checklist |
+| [Constitution](../.specify/memory/constitution.md)    | Engineering principles      |
+| [Theming contract](./contracts/theming.md)            | Theme / token rules         |
+| [A11y contract](./contracts/a11y-wcag.md)             | WCAG AA CI                  |

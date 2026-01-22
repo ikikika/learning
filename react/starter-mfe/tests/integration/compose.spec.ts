@@ -4,10 +4,8 @@ import { test, expect } from '@playwright/test';
  * Compose smoke — expects host at PLAYWRIGHT_HOST_URL and remote at PLAYWRIGHT_REMOTE_URL
  * (set by scripts/compose-harness.mjs). Fallback ports match .env defaults.
  */
-const HOST_URL =
-  process.env.PLAYWRIGHT_HOST_URL || 'http://127.0.0.1:3001';
-const REMOTE_URL =
-  process.env.PLAYWRIGHT_REMOTE_URL || 'http://127.0.0.1:3002';
+const HOST_URL = process.env.PLAYWRIGHT_HOST_URL || 'http://127.0.0.1:3001';
+const REMOTE_URL = process.env.PLAYWRIGHT_REMOTE_URL || 'http://127.0.0.1:3002';
 
 test.describe('compose smoke (two workspaces)', () => {
   test('host owns document theme; embedded demo does not take over', async ({
@@ -41,9 +39,9 @@ test.describe('compose smoke (two workspaces)', () => {
     const remotePage = await page.context().newPage();
     await remotePage.goto(REMOTE_URL);
     await expect(remotePage.getByTestId('demo-remote-route-1')).toBeVisible();
-    await expect(
-      remotePage.getByTestId('demo-remote-host-title'),
-    ).toHaveCount(0);
+    await expect(remotePage.getByTestId('demo-remote-host-title')).toHaveCount(
+      0,
+    );
   });
 
   test('per-remote titles and Route 2 in panel', async ({ page }) => {

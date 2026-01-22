@@ -13,8 +13,8 @@ Non-TTY missing/invalid role messages MUST list `hybrid` among allowed values.
 
 ## Port
 
-| Role | `.env` key |
-|------|------------|
+| Role   | `.env` key    |
+| ------ | ------------- |
 | hybrid | `PORT_HYBRID` |
 
 Port rules unchanged: integer `1`–`65535`; required non-TTY.
@@ -32,8 +32,8 @@ Omitting both yields `remotes: []` for hybrid (empty hybrid valid).
   "name": "<name>",
   "federationName": "<fed>",
   "expose": "./<PascalName>",
-  "remotes": [ /* zero or more RemoteRegistration */ ],
-  "remoteProps": { /* optional */ },
+  "remotes": [/* zero or more RemoteRegistration */],
+  "remoteProps": {/* optional */},
   "version": 1,
   "updatedAt": "<ISO>"
 }

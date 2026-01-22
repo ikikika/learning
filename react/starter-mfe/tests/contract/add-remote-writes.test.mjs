@@ -6,7 +6,10 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../..',
+);
 
 const SKIP = new Set([
   'node_modules',
@@ -23,7 +26,9 @@ const SKIP = new Set([
 ]);
 
 function withTempCopy(fn) {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'starter-add-remote-writes-'));
+  const tmp = fs.mkdtempSync(
+    path.join(os.tmpdir(), 'starter-add-remote-writes-'),
+  );
   fs.cpSync(ROOT, tmp, {
     recursive: true,
     filter: (src) => !SKIP.has(path.basename(src)),

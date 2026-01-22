@@ -62,6 +62,7 @@ compose via two workspaces; WCAG 2.2 AA CI; no third-party UI kit; `--role`
 required; `--force` to re-init.
 
 **Scale/Scope**:
+
 - In: init + symmetric templates, MF roles, demo/typed contract + `embedded`
   prop, host slot/fallback (incl. empty/invalid URL), PWA, theming, compose
   smoke, per-role theme first-visit/reload smoke, axe CI.
@@ -71,7 +72,7 @@ required; `--force` to re-init.
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - **Repository Role & Portability**: PASS — one role; symmetric prune/restore;
   remote dual-mode.
@@ -163,10 +164,10 @@ empty/invalid remote URL. Perf ~2s aspirational only.
 
 ## Complexity Tracking
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| Full offline demo not shipped; show connection-required | Spec clarification | Conflicts with clarified UX; SW still for installability |
-| Interactive ~2s not a hard CI gate | Clarify: aspirational plan goal | Hard perf CI premature for v1 scaffold; still document target |
+| Violation                                                                         | Why Needed                                        | Simpler Alternative Rejected Because                                                                                                              |
+| --------------------------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Full offline demo not shipped; show connection-required                           | Spec clarification                                | Conflicts with clarified UX; SW still for installability                                                                                          |
+| Interactive ~2s not a hard CI gate                                                | Clarify: aspirational plan goal                   | Hard perf CI premature for v1 scaffold; still document target                                                                                     |
 | Published shared contract package deferred; in-repo typed `./Demo` + `1.0.0` only | Clarify / constitution Tech Constraints exception | Registry packaging mid-scaffold adds bootstrap complexity; Principle III still met via typed, versioned in-repo public API + `embedded?: boolean` |
 
 ## Phase 0 / Phase 1 outputs

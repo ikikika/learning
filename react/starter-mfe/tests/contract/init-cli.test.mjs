@@ -6,7 +6,10 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../..',
+);
 
 const SKIP = new Set([
   'node_modules',
@@ -142,9 +145,15 @@ test('host without --remote writes empty remotes[]', () => {
       path.join(tmp, 'src/app/remotes/loaders.generated.ts'),
       'utf8',
     );
-    assert.match(loaders, /remoteLoaders: Record<string, RemoteLoader> = \{\s*\};/);
+    assert.match(
+      loaders,
+      /remoteLoaders: Record<string, RemoteLoader> = \{\s*\};/,
+    );
     assert.doesNotMatch(loaders, /demoRemote/);
-    assert.doesNotMatch(r.stdout, /No remotes configured|Re-init with --remote/);
+    assert.doesNotMatch(
+      r.stdout,
+      /No remotes configured|Re-init with --remote/,
+    );
   });
 });
 
@@ -267,7 +276,11 @@ test('--remote-name rejected for non-host roles', () => {
 
 test('invalid --name exits non-zero', () => {
   withTempCopy((tmp) => {
-    const r = init(tmp, ['--role=standalone', '--port=3000', '--name=BAD NAME']);
+    const r = init(tmp, [
+      '--role=standalone',
+      '--port=3000',
+      '--name=BAD NAME',
+    ]);
     assert.notEqual(r.status, 0);
     assert.match(r.stderr, /Invalid --name/);
   });

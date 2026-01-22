@@ -6,10 +6,10 @@
 
 ## Props
 
-| Prop | Type | Required | Behavior |
-|------|------|----------|----------|
-| `embedded` | `boolean` | No | Shell MUST pass `true` when nesting. When `true`: no document theme/PWA takeover; **suppress hybrid theme toggle**; still render hybrid chrome (layout, tokens, nav) inside mount. When omit/`false`: own-app-style controls may apply only on own-app entry—not via this module’s bootstrap. |
-| (optional display) | serializable | No | Additive sample props only; MUST NOT override `embedded` |
+| Prop               | Type         | Required | Behavior                                                                                                                                                                                                                                                                                      |
+| ------------------ | ------------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `embedded`         | `boolean`    | No       | Shell MUST pass `true` when nesting. When `true`: no document theme/PWA takeover; **suppress hybrid theme toggle**; still render hybrid chrome (layout, tokens, nav) inside mount. When omit/`false`: own-app-style controls may apply only on own-app entry—not via this module’s bootstrap. |
+| (optional display) | serializable | No       | Additive sample props only; MUST NOT override `embedded`                                                                                                                                                                                                                                      |
 
 ## Version
 

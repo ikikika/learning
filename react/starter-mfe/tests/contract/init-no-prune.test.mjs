@@ -6,7 +6,10 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../..',
+);
 
 const SKIP = new Set([
   'node_modules',
@@ -50,7 +53,10 @@ test('init does not prune demo or host sample assets', () => {
       true,
     );
     assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoHost')), true);
-    assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoRemote')), true);
+    assert.equal(
+      fs.existsSync(path.join(tmp, 'src/features/demoRemote')),
+      true,
+    );
     assert.equal(
       fs.existsSync(path.join(tmp, 'src/pages/DemoRemoteRoute1Page')),
       true,
@@ -77,7 +83,10 @@ test('init does not prune demo or host sample assets', () => {
       true,
     );
     assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoHost')), true);
-    assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoRemote')), true);
+    assert.equal(
+      fs.existsSync(path.join(tmp, 'src/features/demoRemote')),
+      true,
+    );
     assert.equal(
       fs.existsSync(path.join(tmp, 'src/app/remotes/loaders.generated.ts')),
       true,
@@ -86,7 +95,10 @@ test('init does not prune demo or host sample assets', () => {
     const remote = init(tmp, ['--role=remote', '--port=3002', '--force']);
     assert.equal(remote.status, 0, remote.stderr);
     assert.equal(fs.existsSync(path.join(tmp, 'src/features/demo')), true);
-    assert.equal(fs.existsSync(path.join(tmp, 'src/features/demoRemote')), true);
+    assert.equal(
+      fs.existsSync(path.join(tmp, 'src/features/demoRemote')),
+      true,
+    );
     assert.equal(
       fs.existsSync(path.join(tmp, 'src/pages/DemoRemoteRoute1Page')),
       true,

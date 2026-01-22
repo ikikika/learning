@@ -23,7 +23,7 @@
 - Q: Where layout cue / theme-toggle ownership lives → A: `demoHybrid` owns the header-band cue; `FederatedHybridApp` owns embed-time theme-toggle suppression (no required new shared layout fork)
 - Q: Hybrid own-app PWA smoke depth → A: Same PWA/offline assertions as other own-app roles (not optional/as-applicable)
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Initialize a hybrid shell for local development (Priority: P1)
 
@@ -106,7 +106,7 @@ Adding hybrid must not break existing roles. Leaf remotes keep their current dua
 - Hybrid with zero modules under shell: hybrid empty state inside mount; shell still stable; hybrid theme toggle remains suppressed while embedded.
 - Phone-width hybrid nav + module panel: primary chrome remains usable without horizontal scroll.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -136,7 +136,7 @@ Adding hybrid must not break existing roles. Leaf remotes keep their current dua
 - **Module registration**: Alias, URL/location, expose name, optional per-alias props—owned by hybrid (or shell) configuration.
 - **Fallback surface**: User-visible placeholder when a hybrid or leaf module is missing/fails.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

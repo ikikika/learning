@@ -29,8 +29,8 @@
     `templates/role-assets/host/`.
   - Standalone/remote: prune live host-only assets; restore demo + `HomePage`
     from `templates/role-assets/demo/`.
-  Templates **mirror `src/` relative paths**; restore is a straight copy
-  (not git checkout alone).
+    Templates **mirror `src/` relative paths**; restore is a straight copy
+    (not git checkout alone).
 - **Alternatives considered**: Interactive prompts; external generators; git
   restore only; leave dormant opposite-role assets on disk; flat templates with
   remap tables (all rejected).

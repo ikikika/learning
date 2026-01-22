@@ -33,8 +33,7 @@ declare const __STARTER_REMOTES_CONFIG__: RemoteSlotStatic[] | undefined;
 declare const __STARTER_REMOTES_URLS__: Record<string, string> | undefined;
 declare const __STARTER_DEMO_REMOTE_URL_DEFAULT__: string | undefined;
 declare const __STARTER_REMOTE_PROPS__:
-  | Record<string, Record<string, unknown>>
-  | undefined;
+  Record<string, Record<string, unknown>> | undefined;
 
 export type RemotePropsBag = Record<string, unknown>;
 
@@ -151,9 +150,8 @@ function toSlot(entry: RemoteSlotStatic): RemoteSlotConfig {
 export const REMOTE_SLOTS: RemoteSlotConfig[] = bakedConfig().map(toSlot);
 
 /** @deprecated Prefer REMOTE_SLOTS / getRemoteSlot — sample demo alias */
-export const DEMO_REMOTE_SLOT: RemoteSlotConfig = REMOTE_SLOTS.find(
-  (s) => s.alias === 'demoRemote',
-) ??
+export const DEMO_REMOTE_SLOT: RemoteSlotConfig =
+  REMOTE_SLOTS.find((s) => s.alias === 'demoRemote') ??
   toSlot({
     alias: 'demoRemote',
     name: 'demoRemote',

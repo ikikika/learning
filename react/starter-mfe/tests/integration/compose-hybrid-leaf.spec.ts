@@ -5,8 +5,7 @@ import { test, expect } from '@playwright/test';
  * (`alias=demoRemote`), at PLAYWRIGHT_HYBRID_URL / PLAYWRIGHT_REMOTE_URL
  * (set by `scripts/compose-harness.mjs --mode=hybrid-leaf`).
  */
-const HYBRID_URL =
-  process.env.PLAYWRIGHT_HYBRID_URL || 'http://127.0.0.1:3003';
+const HYBRID_URL = process.env.PLAYWRIGHT_HYBRID_URL || 'http://127.0.0.1:3003';
 
 test.describe('compose smoke (hybrid + remote leaf)', () => {
   test('hybrid nav loads the leaf remote into its panel with hybrid chrome intact', async ({

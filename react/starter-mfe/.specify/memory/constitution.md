@@ -188,9 +188,9 @@ not optional polish. Nested shells need clear document-ownership rules.
   - one repository for each remote (and each nested hybrid);
   - one root `src/` per application repository;
   - no required `apps/host`, `apps/remote-*`, or workspace `packages/` wrapper.
-  Shared UI, configuration, and typed remote contracts MUST be published and
-  consumed as explicitly versioned packages (normally through a package
-  registry), not copied between repositories.
+    Shared UI, configuration, and typed remote contracts MUST be published and
+    consumed as explicitly versioned packages (normally through a package
+    registry), not copied between repositories.
 - **Application Layout**: Every application repository MUST place its React
   code in root `src/` using this canonical structure:
 
@@ -209,15 +209,16 @@ src/
 └── test/                 # test utils / setup for this app
 ```
 
-  Rules for that layout:
-  - Domain logic and feature UI MUST live under `features/<name>/` with a
-    public `index.ts` (the natural unit for remote/hybrid `exposes`).
-  - Feature-specific api/hooks/services/types MUST stay inside that feature.
-  - Host and hybrid shell concerns (providers, route tables, remote
-    registration) MUST stay under `app/`.
-  - Shared helpers MUST live under `core/` — do not add a parallel `lib/` for
-    the same role.
-  - Root `services/` is for cross-feature infra only, not domain services.
+Rules for that layout:
+
+- Domain logic and feature UI MUST live under `features/<name>/` with a
+  public `index.ts` (the natural unit for remote/hybrid `exposes`).
+- Feature-specific api/hooks/services/types MUST stay inside that feature.
+- Host and hybrid shell concerns (providers, route tables, remote
+  registration) MUST stay under `app/`.
+- Shared helpers MUST live under `core/` — do not add a parallel `lib/` for
+  the same role.
+- Root `services/` is for cross-feature infra only, not domain services.
 - **Styling, a11y & responsive**: UI MUST meet baseline accessibility
   expectations (keyboard reachability, semantic structure, discernible names)
   and MUST be mobile-responsive for primary flows. Visual systems SHOULD avoid

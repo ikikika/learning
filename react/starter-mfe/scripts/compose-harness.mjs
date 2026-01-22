@@ -248,20 +248,16 @@ async function runShellHybrid() {
     await waitForUrl(hybridUrl);
     await waitForUrl(hostUrl);
 
-    await run(
-      'npx',
-      ['playwright', 'test', '--project=compose-shell-hybrid'],
-      {
-        cwd: ROOT,
-        env: {
-          ...process.env,
-          PLAYWRIGHT_HOST_URL: hostUrl,
-          PLAYWRIGHT_HYBRID_URL: hybridUrl,
-          PLAYWRIGHT_SKIP_WEBSERVER: '1',
-          PLAYWRIGHT_BASE_URL: hostUrl,
-        },
+    await run('npx', ['playwright', 'test', '--project=compose-shell-hybrid'], {
+      cwd: ROOT,
+      env: {
+        ...process.env,
+        PLAYWRIGHT_HOST_URL: hostUrl,
+        PLAYWRIGHT_HYBRID_URL: hybridUrl,
+        PLAYWRIGHT_SKIP_WEBSERVER: '1',
+        PLAYWRIGHT_BASE_URL: hostUrl,
       },
-    );
+    });
   } finally {
     cleanup();
   }
@@ -315,20 +311,16 @@ async function runHybridLeaf() {
     await waitForUrl(remoteUrl);
     await waitForUrl(hybridUrl);
 
-    await run(
-      'npx',
-      ['playwright', 'test', '--project=compose-hybrid-leaf'],
-      {
-        cwd: ROOT,
-        env: {
-          ...process.env,
-          PLAYWRIGHT_HYBRID_URL: hybridUrl,
-          PLAYWRIGHT_REMOTE_URL: remoteUrl,
-          PLAYWRIGHT_SKIP_WEBSERVER: '1',
-          PLAYWRIGHT_BASE_URL: hybridUrl,
-        },
+    await run('npx', ['playwright', 'test', '--project=compose-hybrid-leaf'], {
+      cwd: ROOT,
+      env: {
+        ...process.env,
+        PLAYWRIGHT_HYBRID_URL: hybridUrl,
+        PLAYWRIGHT_REMOTE_URL: remoteUrl,
+        PLAYWRIGHT_SKIP_WEBSERVER: '1',
+        PLAYWRIGHT_BASE_URL: hybridUrl,
       },
-    );
+    });
   } finally {
     cleanup();
   }

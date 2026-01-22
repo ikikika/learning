@@ -21,11 +21,7 @@ const ROLE_PORTS = {
 
 function init(role) {
   const port = ROLE_PORTS[role];
-  const args = [
-    'scripts/init.mjs',
-    `--role=${role}`,
-    `--port=${port}`,
-  ];
+  const args = ['scripts/init.mjs', `--role=${role}`, `--port=${port}`];
   if (fs.existsSync(path.join(ROOT, 'starter.role.json'))) args.push('--force');
   const r = spawnSync('node', args, { cwd: ROOT, stdio: 'inherit' });
   if (r.status !== 0) process.exit(r.status ?? 1);

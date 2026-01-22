@@ -50,9 +50,7 @@ export function DemoHybridHome({
             </span>
           ) : null}
         </div>
-        {canShowToggle ? (
-          <ThemeToggle className={styles.headerToggle} />
-        ) : null}
+        {canShowToggle ? <ThemeToggle className={styles.headerToggle} /> : null}
       </header>
       <div className={styles.body}>
         <nav className={styles.nav} aria-label="Hybrid">

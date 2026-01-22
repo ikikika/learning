@@ -6,11 +6,7 @@ export function RemoteFallback({
   title = 'Remote unavailable',
 }: RemoteFallbackProps) {
   return (
-    <div
-      className={styles.fallback}
-      role="alert"
-      data-testid="remote-fallback"
-    >
+    <div className={styles.fallback} role="alert" data-testid="remote-fallback">
       <h2 className={styles.title}>{title}</h2>
       <p className={styles.reason}>{reason}</p>
     </div>

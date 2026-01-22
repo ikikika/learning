@@ -37,7 +37,10 @@ test.describe('host smoke', () => {
 
     // Theme: first visit + toggle + reload + use-system (on Host welcome)
     await page.goto('/');
-    await page.evaluate((key) => localStorage.removeItem(key), THEME_STORAGE_KEY);
+    await page.evaluate(
+      (key) => localStorage.removeItem(key),
+      THEME_STORAGE_KEY,
+    );
     await page.reload();
     const theme = await page.locator('html').getAttribute('data-theme');
     expect(theme === 'light' || theme === 'dark').toBeTruthy();

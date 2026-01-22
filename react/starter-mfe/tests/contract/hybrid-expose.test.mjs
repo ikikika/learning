@@ -4,7 +4,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../..',
+);
 
 test('FederatedHybridApp exists and exports embedded?: boolean and CONTRACT_VERSION', () => {
   const appPath = path.join(ROOT, 'src/app/FederatedHybridApp.tsx');

@@ -1,7 +1,7 @@
 /**
  * DO NOT PRUNE THIS FILE.
  * Webpack remotes map + regenerating loaders.generated.ts
- * 
+ *
  * Host remotes[] helpers shared by init + webpack (CJS).
  */
 const {
@@ -76,8 +76,7 @@ function normalizeRemoteEntry(entry) {
   const name = entry.name || alias;
   const expose = entry.expose || toExposePath(name);
   const urlEnv = entry.urlEnv || aliasToUrlEnv(alias);
-  const federationName =
-    entry.federationName || toFederationName(name);
+  const federationName = entry.federationName || toFederationName(name);
 
   if (!isValidAlias(alias)) {
     throw new Error(`Invalid remote alias: ${alias}`);
@@ -113,8 +112,7 @@ function remotesFromMeta(meta = {}) {
       normalizeRemoteEntry({
         alias: DEMO_ALIAS,
         name,
-        federationName:
-          meta.remoteFederationName || toFederationName(name),
+        federationName: meta.remoteFederationName || toFederationName(name),
         expose: toExposePath(name),
         urlEnv: DEMO_URL_ENV,
       }),
@@ -194,11 +192,7 @@ function parsePropsJson(raw) {
   } catch {
     throw new Error('Invalid --props JSON');
   }
-  if (
-    parsed === null ||
-    typeof parsed !== 'object' ||
-    Array.isArray(parsed)
-  ) {
+  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
     throw new Error('--props must be a JSON object (not array or primitive)');
   }
   return parsed;
@@ -248,7 +242,9 @@ function generateLoadersSource(remotes) {
     lines.push(
       `    // @ts-expect-error Module Federation remote — resolved at runtime`,
     );
-    lines.push(`    import(${JSON.stringify(importPath)}) as Promise<RemoteModule>,`);
+    lines.push(
+      `    import(${JSON.stringify(importPath)}) as Promise<RemoteModule>,`,
+    );
   }
   lines.push('};');
   lines.push('');

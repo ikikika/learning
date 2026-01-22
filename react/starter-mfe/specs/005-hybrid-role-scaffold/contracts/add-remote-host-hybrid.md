@@ -5,11 +5,11 @@
 
 ## Role gate (updated)
 
-| `starter.role.json.role` | Result |
-|--------------------------|--------|
-| `host` | Success path unchanged |
-| **`hybrid`** | **Same success path** (append `remotes[]`, `.env` url, regenerate loaders, optional props) |
-| `standalone` \| `remote` | Non-zero; clear role error; **no writes** |
+| `starter.role.json.role` | Result                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------ |
+| `host`                   | Success path unchanged                                                                     |
+| **`hybrid`**             | **Same success path** (append `remotes[]`, `.env` url, regenerate loaders, optional props) |
+| `standalone` \| `remote` | Non-zero; clear role error; **no writes**                                                  |
 
 Error copy MUST NOT say “host-only” exclusively; it MUST indicate allowed roles are host and hybrid (or equivalent clear wording).
 

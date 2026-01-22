@@ -9,6 +9,7 @@
 **Rationale**: Matches constitution (expose to parent + consume children) without dual apps or monorepo split.
 
 **Alternatives considered**:
+
 - Separate “hybrid host” and “hybrid remote” clones — rejected (one role per clone).
 - Reuse `FederatedRemoteApp` for hybrid expose — rejected (hybrid must render chrome + child slots, not leaf routes).
 
