@@ -3,7 +3,8 @@
 <!--
   PURPOSE
   Evergreen product framing for humans and agents (IDE-agnostic).
-  Fill in the sections below; delete or shorten guidance comments as you go.
+  Update after sessions that change product intent (same habit as
+  coding-conventions.md / ui-context.md / AGENTS.md).
 
   RELATED DOCS (do not duplicate their jobs here)
   - docs/coding-conventions.md → how to write code
@@ -12,101 +13,80 @@
   - .specify/memory/constitution.md → engineering principles
   - specs/<feature>/spec.md → per-feature requirements when using Speckit
     (starter feature folders are removed on opt-in prune)
-
-  AFTER A SESSION that changes product intent, update this file
-  (same habit as updating coding-conventions.md / ui-context.md / AGENTS.md).
 -->
 
 ## What it is
 
-<!--
-  2–4 sentences: what this product/repo is in plain language.
-  Include the delivery model if relevant (e.g. in-repo starter vs generator).
-  Avoid implementation detail (webpack, folder names) — that belongs in
-  architecture / conventions docs.
--->
-
-_TODO: Describe the product._
+_TODO: Describe the actual product this repository is building (2–4
+sentences). Focus on user value and outcomes, not starter setup mechanics._
 
 ## Who it is for
 
-<!--
-  Primary and secondary users (e.g. app developers, platform teams).
-  Note skill assumptions (React familiarity, MFE experience) if useful.
-  Optional: personas or “not for” audiences.
--->
-
-_TODO: List audiences and their goals._
+- **Primary users:** _TODO_
+- **Secondary users / stakeholders:** _TODO_
+- **Assumptions about user skills or context:** _TODO_
 
 ## Problem / why it exists
 
-<!--
-  What pain does this solve? What happens without it?
-  Keep this short; link out if you have a longer brief.
--->
+_TODO: What pain does this product solve? What happens if this product does not
+exist? Keep this short and product-facing._
 
-_TODO: State the problem and outcome._
+## Goals
+
+1. _TODO: Goal one (specific and measurable)._
+2. _TODO: Goal two._
+3. _TODO: Goal three._
 
 ## Core flows
 
-<!--
-  The main happy paths a user can complete. Prefer numbered flows or a short
-  list. Example shape for this starter (replace with your real flows):
+1. _TODO: Core flow 1 (actor → steps → successful outcome)._
+2. _TODO: Core flow 2._
+3. _TODO: Core flow 3._
+4. _TODO: Core flow 4 (optional)._
 
-  1. Init as standalone → run locally → extend a feature
-  2. Init as host → compose a remote with fallback
-  3. Init as remote → standalone + federated ./Demo
+Detail and acceptance criteria for new work stay in `specs/<feature>/spec.md`
+when using Speckit.
 
-  Each flow: actor → steps → successful outcome.
-  Detail and acceptance criteria stay in specs/<feature>/spec.md.
--->
+## Features
 
-_TODO: List 3–7 core flows._
+### Feature category one
 
-## In scope (product)
+- _TODO: Feature description._
+- _TODO: Feature description._
 
-<!--
-  Capabilities the product intentionally includes at this stage (v1 / now).
-  Bullet list. Prefer user-visible outcomes over tech stack.
--->
+### Feature category two
 
-_TODO: In-scope capabilities._
+- _TODO: Feature description._
+- _TODO: Feature description._
 
-## Out of scope
+## Scope
 
-<!--
-  Explicit non-goals so agents and contributors do not invent them.
-  Examples: auth, backends, published npm contract packages, full offline apps,
-  monorepo multi-app, etc. — only list what YOU have decided is out.
-  Align with Complexity Tracking / deferred items in the constitution or specs
-  when relevant, but keep this product-facing.
--->
+### In scope (product)
 
-_TODO: Out of scope / non-goals._
+- _TODO: What this project intentionally includes now._
+- _TODO: Additional in-scope capability._
 
-## Success looks like
+### Out of scope
 
-<!--
-  Optional. How you know the product is working for its audience
-  (e.g. “new clone → init → running demo in <N minutes”).
--->
+- _TODO: Explicit non-goal 1._
+- _TODO: Explicit non-goal 2._
+- _TODO: Explicit non-goal 3._
 
-_TODO: Success criteria (optional)._
+## Success criteria
 
-## Glossary (optional)
+1. _TODO: Specific, verifiable condition 1._
+2. _TODO: Specific, verifiable condition 2._
+3. _TODO: Specific, verifiable condition 3._
 
-<!--
-  Domain terms that confuse newcomers (host, remote, embedded, role, etc.).
-  One line per term.
--->
+## Glossary
 
-_TODO: Key terms (optional)._
+| Term | Meaning |
+| ---- | ------- |
+| _TODO term_ | _TODO definition._ |
+| _TODO term_ | _TODO definition._ |
+| _TODO term_ | _TODO definition._ |
 
 ## Links
-
-<!--
-  Keep this table updated as docs grow.
--->
 
 | Doc                                                   | Role                        |
 | ----------------------------------------------------- | --------------------------- |

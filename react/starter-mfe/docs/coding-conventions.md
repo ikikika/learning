@@ -10,6 +10,9 @@ Higher-level product/architecture principles live in
 constitution win over generic React / agent-skill advice. Prefer patterns
 already in this codebase over alternatives from external guides.
 
+**Goals:** Readable, maintainable, testable code with safe handling at trust
+boundaries (forms, APIs, env).
+
 ## Layer boundaries
 
 | Layer                  | Role                                                              |
@@ -24,6 +27,23 @@ already in this codebase over alternatives from external guides.
 
 Keep new work inside the matching layer; do not grow pages into feature logic
 or put API calls in presentational components.
+
+**Where to put work**
+
+- New capability → `src/features/<name>/`, then thin `src/pages/` entry, then
+  route in `src/app/routes/*Routes.tsx` using `routePaths`.
+- Shared UI → `src/components/<Name>/`.
+- API path segments → `src/core/constants/apiRoutes.ts`; route segments →
+  `routePaths.ts`.
+- HTTP client / base URL → `src/services/httpClient.ts` + env via
+  `src/core/constants/app.ts`.
+- Global styles → `src/styles/`; component styles → co-located `*.module.scss`.
+- Unit tests → co-located `*.test.tsx`; contract/integration → `tests/`.
+- Federated remote/hybrid entry → `src/app/FederatedRemoteApp.tsx` /
+  `FederatedHybridApp.tsx`; domain UI stays in features.
+
+**Rule of thumb:** pages compose, features own domain data, components stay
+presentational, core holds shared constants, services own HTTP.
 
 ## Data fetching
 
@@ -42,9 +62,40 @@ or put API calls in presentational components.
   - Components — consume hooks/props and render UI only
 - Hooks and async UI MUST surface **loading**, **success**, and **error**
   states (and cancel/abort when the consumer unmounts or deps change).
+- Keep response contracts predictable in `features/*/api`: normalize return
+  shapes where practical so hooks/components do not branch on transport quirks.
 - **Base URL** comes from `.env` (`API_BASE_URL`), injected at build time via
   webpack `DefinePlugin` into `src/core/constants/app.ts`. Restart `npm start`
   after changing `.env`.
+
+## Readability
+
+- Prefer clear over clever; short functions with one job.
+- Meaningful names; no abbreviations like `fN` for `firstName`; avoid spelling
+  mistakes in identifiers and paths (searchability).
+- One identifier, one purpose; avoid shadowing (e.g. state `year` vs param
+  `year`).
+- Extract repeated string literals to `const` (e.g. role strings used in
+  multiple places).
+- DRY without over-abstracting; extract helpers when logic repeats or
+  conditions get dense.
+- Avoid deep nesting and long lines; let Prettier/ESLint handle formatting
+  consistently.
+- Extract complex `&&` / `||` conditions into named booleans or helpers.
+- Prefer destructuring for props, nested objects, and API payloads.
+
+## TypeScript
+
+- TypeScript strict mode is expected for new code and refactors.
+- Avoid `any`; prefer explicit interfaces/types or narrow unions.
+- Treat external input (`API`, URL params, storage, postMessage, unknown JSON)
+  as untrusted and validate/parse at boundaries before use.
+
+## Comments and dead code
+
+- Comment non-obvious intent, tradeoffs, and constraints — not
+  self-explanatory code.
+- Delete commented-out code; use version control for history.
 
 ## React UI rules
 
@@ -57,6 +108,30 @@ or put API calls in presentational components.
 - Prefer composition (`children`, small components) over large monolithic
   trees. Do not add `useMemo` / `useCallback` by default — use them where
   this repo already does (e.g. context values, lazy remote factories).
+
+## Errors
+
+- Handle failures so the UI stays usable and issues are diagnosable.
+- Catch async work you own (`fetch`, parse, storage) at `features/*/api` or
+  `features/*/hooks` layers; return clear results to the UI.
+- Never empty-catch. Log with context, then surface a user message or rethrow.
+- Prefer specific errors (include operation + status) over generic messages.
+- Use Error Boundaries for render crashes; use hook/query error state for failed
+  fetches.
+- Surface error state from hooks and offer recovery: retry, go back, or a safe
+  empty state — not a blank screen.
+
+## Input validation
+
+- Validate all user-facing inputs on the frontend before submit or side effects.
+- Required fields: reject `null`, `undefined`, and blank/whitespace-only
+  strings.
+- Check types/formats (email, phone, date, id) — not only non-empty.
+- Numbers/currency: reject NaN; limit decimal places (often 2); disallow
+  negatives unless allowed.
+- Enforce min/max and length where the product cares.
+- Block or disable submit while invalid; do not rely only on API errors.
+- Treat API and form data as untrusted; validate at boundaries.
 
 ## Feature layout
 
@@ -91,6 +166,15 @@ together. Prefer feature-local logic over cross-feature coupling.
 - Use barrel `index.ts` exports for public module surfaces (especially
   federated feature entrypoints).
 
+Order imports consistently:
+
+1. React
+2. External libraries (alphabetical)
+3. Absolute/project imports (`@/…`, alphabetical)
+4. Relative imports (alphabetical)
+5. `import * as …`
+6. Side-effect / style imports (`import "./file.css"`)
+
 | Kind         | Convention                 | Example                           |
 | ------------ | -------------------------- | --------------------------------- |
 | Component    | PascalCase                 | `DemoHost.tsx`                    |
@@ -99,6 +183,7 @@ together. Prefer feature-local logic over cross-feature coupling.
 | API function | camelCase verb             | `getPost.ts`                      |
 | Types        | under `types/`             | `types/post.ts`, `types/index.ts` |
 | Unit test    | co-located                 | `DemoHost.test.tsx`               |
+| Props        | camelCase                  | `onClick`, `someCustomAttribute`  |
 
 ## Environment & ports
 
@@ -161,6 +246,11 @@ together. Prefer feature-local logic over cross-feature coupling.
   npx playwright install chromium
   ```
 
+## Git
+
+- Save and push work regularly; do not rely only on unsaved local buffers.
+- Make small, coherent commits when asked to commit.
+
 ## Anti-patterns
 
 - Do **not** hardcode API path strings or hostnames in UI; use `apiRoutes` /
@@ -172,4 +262,7 @@ together. Prefer feature-local logic over cross-feature coupling.
   `embedded={true}` on federated exposes.
 - Do **not** use `JSON.parse(JSON.stringify(...))` for new state-copy logic.
 - Do **not** leave broad `console.log` in production paths.
+- Do **not** introduce secrets into client code.
+- Do **not** use `dangerouslySetInnerHTML` with untrusted content.
+- Do **not** expand scope beyond the requested change.
 - Prefer minimal, incremental changes over broad rewrites.
