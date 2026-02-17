@@ -45,6 +45,7 @@
 }
 
 .world__stage {
+  position: relative;
   flex: 1;
   min-height: 320px;
   border-radius: 12px;
@@ -75,7 +76,11 @@
   stroke-width: 2.5;
 }
 
-.world__marker {
-  fill: var(--marker);
+.world__avatar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
   pointer-events: none;
+  image-rendering: pixelated;
 }

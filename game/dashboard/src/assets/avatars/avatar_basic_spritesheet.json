@@ -9,6 +9,11 @@
   "frameWidthRounded": 192,
   "frameHeightRounded": 205,
   "chromaKey": "#FF00FF",
+  "anchor": {
+    "x": 116,
+    "y": 193,
+    "notes": "Feet point within each frame (origin top-left). Measured from idle_s frame 0; art is not centered in the 192×204.8 cell."
+  },
   "notes": "Magenta background is intended for chroma-key / removal. Frame height is imageHeight/rows; verify crop alignment visually when wiring the renderer.",
   "animations": {
     "idle_s": { "row": 0, "frames": 8, "frameDurationMs": 120 },

@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
+import { Avatar } from './avatar/Avatar'
 import {
   DEFAULT_GRID,
   depthFromGrid,
@@ -30,6 +31,9 @@ export function World({
   config: configProp,
   showGrid = true,
 }: WorldProps) {
+  const stageRef = useRef<HTMLDivElement>(null)
+  const svgRef = useRef<SVGSVGElement>(null)
+
   const config = useMemo(
     () => ({
       ...DEFAULT_GRID,
@@ -70,6 +74,20 @@ export function World({
   const activeScale =
     activeDepth === null ? null : scaleFromDepth(activeDepth, maxDepth)
 
+  const avatarCell = useMemo(
+    () => ({
+      gridX: Math.floor(config.cols / 2),
+      gridY: Math.floor(config.rows / 2),
+    }),
+    [config.cols, config.rows],
+  )
+  const avatarScreen = useMemo(
+    () => gridToScreen(avatarCell, config),
+    [avatarCell, config],
+  )
+  const avatarDepth = depthFromGrid(avatarCell)
+  const avatarScale = scaleFromDepth(avatarDepth, maxDepth)
+
   return (
     <div className="world">
       <header className="world__chrome">
@@ -81,8 +99,9 @@ export function World({
         </p>
       </header>
 
-      <div className="world__stage">
+      <div className="world__stage" ref={stageRef}>
         <svg
+          ref={svgRef}
           className="world__svg"
           viewBox={viewBox}
           role="img"
@@ -129,9 +148,6 @@ export function World({
               const isSelected =
                 selected?.gridX === cell.gridX &&
                 selected?.gridY === cell.gridY
-              const depth = depthFromGrid(cell)
-              const scale = scaleFromDepth(depth, maxDepth)
-              const center = gridToScreen(cell, config)
 
               return (
                 <g key={`${cell.gridX}-${cell.gridY}`}>
@@ -148,18 +164,19 @@ export function World({
                     stroke={showGrid ? 'var(--tile-stroke)' : 'none'}
                     strokeWidth={showGrid ? 1 : 0}
                   />
-                  {isSelected && (
-                    <circle
-                      className="world__marker"
-                      cx={center.x}
-                      cy={center.y}
-                      r={6 * scale}
-                    />
-                  )}
                 </g>
               )
             })}
         </svg>
+
+        <Avatar
+          svgRef={svgRef}
+          stageRef={stageRef}
+          x={avatarScreen.x}
+          y={avatarScreen.y}
+          scale={avatarScale}
+          animation="idle_s"
+        />
       </div>
     </div>
   )
