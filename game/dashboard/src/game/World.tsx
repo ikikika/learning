@@ -14,6 +14,7 @@ import {
   type GridPoint,
   type IsometricGridConfig,
 } from './grid'
+import { useAvatarMovement } from './useAvatarMovement'
 import './World.css'
 
 type WorldProps = {
@@ -46,11 +47,17 @@ export function World({
   const cells = useMemo(() => [...iterateCells(config)], [config])
   const maxDepth = config.cols + config.rows - 2
 
+  const startCell = useMemo(
+    () => ({
+      gridX: Math.floor(config.cols / 2),
+      gridY: Math.floor(config.rows / 2),
+    }),
+    [config.cols, config.rows],
+  )
+
   const [hover, setHover] = useState<GridPoint | null>(null)
-  const [selected, setSelected] = useState<GridPoint | null>({
-    gridX: Math.floor(config.cols / 2),
-    gridY: Math.floor(config.rows / 2),
-  })
+  const [destination, setDestination] = useState<GridPoint | null>(startCell)
+  const { position, animation, moving, walkTo } = useAvatarMovement(startCell)
 
   const padding = 24
   const viewBox = `${bounds.minX - padding} ${bounds.minY - padding} ${
@@ -69,24 +76,18 @@ export function World({
     return isInBounds(cell, config) ? cell : null
   }
 
-  const active = hover ?? selected
+  const active = hover ?? destination
   const activeDepth = active ? depthFromGrid(active) : null
   const activeScale =
     activeDepth === null ? null : scaleFromDepth(activeDepth, maxDepth)
 
-  const avatarCell = useMemo(
-    () => ({
-      gridX: Math.floor(config.cols / 2),
-      gridY: Math.floor(config.rows / 2),
-    }),
-    [config.cols, config.rows],
-  )
-  const avatarScreen = useMemo(
-    () => gridToScreen(avatarCell, config),
-    [avatarCell, config],
-  )
-  const avatarDepth = depthFromGrid(avatarCell)
+  const avatarScreen = gridToScreen(position, config)
+  const avatarDepth = depthFromGrid(position)
   const avatarScale = scaleFromDepth(avatarDepth, maxDepth)
+  const occupied = {
+    gridX: Math.round(position.gridX),
+    gridY: Math.round(position.gridY),
+  }
 
   return (
     <div className="world">
@@ -94,8 +95,8 @@ export function World({
         <p className="world__label">Room grid</p>
         <p className="world__meta">
           {active
-            ? `cell (${active.gridX}, ${active.gridY}) · depth ${activeDepth?.toFixed(0)} · scale ${activeScale?.toFixed(2)}`
-            : 'hover or click a tile'}
+            ? `cell (${active.gridX}, ${active.gridY}) · depth ${activeDepth?.toFixed(0)} · scale ${activeScale?.toFixed(2)}${moving ? ' · walking' : ''}`
+            : 'click a tile to walk'}
         </p>
       </header>
 
@@ -121,7 +122,9 @@ export function World({
               event.clientY,
               event.currentTarget,
             )
-            if (cell) setSelected(cell)
+            if (!cell) return
+            setDestination(cell)
+            walkTo(cell)
           }}
         >
           <defs>
@@ -145,9 +148,11 @@ export function World({
             .map((cell) => {
               const isHover =
                 hover?.gridX === cell.gridX && hover?.gridY === cell.gridY
-              const isSelected =
-                selected?.gridX === cell.gridX &&
-                selected?.gridY === cell.gridY
+              const isDestination =
+                destination?.gridX === cell.gridX &&
+                destination?.gridY === cell.gridY
+              const isOccupied =
+                occupied.gridX === cell.gridX && occupied.gridY === cell.gridY
 
               return (
                 <g key={`${cell.gridX}-${cell.gridY}`}>
@@ -157,7 +162,8 @@ export function World({
                     className={[
                       'world__tile',
                       isHover ? 'world__tile--hover' : '',
-                      isSelected ? 'world__tile--selected' : '',
+                      isDestination ? 'world__tile--selected' : '',
+                      isOccupied ? 'world__tile--occupied' : '',
                     ]
                       .filter(Boolean)
                       .join(' ')}
@@ -175,7 +181,8 @@ export function World({
           x={avatarScreen.x}
           y={avatarScreen.y}
           scale={avatarScale}
-          animation="idle_s"
+          animation={animation}
+          playing={moving}
         />
       </div>
     </div>

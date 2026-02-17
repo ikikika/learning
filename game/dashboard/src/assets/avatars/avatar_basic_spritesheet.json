@@ -12,9 +12,9 @@
   "anchor": {
     "x": 116,
     "y": 193,
-    "notes": "Feet point within each frame (origin top-left). Measured from idle_s frame 0; art is not centered in the 192×204.8 cell."
+    "notes": "Fallback only. Runtime detects per-frame feet after stripping bottom bleed from the next packed row."
   },
-  "notes": "Magenta background is intended for chroma-key / removal. Frame height is imageHeight/rows; verify crop alignment visually when wiring the renderer.",
+  "notes": "Magenta chroma key. Rows are packed flush: walk_e hair sits in the bottom of the walk_w cell after a gap. Renderer strips that bleed from walk_w and composites it onto walk_e so the head is not cropped. Per-frame feet anchors avoid E/W jumps.",
   "animations": {
     "idle_s": { "row": 0, "frames": 8, "frameDurationMs": 120 },
     "walk_s": { "row": 1, "frames": 8, "frameDurationMs": 80 },

@@ -76,6 +76,10 @@
   stroke-width: 2.5;
 }
 
+.world__tile--occupied {
+  fill: color-mix(in srgb, var(--tile-selected-stroke) 18%, transparent);
+}
+
 .world__avatar {
   position: absolute;
   top: 0;
