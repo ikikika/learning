@@ -1,6 +1,8 @@
 import { useEffect, useEffectEvent, useRef, type RefObject } from 'react'
 import basicSheetUrl from '../../assets/avatars/avatar_basic_spritesheet.png'
 import basicSheetMetaJson from '../../assets/avatars/avatar_basic_spritesheet.json'
+import emoteSheetUrl from '../../assets/avatars/avatar_wave_celebrate_spritesheet.png'
+import emoteSheetMetaJson from '../../assets/avatars/avatar_wave_celebrate_spritesheet.json'
 import {
   getPreparedFrame,
   prepareSpriteSheet,
@@ -9,8 +11,12 @@ import {
 } from './spritesheet'
 
 const basicSheetMeta = basicSheetMetaJson as SpriteSheetMeta
+const emoteSheetMeta = emoteSheetMetaJson as SpriteSheetMeta
+
 /** Bump when frame-prep logic changes so the cached sheet is rebuilt. */
-const SHEET_REVISION = 3
+const SHEET_REVISION = 6
+
+const EMOTE_ANIMATIONS = new Set(['wave_s', 'celebrate_s'])
 
 type AvatarProps = {
   /** SVG element that owns the isometric viewBox */
@@ -26,26 +32,41 @@ type AvatarProps = {
   /** Drawn width of one frame before depth scale */
   displayWidth?: number
   animation?: string
-  /** When true, loop the animation frames (walk). Idle uses a single pose. */
+  /** When true, advance animation frames. */
   playing?: boolean
+  /** When false, play once then call onComplete (emotes). */
+  loop?: boolean
+  onComplete?: () => void
 }
 
-let sheetPromise: Promise<PreparedSpriteSheet> | null = null
+type SheetBundle = {
+  basic: PreparedSpriteSheet
+  emote: PreparedSpriteSheet
+}
+
+let sheetPromise: Promise<SheetBundle> | null = null
 let sheetCacheKey = ''
 
-function getSheet() {
-  const cacheKey = `${basicSheetUrl}#${SHEET_REVISION}`
+function getSheets() {
+  const cacheKey = `${basicSheetUrl}|${emoteSheetUrl}#${SHEET_REVISION}`
   if (!sheetPromise || sheetCacheKey !== cacheKey) {
     sheetCacheKey = cacheKey
-    sheetPromise = prepareSpriteSheet(basicSheetMeta, basicSheetUrl).catch(
-      (error) => {
+    sheetPromise = Promise.all([
+      prepareSpriteSheet(basicSheetMeta, basicSheetUrl),
+      prepareSpriteSheet(emoteSheetMeta, emoteSheetUrl),
+    ])
+      .then(([basic, emote]) => ({ basic, emote }))
+      .catch((error) => {
         sheetPromise = null
         sheetCacheKey = ''
         throw error
-      },
-    )
+      })
   }
   return sheetPromise
+}
+
+function sheetForAnimation(bundle: SheetBundle, animationName: string) {
+  return EMOTE_ANIMATIONS.has(animationName) ? bundle.emote : bundle.basic
 }
 
 export function Avatar({
@@ -57,11 +78,14 @@ export function Avatar({
   displayWidth = 96,
   animation = 'idle_s',
   playing = false,
+  loop = true,
+  onComplete,
 }: AvatarProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const sheetRef = useRef<PreparedSpriteSheet | null>(null)
+  const sheetsRef = useRef<SheetBundle | null>(null)
   const frameRef = useRef(0)
   const lastFrameTimeRef = useRef(0)
+  const completedRef = useRef(false)
 
   const readPaintProps = useEffectEvent(() => ({
     x,
@@ -70,7 +94,12 @@ export function Avatar({
     displayWidth,
     animation,
     playing,
+    loop,
   }))
+
+  const notifyComplete = useEffectEvent(() => {
+    onComplete?.()
+  })
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -84,6 +113,7 @@ export function Avatar({
       frameHeight: number,
       anchorX: number,
       anchorY: number,
+      drawScale: number,
     ) => {
       const svg = svgRef.current
       const stage = stageRef.current
@@ -96,7 +126,7 @@ export function Avatar({
       const screen = new DOMPoint(px, py).matrixTransform(ctm)
       const stageRect = stage.getBoundingClientRect()
 
-      const width = dw * sc
+      const width = dw * sc * drawScale
       const height = width * (frameHeight / frameWidth)
       const scaleX = width / frameWidth
       const scaleY = height / frameHeight
@@ -108,15 +138,18 @@ export function Avatar({
     }
 
     const paint = (time: number) => {
-      const sheet = sheetRef.current
-      if (!sheet) return
+      const bundle = sheetsRef.current
+      if (!bundle) return
 
       const {
         animation: animName,
         playing: isPlaying,
         scale: sc,
         displayWidth: dw,
+        loop: shouldLoop,
       } = readPaintProps()
+
+      const sheet = sheetForAnimation(bundle, animName)
       const anim = sheet.meta.animations[animName]
       if (!anim) return
 
@@ -125,18 +158,33 @@ export function Avatar({
         const elapsed = time - lastFrameTimeRef.current
         if (elapsed >= anim.frameDurationMs) {
           const steps = Math.floor(elapsed / anim.frameDurationMs)
-          frameRef.current = (frameRef.current + steps) % anim.frames
+          const next = frameRef.current + steps
           lastFrameTimeRef.current = time
+
+          if (!shouldLoop && next >= anim.frames) {
+            frameRef.current = anim.frames - 1
+            if (!completedRef.current) {
+              completedRef.current = true
+              notifyComplete()
+            }
+          } else {
+            frameRef.current = next % anim.frames
+          }
         }
       } else {
         frameRef.current = 0
         lastFrameTimeRef.current = 0
+        completedRef.current = false
       }
 
       const prepared = getPreparedFrame(sheet, animName, frameRef.current)
       const sw = prepared.canvas.width
       const sh = prepared.canvas.height
-      const cssWidth = dw * sc
+      // Match emote art size to the basic avatar, then apply depth scale.
+      const drawScale =
+        bundle.basic.referenceContentHeight /
+        Math.max(1, sheet.referenceContentHeight)
+      const cssWidth = dw * sc * drawScale
       const cssHeight = cssWidth * (sh / sw)
       const dpr = window.devicePixelRatio || 1
 
@@ -150,23 +198,23 @@ export function Avatar({
       ctx.clearRect(0, 0, cssWidth, cssHeight)
       ctx.imageSmoothingEnabled = false
       ctx.drawImage(prepared.canvas, 0, 0, sw, sh, 0, 0, cssWidth, cssHeight)
-      placeAtFeet(sw, sh, prepared.anchor.x, prepared.anchor.y)
+      placeAtFeet(sw, sh, prepared.anchor.x, prepared.anchor.y, drawScale)
     }
 
-    const loop = (time: number) => {
+    const loopFrame = (time: number) => {
       if (cancelled) return
       paint(time)
-      rafId = requestAnimationFrame(loop)
+      rafId = requestAnimationFrame(loopFrame)
     }
 
     const onResize = () => paint(performance.now())
     window.addEventListener('resize', onResize)
 
-    getSheet()
+    getSheets()
       .then((loaded) => {
         if (cancelled) return
-        sheetRef.current = loaded
-        rafId = requestAnimationFrame(loop)
+        sheetsRef.current = loaded
+        rafId = requestAnimationFrame(loopFrame)
       })
       .catch((error) => {
         console.error(error)
@@ -182,6 +230,7 @@ export function Avatar({
   useEffect(() => {
     frameRef.current = 0
     lastFrameTimeRef.current = 0
+    completedRef.current = false
   }, [animation])
 
   return <canvas ref={canvasRef} className="world__avatar" aria-hidden />

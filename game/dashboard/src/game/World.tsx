@@ -57,7 +57,17 @@ export function World({
 
   const [hover, setHover] = useState<GridPoint | null>(null)
   const [destination, setDestination] = useState<GridPoint | null>(startCell)
+  const [emote, setEmote] = useState<'wave_s' | 'celebrate_s' | null>(null)
   const { position, animation, moving, walkTo } = useAvatarMovement(startCell)
+
+  const activeAnimation = emote ?? animation
+  const isPlaying = moving || emote !== null
+  const loopAnimation = emote === null
+
+  function playEmote(next: 'wave_s' | 'celebrate_s') {
+    if (moving || emote) return
+    setEmote(next)
+  }
 
   const padding = 24
   const viewBox = `${bounds.minX - padding} ${bounds.minY - padding} ${
@@ -101,6 +111,25 @@ export function World({
       </header>
 
       <div className="world__stage" ref={stageRef}>
+        <div className="world__actions" role="group" aria-label="Avatar actions">
+          <button
+            type="button"
+            className="world__action"
+            disabled={moving || emote !== null}
+            onClick={() => playEmote('wave_s')}
+          >
+            Wave
+          </button>
+          <button
+            type="button"
+            className="world__action"
+            disabled={moving || emote !== null}
+            onClick={() => playEmote('celebrate_s')}
+          >
+            Celebrate
+          </button>
+        </div>
+
         <svg
           ref={svgRef}
           className="world__svg"
@@ -117,6 +146,7 @@ export function World({
             setHover(cell)
           }}
           onClick={(event) => {
+            if (emote) return
             const cell = hitTest(
               event.clientX,
               event.clientY,
@@ -181,8 +211,10 @@ export function World({
           x={avatarScreen.x}
           y={avatarScreen.y}
           scale={avatarScale}
-          animation={animation}
-          playing={moving}
+          animation={activeAnimation}
+          playing={isPlaying}
+          loop={loopAnimation}
+          onComplete={() => setEmote(null)}
         />
       </div>
     </div>

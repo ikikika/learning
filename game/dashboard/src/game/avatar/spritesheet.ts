@@ -28,6 +28,8 @@ export type SpriteSheetMeta = {
 export type PreparedFrame = {
   canvas: HTMLCanvasElement
   anchor: SpriteAnchor
+  /** Opaque body height in source pixels (for cross-sheet size matching). */
+  contentHeight: number
 }
 
 export type PreparedSpriteSheet = {
@@ -36,6 +38,11 @@ export type PreparedSpriteSheet = {
   canvas: HTMLCanvasElement
   /** Isolated frames with per-frame feet anchors */
   frames: Record<string, PreparedFrame[]>
+  /**
+   * Standing-pose content height used to normalize draw size so emote sheets
+   * match the basic avatar under the same depth scale.
+   */
+  referenceContentHeight: number
 }
 
 function parseHexColor(hex: string): { r: number; g: number; b: number } {
@@ -169,6 +176,23 @@ function rowSource(
   return { sx, sy, sw, sh: syEnd - sy }
 }
 
+function measureContentHeight(
+  data: Uint8ClampedArray,
+  sw: number,
+  sh: number,
+): number {
+  const counts = opaqueRowCounts(data, sw, sh)
+  let minY = -1
+  let maxY = -1
+  for (let y = 0; y < sh; y += 1) {
+    if (counts[y]! < 3) continue
+    if (minY < 0) minY = y
+    maxY = y
+  }
+  if (minY < 0 || maxY < 0) return sh
+  return maxY - minY + 1
+}
+
 function detectFeetAnchor(
   data: Uint8ClampedArray,
   sw: number,
@@ -205,7 +229,7 @@ function detectFeetAnchor(
 function extractFrameCanvases(
   sheetCtx: CanvasRenderingContext2D,
   meta: SpriteSheetMeta,
-): Record<string, PreparedFrame[]> {
+): { frames: Record<string, PreparedFrame[]>; referenceContentHeight: number } {
   const frames: Record<string, PreparedFrame[]> = {}
   const fallback: SpriteAnchor = meta.anchor ?? {
     x: meta.frameWidth / 2,
@@ -257,11 +281,17 @@ function extractFrameCanvases(
         x: fallback.x,
         y: fallback.y + overhang,
       })
-      frames[name].push({ canvas: frameCanvas, anchor })
+      const contentHeight = measureContentHeight(composed.data, sw, totalH)
+      frames[name].push({ canvas: frameCanvas, anchor, contentHeight })
     }
   }
 
-  return frames
+  // Prefer a standing/idle-like first frame as the size reference for the sheet.
+  const preferred =
+    frames.idle_s?.[0] ?? frames.wave_s?.[0] ?? Object.values(frames)[0]?.[0]
+  const referenceContentHeight = preferred?.contentHeight ?? meta.frameHeight
+
+  return { frames, referenceContentHeight }
 }
 
 /** Prepare a spritesheet from a Vite-bundled image URL (not a public/ path). */
@@ -289,9 +319,9 @@ export async function prepareSpriteSheet(
 
   ctx.drawImage(image, 0, 0)
   applyChromaKey(ctx, canvas.width, canvas.height, meta.chromaKey)
-  const frames = extractFrameCanvases(ctx, meta)
+  const { frames, referenceContentHeight } = extractFrameCanvases(ctx, meta)
 
-  return { meta, canvas, frames }
+  return { meta, canvas, frames, referenceContentHeight }
 }
 
 export function getPreparedFrame(
