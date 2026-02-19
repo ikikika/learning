@@ -23,6 +23,11 @@ export type SpriteSheetMeta = {
   /** Fallback feet point if a frame has no auto-detected anchor */
   anchor?: SpriteAnchor
   animations: Record<string, SpriteAnimation>
+  /**
+   * When true (head / full-body sheets), walk_w may pack walk_e hair into the
+   * bottom of the cell. Feet/hands/body layers must leave this false/undefined.
+   */
+  packedWalkHair?: boolean
 }
 
 export type PreparedFrame = {
@@ -127,6 +132,9 @@ function opaqueRowCounts(data: Uint8ClampedArray, sw: number, sh: number): numbe
 /**
  * Packed sheets often put the next row's hair in this cell after a magenta gap.
  * Returns gap start (clear from here) and content start (hair band for overhang).
+ *
+ * Requires real sprite content above the gap so feet/hands-only layers (empty
+ * upper cell + boots at the bottom) are not mistaken for packed hair bleed.
  */
 function findBottomBleed(
   data: Uint8ClampedArray,
@@ -140,6 +148,11 @@ function findBottomBleed(
     const gap =
       counts[y]! < 3 && counts[y + 1]! < 3 && counts[y + 2]! < 3
     if (!gap) continue
+
+    // Body (or head) must already occupy the cell above this gap.
+    let contentAbove = 0
+    for (let z = 0; z < y; z += 1) contentAbove += counts[z]!
+    if (contentAbove < 80) continue
 
     let contentStart = -1
     for (let z = y + 1; z < sh; z += 1) {
@@ -272,19 +285,22 @@ function extractFrameCanvases(
     x: meta.frameWidth / 2,
     y: meta.frameHeight,
   }
+  const packedWalkHair = meta.packedWalkHair === true
 
   for (const [name, animation] of Object.entries(meta.animations)) {
     frames[name] = []
     for (let i = 0; i < animation.frames; i += 1) {
       const { sx, sy, sw, sh } = getFrameSource(meta, name, i)
       const main = sheetCtx.getImageData(sx, sy, sw, sh)
-      clearBottomBleed(main.data, sw, sh)
+      // Only the walk_w row of hair-bearing sheets packs the next row's hair.
+      if (packedWalkHair && name === 'walk_w') {
+        clearBottomBleed(main.data, sw, sh)
+      }
 
-      // walk_e hair (and similar) is drawn into the previous row's cell.
-      // Pull that overhang back onto this frame so the top of the head isn't cropped.
+      // Restore that hair onto walk_e so the head isn't cropped.
       let overhang = 0
       let overhangData: ImageData | null = null
-      if (animation.row > 0) {
+      if (packedWalkHair && name === 'walk_e' && animation.row > 0) {
         const prev = rowSource(meta, animation.row - 1, i)
         const prevPixels = sheetCtx.getImageData(prev.sx, prev.sy, prev.sw, prev.sh)
         const bleed = findBottomBleed(prevPixels.data, prev.sw, prev.sh)

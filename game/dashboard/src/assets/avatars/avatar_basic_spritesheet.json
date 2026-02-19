@@ -9,12 +9,13 @@
   "frameWidthRounded": 192,
   "frameHeightRounded": 205,
   "chromaKey": "#FF00FF",
+  "packedWalkHair": true,
   "anchor": {
     "x": 116,
     "y": 193,
     "notes": "Fallback only. Runtime detects per-frame feet after stripping bottom bleed from the next packed row."
   },
-  "notes": "Magenta chroma key. Rows are packed flush: walk_e hair sits in the bottom of the walk_w cell after a gap. Renderer strips that bleed from walk_w and composites it onto walk_e so the head is not cropped. Per-frame feet anchors avoid E/W jumps.",
+  "notes": "Magenta chroma key. Source for layer split (head/body/hands/feet). Rows are packed flush: walk_e hair sits in the bottom of the walk_w cell after a gap. Prefer composing avatar_*_spritesheet layers at runtime.",
   "animations": {
     "idle_s": { "row": 0, "frames": 8, "frameDurationMs": 120 },
     "walk_s": { "row": 1, "frames": 8, "frameDurationMs": 80 },
