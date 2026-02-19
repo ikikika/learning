@@ -117,6 +117,12 @@
   border-color: var(--tile-selected-stroke);
 }
 
+.world__action--active {
+  background: #e7f0e4;
+  border-color: var(--tile-selected-stroke);
+  color: #2f4a36;
+}
+
 .world__action:disabled {
   opacity: 0.45;
   cursor: not-allowed;

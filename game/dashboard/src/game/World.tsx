@@ -58,6 +58,7 @@ export function World({
   const [hover, setHover] = useState<GridPoint | null>(null)
   const [destination, setDestination] = useState<GridPoint | null>(startCell)
   const [emote, setEmote] = useState<'wave_s' | 'celebrate_s' | null>(null)
+  const [helmetEquipped, setHelmetEquipped] = useState(false)
   const { position, animation, moving, walkTo } = useAvatarMovement(startCell)
 
   const activeAnimation = emote ?? animation
@@ -127,6 +128,14 @@ export function World({
             onClick={() => playEmote('celebrate_s')}
           >
             Celebrate
+          </button>
+          <button
+            type="button"
+            className={`world__action${helmetEquipped ? ' world__action--active' : ''}`}
+            aria-pressed={helmetEquipped}
+            onClick={() => setHelmetEquipped((on) => !on)}
+          >
+            {helmetEquipped ? 'Unequip Helmet' : 'Equip Helmet'}
           </button>
         </div>
 
@@ -214,6 +223,7 @@ export function World({
           animation={activeAnimation}
           playing={isPlaying}
           loop={loopAnimation}
+          helmetEquipped={helmetEquipped}
           onComplete={() => setEmote(null)}
         />
       </div>

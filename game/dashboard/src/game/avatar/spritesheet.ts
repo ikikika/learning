@@ -27,7 +27,13 @@ export type SpriteSheetMeta = {
 
 export type PreparedFrame = {
   canvas: HTMLCanvasElement
+  /** Feet point used to plant the sprite on a tile. */
   anchor: SpriteAnchor
+  /**
+   * Top-center of the head (or equipment art). Used to keep layered gear
+   * locked to the head while the body slides inside the cell across frames.
+   */
+  head: SpriteAnchor
   /** Opaque body height in source pixels (for cross-sheet size matching). */
   contentHeight: number
 }
@@ -226,6 +232,37 @@ function detectFeetAnchor(
   return { x: feetX, y: bodyMax }
 }
 
+/** Top-center of the first opaque band (head / helmet crown). */
+function detectHeadAnchor(
+  data: Uint8ClampedArray,
+  sw: number,
+  sh: number,
+  fallback: SpriteAnchor,
+): SpriteAnchor {
+  const counts = opaqueRowCounts(data, sw, sh)
+  let top = -1
+  for (let y = 0; y < sh; y += 1) {
+    if (counts[y]! >= 3) {
+      top = y
+      break
+    }
+  }
+  if (top < 0) return fallback
+
+  const band = Math.max(4, Math.floor(sh * 0.06))
+  const xs: number[] = []
+  for (let y = top; y <= Math.min(sh - 1, top + band); y += 1) {
+    for (let x = 0; x < sw; x += 1) {
+      if (data[(y * sw + x) * 4 + 3]! <= 10) continue
+      xs.push(x)
+    }
+  }
+  if (xs.length === 0) return { x: fallback.x, y: top }
+
+  const headX = xs.reduce((sum, v) => sum + v, 0) / xs.length
+  return { x: headX, y: top }
+}
+
 function extractFrameCanvases(
   sheetCtx: CanvasRenderingContext2D,
   meta: SpriteSheetMeta,
@@ -281,8 +318,12 @@ function extractFrameCanvases(
         x: fallback.x,
         y: fallback.y + overhang,
       })
+      const head = detectHeadAnchor(composed.data, sw, totalH, {
+        x: fallback.x,
+        y: overhang,
+      })
       const contentHeight = measureContentHeight(composed.data, sw, totalH)
-      frames[name].push({ canvas: frameCanvas, anchor, contentHeight })
+      frames[name].push({ canvas: frameCanvas, anchor, head, contentHeight })
     }
   }
 

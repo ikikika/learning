@@ -3,6 +3,8 @@ import basicSheetUrl from '../../assets/avatars/avatar_basic_spritesheet.png'
 import basicSheetMetaJson from '../../assets/avatars/avatar_basic_spritesheet.json'
 import emoteSheetUrl from '../../assets/avatars/avatar_wave_celebrate_spritesheet.png'
 import emoteSheetMetaJson from '../../assets/avatars/avatar_wave_celebrate_spritesheet.json'
+import helmetSheetUrl from '../../assets/avatars/helmet_red_spritesheet.png'
+import helmetSheetMetaJson from '../../assets/avatars/helmet_red_spritesheet.json'
 import {
   getPreparedFrame,
   prepareSpriteSheet,
@@ -12,9 +14,10 @@ import {
 
 const basicSheetMeta = basicSheetMetaJson as SpriteSheetMeta
 const emoteSheetMeta = emoteSheetMetaJson as SpriteSheetMeta
+const helmetSheetMeta = helmetSheetMetaJson as SpriteSheetMeta
 
 /** Bump when frame-prep logic changes so the cached sheet is rebuilt. */
-const SHEET_REVISION = 6
+const SHEET_REVISION = 9
 
 const EMOTE_ANIMATIONS = new Set(['wave_s', 'celebrate_s'])
 
@@ -36,26 +39,30 @@ type AvatarProps = {
   playing?: boolean
   /** When false, play once then call onComplete (emotes). */
   loop?: boolean
+  /** Equip the red helmet overlay layer. */
+  helmetEquipped?: boolean
   onComplete?: () => void
 }
 
 type SheetBundle = {
   basic: PreparedSpriteSheet
   emote: PreparedSpriteSheet
+  helmet: PreparedSpriteSheet
 }
 
 let sheetPromise: Promise<SheetBundle> | null = null
 let sheetCacheKey = ''
 
 function getSheets() {
-  const cacheKey = `${basicSheetUrl}|${emoteSheetUrl}#${SHEET_REVISION}`
+  const cacheKey = `${basicSheetUrl}|${emoteSheetUrl}|${helmetSheetUrl}#${SHEET_REVISION}`
   if (!sheetPromise || sheetCacheKey !== cacheKey) {
     sheetCacheKey = cacheKey
     sheetPromise = Promise.all([
       prepareSpriteSheet(basicSheetMeta, basicSheetUrl),
       prepareSpriteSheet(emoteSheetMeta, emoteSheetUrl),
+      prepareSpriteSheet(helmetSheetMeta, helmetSheetUrl),
     ])
-      .then(([basic, emote]) => ({ basic, emote }))
+      .then(([basic, emote, helmet]) => ({ basic, emote, helmet }))
       .catch((error) => {
         sheetPromise = null
         sheetCacheKey = ''
@@ -69,6 +76,15 @@ function sheetForAnimation(bundle: SheetBundle, animationName: string) {
   return EMOTE_ANIMATIONS.has(animationName) ? bundle.emote : bundle.basic
 }
 
+/** Compact helmet sheet: map body/emote clips to a facing row. */
+function helmetAnimationFor(bodyAnimation: string): string {
+  if (bodyAnimation === 'walk_n') return 'walk_n'
+  if (bodyAnimation === 'walk_w') return 'walk_w'
+  if (bodyAnimation === 'walk_e') return 'walk_e'
+  // idle_s, walk_s, wave_s, celebrate_s → front
+  return 'idle_s'
+}
+
 export function Avatar({
   svgRef,
   stageRef,
@@ -79,6 +95,7 @@ export function Avatar({
   animation = 'idle_s',
   playing = false,
   loop = true,
+  helmetEquipped = false,
   onComplete,
 }: AvatarProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -95,6 +112,7 @@ export function Avatar({
     animation,
     playing,
     loop,
+    helmetEquipped,
   }))
 
   const notifyComplete = useEffectEvent(() => {
@@ -147,6 +165,7 @@ export function Avatar({
         scale: sc,
         displayWidth: dw,
         loop: shouldLoop,
+        helmetEquipped: showHelmet,
       } = readPaintProps()
 
       const sheet = sheetForAnimation(bundle, animName)
@@ -198,6 +217,32 @@ export function Avatar({
       ctx.clearRect(0, 0, cssWidth, cssHeight)
       ctx.imageSmoothingEnabled = false
       ctx.drawImage(prepared.canvas, 0, 0, sw, sh, 0, 0, cssWidth, cssHeight)
+
+      if (showHelmet) {
+        const helmetAnim = helmetAnimationFor(animName)
+        const helmetFrame = getPreparedFrame(bundle.helmet, helmetAnim, 0)
+        const hw = helmetFrame.canvas.width
+        const hh = helmetFrame.canvas.height
+        // Body art slides inside the cell across walk frames; pin helmet to the
+        // current head top-center (also corrects walk overhang / idle vs walk_s).
+        const px = cssWidth / sw
+        const helmetCssW = hw * px
+        const helmetCssH = hh * px
+        const dx = (prepared.head.x - helmetFrame.head.x) * px
+        const dy = (prepared.head.y - helmetFrame.head.y) * px
+        ctx.drawImage(
+          helmetFrame.canvas,
+          0,
+          0,
+          hw,
+          hh,
+          dx,
+          dy,
+          helmetCssW,
+          helmetCssH,
+        )
+      }
+
       placeAtFeet(sw, sh, prepared.anchor.x, prepared.anchor.y, drawScale)
     }
 
