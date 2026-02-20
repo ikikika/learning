@@ -9,8 +9,8 @@ import feetSheetUrl from '../../assets/avatars/avatar_feet_spritesheet.png'
 import feetSheetMetaJson from '../../assets/avatars/avatar_feet_spritesheet.json'
 import emoteSheetUrl from '../../assets/avatars/avatar_wave_celebrate_spritesheet.png'
 import emoteSheetMetaJson from '../../assets/avatars/avatar_wave_celebrate_spritesheet.json'
-import helmetSheetUrl from '../../assets/avatars/helmet_red_spritesheet.png'
-import helmetSheetMetaJson from '../../assets/avatars/helmet_red_spritesheet.json'
+import headHelmetSheetUrl from '../../assets/avatars/avatar_head_white_helmet_spritesheet.png'
+import headHelmetSheetMetaJson from '../../assets/avatars/avatar_head_white_helmet_spritesheet.json'
 import {
   getPreparedFrame,
   prepareSpriteSheet,
@@ -20,18 +20,18 @@ import {
 } from './spritesheet'
 
 const headSheetMeta = headSheetMetaJson as SpriteSheetMeta
+const headHelmetSheetMeta = headHelmetSheetMetaJson as SpriteSheetMeta
 const bodySheetMeta = bodySheetMetaJson as SpriteSheetMeta
 const handsSheetMeta = handsSheetMetaJson as SpriteSheetMeta
 const feetSheetMeta = feetSheetMetaJson as SpriteSheetMeta
 const emoteSheetMeta = emoteSheetMetaJson as SpriteSheetMeta
-const helmetSheetMeta = helmetSheetMetaJson as SpriteSheetMeta
 
 /** Bump when frame-prep logic or layer assets change. */
-const SHEET_REVISION = 14
+const SHEET_REVISION = 20
 
 const EMOTE_ANIMATIONS = new Set(['wave_s', 'celebrate_s'])
 
-/** Draw order for the paper-doll body (equipment draws after head). */
+/** Draw order for the paper-doll body. */
 type BodyLayerName = 'feet' | 'body' | 'hands' | 'head'
 
 type AvatarProps = {
@@ -52,7 +52,7 @@ type AvatarProps = {
   playing?: boolean
   /** When false, play once then call onComplete (emotes). */
   loop?: boolean
-  /** Equip the red helmet overlay layer. */
+  /** Swap head layer to the white-helmet head spritesheet. */
   helmetEquipped?: boolean
   onComplete?: () => void
 }
@@ -62,8 +62,8 @@ type SheetBundle = {
   body: PreparedSpriteSheet
   hands: PreparedSpriteSheet
   head: PreparedSpriteSheet
+  headHelmet: PreparedSpriteSheet
   emote: PreparedSpriteSheet
-  helmet: PreparedSpriteSheet
   /** Standing-pose height used to size emotes against the layered avatar. */
   referenceContentHeight: number
 }
@@ -74,11 +74,11 @@ let sheetCacheKey = ''
 function getSheets() {
   const cacheKey = [
     headSheetUrl,
+    headHelmetSheetUrl,
     bodySheetUrl,
     handsSheetUrl,
     feetSheetUrl,
     emoteSheetUrl,
-    helmetSheetUrl,
     SHEET_REVISION,
   ].join('|')
   if (!sheetPromise || sheetCacheKey !== cacheKey) {
@@ -88,10 +88,10 @@ function getSheets() {
       prepareSpriteSheet(bodySheetMeta, bodySheetUrl),
       prepareSpriteSheet(handsSheetMeta, handsSheetUrl),
       prepareSpriteSheet(headSheetMeta, headSheetUrl),
+      prepareSpriteSheet(headHelmetSheetMeta, headHelmetSheetUrl),
       prepareSpriteSheet(emoteSheetMeta, emoteSheetUrl),
-      prepareSpriteSheet(helmetSheetMeta, helmetSheetUrl),
     ])
-      .then(([feet, body, hands, head, emote, helmet]) => {
+      .then(([feet, body, hands, head, headHelmet, emote]) => {
         const headIdle = getPreparedFrame(head, 'idle_s', 0)
         const feetIdle = getPreparedFrame(feet, 'idle_s', 0)
         const referenceContentHeight = Math.max(
@@ -103,8 +103,8 @@ function getSheets() {
           body,
           hands,
           head,
+          headHelmet,
           emote,
-          helmet,
           referenceContentHeight,
         }
       })
@@ -124,15 +124,6 @@ function bodyLayerFrame(
   frameIndex: number,
 ): PreparedFrame {
   return getPreparedFrame(bundle[layer], animationName, frameIndex)
-}
-
-/** Compact helmet sheet: map body/emote clips to a facing row. */
-function helmetAnimationFor(bodyAnimation: string): string {
-  if (bodyAnimation === 'walk_n') return 'walk_n'
-  if (bodyAnimation === 'walk_w') return 'walk_w'
-  if (bodyAnimation === 'walk_e') return 'walk_e'
-  // idle_s, walk_s, wave_s, celebrate_s → front
-  return 'idle_s'
 }
 
 export function Avatar({
@@ -270,30 +261,12 @@ export function Avatar({
         ctx.clearRect(0, 0, cssWidth, cssHeight)
         ctx.drawImage(prepared.canvas, 0, 0, sw, sh, 0, 0, cssWidth, cssHeight)
 
-        if (showHelmet) {
-          const helmetAnim = helmetAnimationFor(animName)
-          const helmetFrame = getPreparedFrame(bundle.helmet, helmetAnim, 0)
-          const px = cssWidth / sw
-          const dx = (prepared.head.x - helmetFrame.head.x) * px
-          const dy = (prepared.head.y - helmetFrame.head.y) * px
-          ctx.drawImage(
-            helmetFrame.canvas,
-            0,
-            0,
-            helmetFrame.canvas.width,
-            helmetFrame.canvas.height,
-            dx,
-            dy,
-            helmetFrame.canvas.width * px,
-            helmetFrame.canvas.height * px,
-          )
-        }
-
         placeAtFeet(sw, sh, prepared.anchor.x, prepared.anchor.y, drawScale)
         return
       }
 
-      const headFrame = bodyLayerFrame(bundle, 'head', animName, frameIndex)
+      const headSheet = showHelmet ? bundle.headHelmet : bundle.head
+      const headFrame = getPreparedFrame(headSheet, animName, frameIndex)
       const bodyFrame = bodyLayerFrame(bundle, 'body', animName, frameIndex)
       const handsFrame = bodyLayerFrame(bundle, 'hands', animName, frameIndex)
       const feetFrame = bodyLayerFrame(bundle, 'feet', animName, frameIndex)
@@ -328,29 +301,11 @@ export function Avatar({
         )
       }
 
-      // feet → body → hands → head (helmet after head)
+      // feet → body → hands → head
       drawLayer(feetFrame, overhang)
       drawLayer(bodyFrame, overhang)
       drawLayer(handsFrame, overhang)
       drawLayer(headFrame, 0)
-
-      if (showHelmet) {
-        const helmetAnim = helmetAnimationFor(animName)
-        const helmetFrame = getPreparedFrame(bundle.helmet, helmetAnim, 0)
-        const dx = (headFrame.head.x - helmetFrame.head.x) * px
-        const dy = (headFrame.head.y - helmetFrame.head.y) * px
-        ctx.drawImage(
-          helmetFrame.canvas,
-          0,
-          0,
-          helmetFrame.canvas.width,
-          helmetFrame.canvas.height,
-          dx,
-          dy,
-          helmetFrame.canvas.width * px,
-          helmetFrame.canvas.height * px,
-        )
-      }
 
       placeAtFeet(
         sw,
