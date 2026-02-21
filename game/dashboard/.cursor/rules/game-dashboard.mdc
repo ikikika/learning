@@ -1,0 +1,25 @@
+---
+description: Game dashboard implementation context — isometric world, layered avatar, assets
+alwaysApply: true
+---
+
+# Game dashboard
+
+Implementation truth lives in `docs/game_dashboard_context.md`. Product/design north-star: `docs/avatar_gamification_dashboard_decisions.md`. Prefer the context doc when they disagree.
+
+## Architecture (current)
+
+- Vite + React 19 + TS. Single page: `App` → `World` (no router, no Phaser).
+- SVG isometric 10×10 grid + HTML canvas avatar overlay.
+- Click-to-walk via `useAvatarMovement` + `movement/path.ts`; depth scale 0.6–1.0.
+- Paper-doll: feet → body → hands → head (`src/game/avatar/Avatar.tsx` + `spritesheet.ts`).
+- Helmet MVP: swap head sheet to `avatar_head_white_helmet_spritesheet` (not a separate overlay).
+- Emotes: `avatar_wave_celebrate_spritesheet` (`wave_s`, `celebrate_s`); no helmet on emote art.
+- Magenta chroma `#FF00FF`. `packedWalkHair` only on head / white-helmet head / basic meta.
+- Bump `SHEET_REVISION` in `Avatar.tsx` when sheet prep or avatar PNGs/JSON change.
+
+## Do / don’t
+
+- Do compose layer sheets; keep `avatar_basic` as source reference.
+- Don’t assume `helmet_red` / helmet overlays are wired (orphaned unless reintroduced).
+- Don’t treat visible grid / lack of furniture as final — see decisions doc roadmap.
