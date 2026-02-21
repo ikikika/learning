@@ -1,0 +1,22 @@
+{
+  "image": "avatar_celebrate_hands_spritesheet.png",
+  "imageWidth": 1536,
+  "imageHeight": 512,
+  "columns": 8,
+  "rows": 1,
+  "frameWidth": 192,
+  "frameHeight": 512,
+  "chromaKey": "#FF00FF",
+  "animations": {
+    "celebrate_s": {
+      "row": 0,
+      "frames": 8,
+      "frameDurationMs": 90
+    }
+  },
+  "directions": {
+    "s": "front / toward camera"
+  },
+  "notes": "Layer 'hands' for celebrate_s from avatar_wave_celebrate_spritesheet. Compose feet\u2192body\u2192hands\u2192head.",
+  "slot": "hands"
+}

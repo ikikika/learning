@@ -1,0 +1,21 @@
+{
+  "image": "avatar_wave_spritesheet.png",
+  "imageWidth": 1536,
+  "imageHeight": 512,
+  "columns": 8,
+  "rows": 1,
+  "frameWidth": 192,
+  "frameHeight": 512,
+  "chromaKey": "#FF00FF",
+  "animations": {
+    "wave_s": {
+      "row": 0,
+      "frames": 8,
+      "frameDurationMs": 100
+    }
+  },
+  "directions": {
+    "s": "front / toward camera"
+  },
+  "notes": "Full-body wave sheet sliced from avatar_wave_celebrate_spritesheet. Prefer composing avatar_{prefix}_* layer sheets at runtime."
+}

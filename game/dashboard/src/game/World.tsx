@@ -115,16 +115,18 @@ export function World({
         <div className="world__actions" role="group" aria-label="Avatar actions">
           <button
             type="button"
-            className="world__action"
+            className={`world__action${emote === 'wave_s' ? ' world__action--active' : ''}`}
             disabled={moving || emote !== null}
+            aria-pressed={emote === 'wave_s'}
             onClick={() => playEmote('wave_s')}
           >
             Wave
           </button>
           <button
             type="button"
-            className="world__action"
+            className={`world__action${emote === 'celebrate_s' ? ' world__action--active' : ''}`}
             disabled={moving || emote !== null}
+            aria-pressed={emote === 'celebrate_s'}
             onClick={() => playEmote('celebrate_s')}
           >
             Celebrate

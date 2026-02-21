@@ -23,6 +23,8 @@ dashboard/
 ├── docs/
 │   ├── avatar_gamification_dashboard_decisions.md   # product/design decisions
 │   └── game_dashboard_context.md                    # this file (implementation truth)
+├── scripts/
+│   └── split_emote_layers.py                        # wave/celebrate → paper-doll layers
 ├── src/
 │   ├── App.tsx, main.tsx, App.css, index.css
 │   ├── assets/avatars/                              # sprites + JSON meta
@@ -55,17 +57,17 @@ dashboard/
 
 ## Avatar (paper-doll)
 
-### Draw order (walk / idle)
+### Draw order (walk / idle / emotes)
 
 `feet → body → hands → head`
 
 ### Helmet (MVP)
 
 - **Not** a separate overlay layer at runtime.
-- `helmetEquipped` swaps head sheet:
+- `helmetEquipped` swaps head sheet (walk/idle only):
   - off → `avatar_head_spritesheet`
   - on → `avatar_head_white_helmet_spritesheet` (pre-composited head + white helmet)
-- Emotes use the full-body wave/celebrate sheet (**no helmet** on that art).
+- Emotes use layered wave/celebrate sheets (**no helmet** on that art).
 
 ### Animation rows (body layers, 8×5, 1536×1024, chroma `#FF00FF`)
 
@@ -77,12 +79,14 @@ dashboard/
 | `walk_w` | 3 | 8 | 80 |
 | `walk_e` | 4 | 8 | 80 |
 
-### Emotes (separate sheet)
+### Emotes (layered sheets, 8×1, 1536×512 each)
 
-| Name | Row | Frames | ms |
-|------|-----|--------|-----|
-| `wave_s` | 0 | 8 | 100 |
-| `celebrate_s` | 1 | 8 | 90 |
+| Name | Source row (combined) | Frames | ms | Layer prefix |
+|------|----------------------|--------|-----|--------------|
+| `wave_s` | 0 | 8 | 100 | `avatar_wave_{feet,body,hands,head}` |
+| `celebrate_s` | 1 | 8 | 90 | `avatar_celebrate_{feet,body,hands,head}` |
+
+Split from `avatar_wave_celebrate_spritesheet` via `scripts/split_emote_layers.py`.
 
 ### Spritesheet prep (`spritesheet.ts`)
 
@@ -93,7 +97,7 @@ dashboard/
    - `walk_e`: restore that band as **overhang** above the cell.
 4. Per-frame feet + head anchors from opaque pixels.
 5. Layered draw offsets non-head layers by overhang when head is taller.
-6. **`SHEET_REVISION`** in `Avatar.tsx` (currently **20**) busts the in-memory sheet cache with Vite URLs.
+6. **`SHEET_REVISION`** in `Avatar.tsx` (currently **22**) busts the in-memory sheet cache with Vite URLs.
 
 ---
 
@@ -103,18 +107,23 @@ dashboard/
 
 | Asset | Role |
 |-------|------|
-| `avatar_feet_spritesheet.{png,json}` | Feet / boots + lower legs |
-| `avatar_body_spritesheet.{png,json}` | Tunic / belt |
-| `avatar_hands_spritesheet.{png,json}` | Hands |
-| `avatar_head_spritesheet.{png,json}` | Default head (`packedWalkHair`) |
+| `avatar_feet_spritesheet.{png,json}` | Walk/idle feet / boots + lower legs |
+| `avatar_body_spritesheet.{png,json}` | Walk/idle tunic / belt |
+| `avatar_hands_spritesheet.{png,json}` | Walk/idle hands |
+| `avatar_head_spritesheet.{png,json}` | Walk/idle default head (`packedWalkHair`) |
 | `avatar_head_white_helmet_spritesheet.{png,json}` | Helmet-equipped head |
-| `avatar_wave_celebrate_spritesheet.{png,json}` | Wave + celebrate |
+| `avatar_wave_{feet,body,hands,head}_spritesheet.{png,json}` | Wave emote layers (Wave button → `wave_s`) |
+| `avatar_celebrate_{feet,body,hands,head}_spritesheet.{png,json}` | Celebrate emote layers |
+| `avatar_wave_assembled_spritesheet.{png,json}` | Preview composite of wave layers (not imported at runtime) |
 
 ### Source / unused at runtime
 
 | Asset | Role |
 |-------|------|
-| `avatar_basic_spritesheet.{png,json}` | Source sheet for layer split; keep as reference |
+| `avatar_basic_spritesheet.{png,json}` | Source sheet for walk layer split; keep as reference |
+| `avatar_wave_celebrate_spritesheet.{png,json}` | Source for emote split (`scripts/split_emote_layers.py`) |
+| `avatar_wave_spritesheet.{png,json}` | Full-body wave slice (reference) |
+| `avatar_celebrate_spritesheet.{png,json}` | Full-body celebrate slice (reference) |
 | `helmet_red_spritesheet.png` | Orphaned helmet-only overlay experiment (safe to delete unless regenerating overlays) |
 
 Deleted / not used: `helmet_white_*`, `helmet_red_spritesheet.json` — white helmet was baked into the head sheet for MVP.
@@ -149,9 +158,10 @@ Rough progress: early MVP phases (grid, walk, layered avatar, depth scale, two e
 
 ## Conventions for agents
 
-1. Prefer composing **layer sheets**, not editing `avatar_basic` for runtime.
+1. Prefer composing **layer sheets**, not editing `avatar_basic` / `avatar_wave_celebrate` for runtime.
 2. After changing prep logic or PNG/JSON sheets, bump **`SHEET_REVISION`**.
 3. Only enable `packedWalkHair` on sheets that actually pack walk_e hair into walk_w.
 4. Do not reintroduce helmet overlay unless intentionally replacing the head-swap MVP.
 5. Keep movement/avatar state in World + hooks; avoid adding engines unless asked.
 6. Decisions doc = product intent; **this file** = implementation truth when they disagree.
+7. Regenerate emote layers with `.tmp-venv/bin/python scripts/split_emote_layers.py`.

@@ -7,10 +7,24 @@ import handsSheetUrl from '../../assets/avatars/avatar_hands_spritesheet.png'
 import handsSheetMetaJson from '../../assets/avatars/avatar_hands_spritesheet.json'
 import feetSheetUrl from '../../assets/avatars/avatar_feet_spritesheet.png'
 import feetSheetMetaJson from '../../assets/avatars/avatar_feet_spritesheet.json'
-import emoteSheetUrl from '../../assets/avatars/avatar_wave_celebrate_spritesheet.png'
-import emoteSheetMetaJson from '../../assets/avatars/avatar_wave_celebrate_spritesheet.json'
 import headHelmetSheetUrl from '../../assets/avatars/avatar_head_white_helmet_spritesheet.png'
 import headHelmetSheetMetaJson from '../../assets/avatars/avatar_head_white_helmet_spritesheet.json'
+import waveFeetUrl from '../../assets/avatars/avatar_wave_feet_spritesheet.png'
+import waveFeetMetaJson from '../../assets/avatars/avatar_wave_feet_spritesheet.json'
+import waveBodyUrl from '../../assets/avatars/avatar_wave_body_spritesheet.png'
+import waveBodyMetaJson from '../../assets/avatars/avatar_wave_body_spritesheet.json'
+import waveHandsUrl from '../../assets/avatars/avatar_wave_hands_spritesheet.png'
+import waveHandsMetaJson from '../../assets/avatars/avatar_wave_hands_spritesheet.json'
+import waveHeadUrl from '../../assets/avatars/avatar_wave_head_spritesheet.png'
+import waveHeadMetaJson from '../../assets/avatars/avatar_wave_head_spritesheet.json'
+import celebrateFeetUrl from '../../assets/avatars/avatar_celebrate_feet_spritesheet.png'
+import celebrateFeetMetaJson from '../../assets/avatars/avatar_celebrate_feet_spritesheet.json'
+import celebrateBodyUrl from '../../assets/avatars/avatar_celebrate_body_spritesheet.png'
+import celebrateBodyMetaJson from '../../assets/avatars/avatar_celebrate_body_spritesheet.json'
+import celebrateHandsUrl from '../../assets/avatars/avatar_celebrate_hands_spritesheet.png'
+import celebrateHandsMetaJson from '../../assets/avatars/avatar_celebrate_hands_spritesheet.json'
+import celebrateHeadUrl from '../../assets/avatars/avatar_celebrate_head_spritesheet.png'
+import celebrateHeadMetaJson from '../../assets/avatars/avatar_celebrate_head_spritesheet.json'
 import {
   getPreparedFrame,
   prepareSpriteSheet,
@@ -24,15 +38,29 @@ const headHelmetSheetMeta = headHelmetSheetMetaJson as SpriteSheetMeta
 const bodySheetMeta = bodySheetMetaJson as SpriteSheetMeta
 const handsSheetMeta = handsSheetMetaJson as SpriteSheetMeta
 const feetSheetMeta = feetSheetMetaJson as SpriteSheetMeta
-const emoteSheetMeta = emoteSheetMetaJson as SpriteSheetMeta
+const waveFeetMeta = waveFeetMetaJson as SpriteSheetMeta
+const waveBodyMeta = waveBodyMetaJson as SpriteSheetMeta
+const waveHandsMeta = waveHandsMetaJson as SpriteSheetMeta
+const waveHeadMeta = waveHeadMetaJson as SpriteSheetMeta
+const celebrateFeetMeta = celebrateFeetMetaJson as SpriteSheetMeta
+const celebrateBodyMeta = celebrateBodyMetaJson as SpriteSheetMeta
+const celebrateHandsMeta = celebrateHandsMetaJson as SpriteSheetMeta
+const celebrateHeadMeta = celebrateHeadMetaJson as SpriteSheetMeta
 
 /** Bump when frame-prep logic or layer assets change. */
-const SHEET_REVISION = 20
+const SHEET_REVISION = 22
 
 const EMOTE_ANIMATIONS = new Set(['wave_s', 'celebrate_s'])
 
 /** Draw order for the paper-doll body. */
 type BodyLayerName = 'feet' | 'body' | 'hands' | 'head'
+
+type LayerBundle = {
+  feet: PreparedSpriteSheet
+  body: PreparedSpriteSheet
+  hands: PreparedSpriteSheet
+  head: PreparedSpriteSheet
+}
 
 type AvatarProps = {
   /** SVG element that owns the isometric viewBox */
@@ -58,18 +86,26 @@ type AvatarProps = {
 }
 
 type SheetBundle = {
-  feet: PreparedSpriteSheet
-  body: PreparedSpriteSheet
-  hands: PreparedSpriteSheet
-  head: PreparedSpriteSheet
+  walk: LayerBundle
   headHelmet: PreparedSpriteSheet
-  emote: PreparedSpriteSheet
+  wave: LayerBundle
+  celebrate: LayerBundle
   /** Standing-pose height used to size emotes against the layered avatar. */
   referenceContentHeight: number
+  /** Full paper-doll height for wave (feet→head), not head-layer-only. */
+  waveContentHeight: number
+  /** Full paper-doll height for celebrate (feet→head), not head-layer-only. */
+  celebrateContentHeight: number
 }
 
 let sheetPromise: Promise<SheetBundle> | null = null
 let sheetCacheKey = ''
+
+function paperDollHeight(layers: LayerBundle, animationName: string): number {
+  const head = getPreparedFrame(layers.head, animationName, 0)
+  const feet = getPreparedFrame(layers.feet, animationName, 0)
+  return Math.max(1, Math.round(feet.anchor.y - head.head.y + 1))
+}
 
 function getSheets() {
   const cacheKey = [
@@ -78,7 +114,14 @@ function getSheets() {
     bodySheetUrl,
     handsSheetUrl,
     feetSheetUrl,
-    emoteSheetUrl,
+    waveFeetUrl,
+    waveBodyUrl,
+    waveHandsUrl,
+    waveHeadUrl,
+    celebrateFeetUrl,
+    celebrateBodyUrl,
+    celebrateHandsUrl,
+    celebrateHeadUrl,
     SHEET_REVISION,
   ].join('|')
   if (!sheetPromise || sheetCacheKey !== cacheKey) {
@@ -89,25 +132,55 @@ function getSheets() {
       prepareSpriteSheet(handsSheetMeta, handsSheetUrl),
       prepareSpriteSheet(headSheetMeta, headSheetUrl),
       prepareSpriteSheet(headHelmetSheetMeta, headHelmetSheetUrl),
-      prepareSpriteSheet(emoteSheetMeta, emoteSheetUrl),
+      prepareSpriteSheet(waveFeetMeta, waveFeetUrl),
+      prepareSpriteSheet(waveBodyMeta, waveBodyUrl),
+      prepareSpriteSheet(waveHandsMeta, waveHandsUrl),
+      prepareSpriteSheet(waveHeadMeta, waveHeadUrl),
+      prepareSpriteSheet(celebrateFeetMeta, celebrateFeetUrl),
+      prepareSpriteSheet(celebrateBodyMeta, celebrateBodyUrl),
+      prepareSpriteSheet(celebrateHandsMeta, celebrateHandsUrl),
+      prepareSpriteSheet(celebrateHeadMeta, celebrateHeadUrl),
     ])
-      .then(([feet, body, hands, head, headHelmet, emote]) => {
-        const headIdle = getPreparedFrame(head, 'idle_s', 0)
-        const feetIdle = getPreparedFrame(feet, 'idle_s', 0)
-        const referenceContentHeight = Math.max(
-          1,
-          Math.round(feetIdle.anchor.y - headIdle.head.y + 1),
-        )
-        return {
+      .then(
+        ([
           feet,
           body,
           hands,
           head,
           headHelmet,
-          emote,
-          referenceContentHeight,
-        }
-      })
+          waveFeet,
+          waveBody,
+          waveHands,
+          waveHead,
+          celebrateFeet,
+          celebrateBody,
+          celebrateHands,
+          celebrateHead,
+        ]) => {
+          const walk = { feet, body, hands, head }
+          const wave = {
+            feet: waveFeet,
+            body: waveBody,
+            hands: waveHands,
+            head: waveHead,
+          }
+          const celebrate = {
+            feet: celebrateFeet,
+            body: celebrateBody,
+            hands: celebrateHands,
+            head: celebrateHead,
+          }
+          return {
+            walk,
+            headHelmet,
+            wave,
+            celebrate,
+            referenceContentHeight: paperDollHeight(walk, 'idle_s'),
+            waveContentHeight: paperDollHeight(wave, 'wave_s'),
+            celebrateContentHeight: paperDollHeight(celebrate, 'celebrate_s'),
+          }
+        },
+      )
       .catch((error) => {
         sheetPromise = null
         sheetCacheKey = ''
@@ -117,13 +190,13 @@ function getSheets() {
   return sheetPromise
 }
 
-function bodyLayerFrame(
-  bundle: SheetBundle,
+function layerFrame(
+  layers: LayerBundle,
   layer: BodyLayerName,
   animationName: string,
   frameIndex: number,
 ): PreparedFrame {
-  return getPreparedFrame(bundle[layer], animationName, frameIndex)
+  return getPreparedFrame(layers[layer], animationName, frameIndex)
 }
 
 export function Avatar({
@@ -210,7 +283,9 @@ export function Avatar({
       } = readPaintProps()
 
       const isEmote = EMOTE_ANIMATIONS.has(animName)
-      const timingSheet = isEmote ? bundle.emote : bundle.head
+      const emoteLayers =
+        animName === 'celebrate_s' ? bundle.celebrate : bundle.wave
+      const timingSheet = isEmote ? emoteLayers.head : bundle.walk.head
       const anim = timingSheet.meta.animations[animName]
       if (!anim) return
 
@@ -245,37 +320,25 @@ export function Avatar({
 
       ctx.imageSmoothingEnabled = false
 
-      if (isEmote) {
-        const prepared = getPreparedFrame(bundle.emote, animName, frameIndex)
-        const sw = prepared.canvas.width
-        const sh = prepared.canvas.height
-        const drawScale =
-          bundle.referenceContentHeight /
-          Math.max(1, bundle.emote.referenceContentHeight)
-        const cssWidth = dw * sc * drawScale
-        const cssHeight = cssWidth * (sh / sw)
-
-        canvas.width = Math.max(1, Math.ceil(cssWidth * dpr))
-        canvas.height = Math.max(1, Math.ceil(cssHeight * dpr))
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-        ctx.clearRect(0, 0, cssWidth, cssHeight)
-        ctx.drawImage(prepared.canvas, 0, 0, sw, sh, 0, 0, cssWidth, cssHeight)
-
-        placeAtFeet(sw, sh, prepared.anchor.x, prepared.anchor.y, drawScale)
-        return
-      }
-
-      const headSheet = showHelmet ? bundle.headHelmet : bundle.head
+      const layers: LayerBundle = isEmote ? emoteLayers : bundle.walk
+      const headSheet =
+        !isEmote && showHelmet ? bundle.headHelmet : layers.head
       const headFrame = getPreparedFrame(headSheet, animName, frameIndex)
-      const bodyFrame = bodyLayerFrame(bundle, 'body', animName, frameIndex)
-      const handsFrame = bodyLayerFrame(bundle, 'hands', animName, frameIndex)
-      const feetFrame = bodyLayerFrame(bundle, 'feet', animName, frameIndex)
+      const bodyFrame = layerFrame(layers, 'body', animName, frameIndex)
+      const handsFrame = layerFrame(layers, 'hands', animName, frameIndex)
+      const feetFrame = layerFrame(layers, 'feet', animName, frameIndex)
 
       const sw = headFrame.canvas.width
       // Head may be taller after restoring walk_e hair overhang from walk_w.
       const overhang = Math.max(0, headFrame.canvas.height - bodyFrame.canvas.height)
       const sh = headFrame.canvas.height
-      const drawScale = 1
+      const emoteContentHeight =
+        animName === 'celebrate_s'
+          ? bundle.celebrateContentHeight
+          : bundle.waveContentHeight
+      const drawScale = isEmote
+        ? bundle.referenceContentHeight / Math.max(1, emoteContentHeight)
+        : 1
       const cssWidth = dw * sc * drawScale
       const cssHeight = cssWidth * (sh / sw)
       const px = cssWidth / sw
