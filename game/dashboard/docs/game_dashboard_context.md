@@ -70,7 +70,8 @@ dashboard/
   - walk/idle on → `avatar_head_white_helmet_spritesheet`
   - wave off → `avatar_wave_head_spritesheet`
   - wave on → `avatar_wave_head_white_helmet_spritesheet`
-- Celebrate emote still has no helmet head variant.
+  - celebrate off → `avatar_celebrate_head_spritesheet`
+  - celebrate on → `avatar_celebrate_head_white_helmet_spritesheet`
 
 ### Animation rows (body layers, 8×5, 1536×1024, chroma `#FF00FF`)
 
@@ -100,7 +101,7 @@ Split from `avatar_wave_celebrate_spritesheet` via `scripts/split_emote_layers.p
    - `walk_e`: restore that band as **overhang** above the cell.
 4. Per-frame feet + head anchors from opaque pixels.
 5. Layered draw offsets non-head layers by overhang when head is taller.
-6. **`SHEET_REVISION`** in `Avatar.tsx` (currently **29**) busts the in-memory sheet cache with Vite URLs.
+6. **`SHEET_REVISION`** in `Avatar.tsx` (currently **32**) busts the in-memory sheet cache with Vite URLs.
 
 ---
 
@@ -117,8 +118,10 @@ Split from `avatar_wave_celebrate_spritesheet` via `scripts/split_emote_layers.p
 | `avatar_head_white_helmet_spritesheet.{png,json}` | Helmet-equipped head (walk/idle) |
 | `avatar_wave_{feet,body,hands,head}_spritesheet.{png,json}` | Wave emote layers (Wave button → `wave_s`) |
 | `avatar_wave_head_white_helmet_spritesheet.{png,json}` | Helmet-equipped wave head |
-| `avatar_celebrate_{feet,body,hands,head}_spritesheet.{png,json}` | Celebrate emote layers |
+| `avatar_celebrate_{feet,body,hands,head}_spritesheet.{png,json}` | Celebrate emote layers (Celebrate button → `celebrate_s`) |
+| `avatar_celebrate_head_white_helmet_spritesheet.{png,json}` | Helmet-equipped celebrate head |
 | `avatar_wave_assembled_spritesheet.{png,json}` | Preview composite of wave layers (not imported at runtime) |
+| `avatar_celebrate_assembled_spritesheet.{png,json}` | Preview composite of celebrate layers (not imported at runtime) |
 
 ### Source / unused at runtime
 

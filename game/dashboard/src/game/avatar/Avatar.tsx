@@ -27,6 +27,8 @@ import celebrateHandsUrl from '../../assets/avatars/avatar_celebrate_hands_sprit
 import celebrateHandsMetaJson from '../../assets/avatars/avatar_celebrate_hands_spritesheet.json'
 import celebrateHeadUrl from '../../assets/avatars/avatar_celebrate_head_spritesheet.png'
 import celebrateHeadMetaJson from '../../assets/avatars/avatar_celebrate_head_spritesheet.json'
+import celebrateHeadHelmetUrl from '../../assets/avatars/avatar_celebrate_head_white_helmet_spritesheet.png'
+import celebrateHeadHelmetMetaJson from '../../assets/avatars/avatar_celebrate_head_white_helmet_spritesheet.json'
 import {
   getPreparedFrame,
   prepareSpriteSheet,
@@ -49,9 +51,10 @@ const celebrateFeetMeta = celebrateFeetMetaJson as SpriteSheetMeta
 const celebrateBodyMeta = celebrateBodyMetaJson as SpriteSheetMeta
 const celebrateHandsMeta = celebrateHandsMetaJson as SpriteSheetMeta
 const celebrateHeadMeta = celebrateHeadMetaJson as SpriteSheetMeta
+const celebrateHeadHelmetMeta = celebrateHeadHelmetMetaJson as SpriteSheetMeta
 
 /** Bump when frame-prep logic or layer assets change. */
-const SHEET_REVISION = 29
+const SHEET_REVISION = 32
 
 const EMOTE_ANIMATIONS = new Set(['wave_s', 'celebrate_s'])
 
@@ -94,6 +97,7 @@ type SheetBundle = {
   wave: LayerBundle
   waveHeadHelmet: PreparedSpriteSheet
   celebrate: LayerBundle
+  celebrateHeadHelmet: PreparedSpriteSheet
   /** Standing-pose height used to size emotes against the layered avatar. */
   referenceContentHeight: number
   /** Full paper-doll height for wave (feet→head), not head-layer-only. */
@@ -127,6 +131,7 @@ function getSheets() {
     celebrateBodyUrl,
     celebrateHandsUrl,
     celebrateHeadUrl,
+    celebrateHeadHelmetUrl,
     SHEET_REVISION,
   ].join('|')
   if (!sheetPromise || sheetCacheKey !== cacheKey) {
@@ -146,6 +151,7 @@ function getSheets() {
       prepareSpriteSheet(celebrateBodyMeta, celebrateBodyUrl),
       prepareSpriteSheet(celebrateHandsMeta, celebrateHandsUrl),
       prepareSpriteSheet(celebrateHeadMeta, celebrateHeadUrl),
+      prepareSpriteSheet(celebrateHeadHelmetMeta, celebrateHeadHelmetUrl),
     ])
       .then(
         ([
@@ -163,6 +169,7 @@ function getSheets() {
           celebrateBody,
           celebrateHands,
           celebrateHead,
+          celebrateHeadHelmet,
         ]) => {
           const walk = { feet, body, hands, head }
           const wave = {
@@ -183,6 +190,7 @@ function getSheets() {
             wave,
             waveHeadHelmet,
             celebrate,
+            celebrateHeadHelmet,
             referenceContentHeight: paperDollHeight(walk, 'idle_s'),
             waveContentHeight: paperDollHeight(wave, 'wave_s'),
             celebrateContentHeight: paperDollHeight(celebrate, 'celebrate_s'),
@@ -332,6 +340,7 @@ export function Avatar({
       let headSheet = layers.head
       if (showHelmet) {
         if (animName === 'wave_s') headSheet = bundle.waveHeadHelmet
+        else if (animName === 'celebrate_s') headSheet = bundle.celebrateHeadHelmet
         else if (!isEmote) headSheet = bundle.headHelmet
       }
       const headFrame = getPreparedFrame(headSheet, animName, frameIndex)
