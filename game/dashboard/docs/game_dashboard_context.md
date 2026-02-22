@@ -57,17 +57,20 @@ dashboard/
 
 ## Avatar (paper-doll)
 
-### Draw order (walk / idle / emotes)
+### Draw order
 
-`feet → body → hands → head`
+- Walk / idle: `feet → body → hands → head`
+- Wave / celebrate: `feet → body → head → hands` (hand in front of head/helmet)
 
 ### Helmet (MVP)
 
 - **Not** a separate overlay layer at runtime.
-- `helmetEquipped` swaps head sheet (walk/idle only):
-  - off → `avatar_head_spritesheet`
-  - on → `avatar_head_white_helmet_spritesheet` (pre-composited head + white helmet)
-- Emotes use layered wave/celebrate sheets (**no helmet** on that art).
+- `helmetEquipped` swaps head sheet:
+  - walk/idle off → `avatar_head_spritesheet`
+  - walk/idle on → `avatar_head_white_helmet_spritesheet`
+  - wave off → `avatar_wave_head_spritesheet`
+  - wave on → `avatar_wave_head_white_helmet_spritesheet`
+- Celebrate emote still has no helmet head variant.
 
 ### Animation rows (body layers, 8×5, 1536×1024, chroma `#FF00FF`)
 
@@ -97,7 +100,7 @@ Split from `avatar_wave_celebrate_spritesheet` via `scripts/split_emote_layers.p
    - `walk_e`: restore that band as **overhang** above the cell.
 4. Per-frame feet + head anchors from opaque pixels.
 5. Layered draw offsets non-head layers by overhang when head is taller.
-6. **`SHEET_REVISION`** in `Avatar.tsx` (currently **22**) busts the in-memory sheet cache with Vite URLs.
+6. **`SHEET_REVISION`** in `Avatar.tsx` (currently **29**) busts the in-memory sheet cache with Vite URLs.
 
 ---
 
@@ -111,8 +114,9 @@ Split from `avatar_wave_celebrate_spritesheet` via `scripts/split_emote_layers.p
 | `avatar_body_spritesheet.{png,json}` | Walk/idle tunic / belt |
 | `avatar_hands_spritesheet.{png,json}` | Walk/idle hands |
 | `avatar_head_spritesheet.{png,json}` | Walk/idle default head (`packedWalkHair`) |
-| `avatar_head_white_helmet_spritesheet.{png,json}` | Helmet-equipped head |
+| `avatar_head_white_helmet_spritesheet.{png,json}` | Helmet-equipped head (walk/idle) |
 | `avatar_wave_{feet,body,hands,head}_spritesheet.{png,json}` | Wave emote layers (Wave button → `wave_s`) |
+| `avatar_wave_head_white_helmet_spritesheet.{png,json}` | Helmet-equipped wave head |
 | `avatar_celebrate_{feet,body,hands,head}_spritesheet.{png,json}` | Celebrate emote layers |
 | `avatar_wave_assembled_spritesheet.{png,json}` | Preview composite of wave layers (not imported at runtime) |
 

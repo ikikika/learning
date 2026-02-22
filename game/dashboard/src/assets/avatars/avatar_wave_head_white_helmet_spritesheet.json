@@ -1,0 +1,22 @@
+{
+  "image": "avatar_wave_head_white_helmet_spritesheet.png",
+  "imageWidth": 1536,
+  "imageHeight": 512,
+  "columns": 8,
+  "rows": 1,
+  "frameWidth": 192,
+  "frameHeight": 512,
+  "chromaKey": "#FF00FF",
+  "animations": {
+    "wave_s": {
+      "row": 0,
+      "frames": 8,
+      "frameDurationMs": 100
+    }
+  },
+  "directions": {
+    "s": "front / toward camera"
+  },
+  "slot": "head",
+  "notes": "Wave head layer with white helmet (gold trim) composited. Same grid as avatar_wave_head_spritesheet. Used when helmetEquipped during wave_s."
+}

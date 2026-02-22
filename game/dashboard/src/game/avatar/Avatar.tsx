@@ -17,6 +17,8 @@ import waveHandsUrl from '../../assets/avatars/avatar_wave_hands_spritesheet.png
 import waveHandsMetaJson from '../../assets/avatars/avatar_wave_hands_spritesheet.json'
 import waveHeadUrl from '../../assets/avatars/avatar_wave_head_spritesheet.png'
 import waveHeadMetaJson from '../../assets/avatars/avatar_wave_head_spritesheet.json'
+import waveHeadHelmetUrl from '../../assets/avatars/avatar_wave_head_white_helmet_spritesheet.png'
+import waveHeadHelmetMetaJson from '../../assets/avatars/avatar_wave_head_white_helmet_spritesheet.json'
 import celebrateFeetUrl from '../../assets/avatars/avatar_celebrate_feet_spritesheet.png'
 import celebrateFeetMetaJson from '../../assets/avatars/avatar_celebrate_feet_spritesheet.json'
 import celebrateBodyUrl from '../../assets/avatars/avatar_celebrate_body_spritesheet.png'
@@ -42,13 +44,14 @@ const waveFeetMeta = waveFeetMetaJson as SpriteSheetMeta
 const waveBodyMeta = waveBodyMetaJson as SpriteSheetMeta
 const waveHandsMeta = waveHandsMetaJson as SpriteSheetMeta
 const waveHeadMeta = waveHeadMetaJson as SpriteSheetMeta
+const waveHeadHelmetMeta = waveHeadHelmetMetaJson as SpriteSheetMeta
 const celebrateFeetMeta = celebrateFeetMetaJson as SpriteSheetMeta
 const celebrateBodyMeta = celebrateBodyMetaJson as SpriteSheetMeta
 const celebrateHandsMeta = celebrateHandsMetaJson as SpriteSheetMeta
 const celebrateHeadMeta = celebrateHeadMetaJson as SpriteSheetMeta
 
 /** Bump when frame-prep logic or layer assets change. */
-const SHEET_REVISION = 22
+const SHEET_REVISION = 29
 
 const EMOTE_ANIMATIONS = new Set(['wave_s', 'celebrate_s'])
 
@@ -89,6 +92,7 @@ type SheetBundle = {
   walk: LayerBundle
   headHelmet: PreparedSpriteSheet
   wave: LayerBundle
+  waveHeadHelmet: PreparedSpriteSheet
   celebrate: LayerBundle
   /** Standing-pose height used to size emotes against the layered avatar. */
   referenceContentHeight: number
@@ -118,6 +122,7 @@ function getSheets() {
     waveBodyUrl,
     waveHandsUrl,
     waveHeadUrl,
+    waveHeadHelmetUrl,
     celebrateFeetUrl,
     celebrateBodyUrl,
     celebrateHandsUrl,
@@ -136,6 +141,7 @@ function getSheets() {
       prepareSpriteSheet(waveBodyMeta, waveBodyUrl),
       prepareSpriteSheet(waveHandsMeta, waveHandsUrl),
       prepareSpriteSheet(waveHeadMeta, waveHeadUrl),
+      prepareSpriteSheet(waveHeadHelmetMeta, waveHeadHelmetUrl),
       prepareSpriteSheet(celebrateFeetMeta, celebrateFeetUrl),
       prepareSpriteSheet(celebrateBodyMeta, celebrateBodyUrl),
       prepareSpriteSheet(celebrateHandsMeta, celebrateHandsUrl),
@@ -152,6 +158,7 @@ function getSheets() {
           waveBody,
           waveHands,
           waveHead,
+          waveHeadHelmet,
           celebrateFeet,
           celebrateBody,
           celebrateHands,
@@ -174,6 +181,7 @@ function getSheets() {
             walk,
             headHelmet,
             wave,
+            waveHeadHelmet,
             celebrate,
             referenceContentHeight: paperDollHeight(walk, 'idle_s'),
             waveContentHeight: paperDollHeight(wave, 'wave_s'),
@@ -321,8 +329,11 @@ export function Avatar({
       ctx.imageSmoothingEnabled = false
 
       const layers: LayerBundle = isEmote ? emoteLayers : bundle.walk
-      const headSheet =
-        !isEmote && showHelmet ? bundle.headHelmet : layers.head
+      let headSheet = layers.head
+      if (showHelmet) {
+        if (animName === 'wave_s') headSheet = bundle.waveHeadHelmet
+        else if (!isEmote) headSheet = bundle.headHelmet
+      }
       const headFrame = getPreparedFrame(headSheet, animName, frameIndex)
       const bodyFrame = layerFrame(layers, 'body', animName, frameIndex)
       const handsFrame = layerFrame(layers, 'hands', animName, frameIndex)
@@ -364,11 +375,17 @@ export function Avatar({
         )
       }
 
-      // feet → body → hands → head
+      // Walk/idle: feet → body → hands → head
+      // Wave (and celebrate): hands above head/helmet so the wave reads in front
       drawLayer(feetFrame, overhang)
       drawLayer(bodyFrame, overhang)
-      drawLayer(handsFrame, overhang)
-      drawLayer(headFrame, 0)
+      if (animName === 'wave_s' || animName === 'celebrate_s') {
+        drawLayer(headFrame, 0)
+        drawLayer(handsFrame, overhang)
+      } else {
+        drawLayer(handsFrame, overhang)
+        drawLayer(headFrame, 0)
+      }
 
       placeAtFeet(
         sw,
