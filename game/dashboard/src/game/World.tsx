@@ -5,8 +5,7 @@ import {
   depthFromGrid,
   gridBounds,
   gridToScreen,
-  isInBounds,
-  iterateCells,
+  iterateCellsCoveringRect,
   scaleFromDepth,
   screenToGrid,
   snapToCell,
@@ -44,8 +43,31 @@ export function World({
   )
 
   const bounds = useMemo(() => gridBounds(config), [config])
-  const cells = useMemo(() => [...iterateCells(config)], [config])
-  const maxDepth = config.cols + config.rows - 2
+  const padding = 24
+  const stageRect = useMemo(
+    () => ({
+      minX: bounds.minX - padding,
+      minY: bounds.minY - padding,
+      width: bounds.width + padding * 2,
+      height: bounds.height + padding * 2,
+    }),
+    [bounds],
+  )
+  const cells = useMemo(
+    () => [...iterateCellsCoveringRect(stageRect, config)],
+    [stageRect, config],
+  )
+  const floorCells = useMemo(() => {
+    const keys = new Set(cells.map((c) => `${c.gridX},${c.gridY}`))
+    return keys
+  }, [cells])
+  const maxDepth = useMemo(() => {
+    let max = 0
+    for (const cell of cells) {
+      max = Math.max(max, depthFromGrid(cell))
+    }
+    return max
+  }, [cells])
 
   const startCell = useMemo(
     () => ({
@@ -70,10 +92,11 @@ export function World({
     setEmote(next)
   }
 
-  const padding = 24
-  const viewBox = `${bounds.minX - padding} ${bounds.minY - padding} ${
-    bounds.width + padding * 2
-  } ${bounds.height + padding * 2}`
+  const viewBox = `${stageRect.minX} ${stageRect.minY} ${stageRect.width} ${stageRect.height}`
+
+  function isFloorCell(cell: GridPoint) {
+    return floorCells.has(`${cell.gridX},${cell.gridY}`)
+  }
 
   function hitTest(clientX: number, clientY: number, svg: SVGSVGElement) {
     const point = svg.createSVGPoint()
@@ -84,7 +107,7 @@ export function World({
     const local = point.matrixTransform(ctm.inverse())
     const fractional = screenToGrid({ x: local.x, y: local.y }, config)
     const cell = snapToCell(fractional)
-    return isInBounds(cell, config) ? cell : null
+    return isFloorCell(cell) ? cell : null
   }
 
   const active = hover ?? destination
@@ -145,6 +168,7 @@ export function World({
           ref={svgRef}
           className="world__svg"
           viewBox={viewBox}
+          preserveAspectRatio="xMidYMid slice"
           role="img"
           aria-label="Isometric room grid"
           onPointerLeave={() => setHover(null)}
@@ -177,10 +201,10 @@ export function World({
 
           <rect
             className="world__backdrop"
-            x={bounds.minX - padding}
-            y={bounds.minY - padding}
-            width={bounds.width + padding * 2}
-            height={bounds.height + padding * 2}
+            x={stageRect.minX}
+            y={stageRect.minY}
+            width={stageRect.width}
+            height={stageRect.height}
             fill="url(#room-wash)"
           />
 

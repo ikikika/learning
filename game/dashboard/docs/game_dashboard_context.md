@@ -43,7 +43,7 @@ dashboard/
 
 ## World (isometric room)
 
-- **Grid:** 10×10, tile 96×48, origin (0,0). Diamond tiles in SVG.
+- **Grid:** 10×10 core, tile 96×48, origin (0,0). Diamond tiles in SVG; `preserveAspectRatio="xMidYMid slice"`; extra lattice cells fill AABB corner voids so the stage rectangle is fully tiled.
 - **Projection:** `x = (gx-gy)*halfW`, `y = (gx+gy)*halfH`.
 - **Depth:** `gx+gy`. **Scale:** ~0.6 (back) → 1.0 (front).
 - **Input:** click tile → `walkTo` (emotes block clicks).

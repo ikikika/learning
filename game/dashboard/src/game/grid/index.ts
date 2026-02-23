@@ -11,4 +11,7 @@ export {
   tilePath,
   gridBounds,
   iterateCells,
+  tileBounds,
+  iterateCellsCoveringRect,
 } from './isometric'
+export type { ScreenRect } from './isometric'

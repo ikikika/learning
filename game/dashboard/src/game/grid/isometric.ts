@@ -143,3 +143,68 @@ export function* iterateCells(
     }
   }
 }
+
+export type ScreenRect = {
+  minX: number
+  minY: number
+  width: number
+  height: number
+}
+
+/** Axis-aligned bounds of one diamond tile. */
+export function tileBounds(
+  point: GridPoint,
+  config: IsometricGridConfig = DEFAULT_GRID,
+): ScreenRect {
+  const center = gridToScreen(point, config)
+  const halfW = config.tileWidth / 2
+  const halfH = config.tileHeight / 2
+  return {
+    minX: center.x - halfW,
+    minY: center.y - halfH,
+    width: config.tileWidth,
+    height: config.tileHeight,
+  }
+}
+
+function rectsOverlap(a: ScreenRect, b: ScreenRect): boolean {
+  return (
+    a.minX < b.minX + b.width &&
+    a.minX + a.width > b.minX &&
+    a.minY < b.minY + b.height &&
+    a.minY + a.height > b.minY
+  )
+}
+
+/**
+ * All lattice cells whose diamonds intersect a screen rect.
+ * Used to fill AABB corner voids around the core cols×rows diamond.
+ */
+export function* iterateCellsCoveringRect(
+  rect: ScreenRect,
+  config: IsometricGridConfig = DEFAULT_GRID,
+): Generator<GridPoint> {
+  const corners: ScreenPoint[] = [
+    { x: rect.minX, y: rect.minY },
+    { x: rect.minX + rect.width, y: rect.minY },
+    { x: rect.minX, y: rect.minY + rect.height },
+    { x: rect.minX + rect.width, y: rect.minY + rect.height },
+  ]
+  const fracs = corners.map((corner) => screenToGrid(corner, config))
+  const pad = 2
+  const minGX =
+    Math.floor(Math.min(...fracs.map((p) => p.gridX))) - pad
+  const maxGX = Math.ceil(Math.max(...fracs.map((p) => p.gridX))) + pad
+  const minGY =
+    Math.floor(Math.min(...fracs.map((p) => p.gridY))) - pad
+  const maxGY = Math.ceil(Math.max(...fracs.map((p) => p.gridY))) + pad
+
+  for (let gridY = minGY; gridY <= maxGY; gridY += 1) {
+    for (let gridX = minGX; gridX <= maxGX; gridX += 1) {
+      const cell = { gridX, gridY }
+      if (rectsOverlap(tileBounds(cell, config), rect)) {
+        yield cell
+      }
+    }
+  }
+}
