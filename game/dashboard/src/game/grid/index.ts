@@ -13,5 +13,6 @@ export {
   iterateCells,
   tileBounds,
   iterateCellsCoveringRect,
+  expandRectToAspect,
 } from './isometric'
 export type { ScreenRect } from './isometric'

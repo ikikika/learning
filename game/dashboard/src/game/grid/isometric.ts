@@ -208,3 +208,38 @@ export function* iterateCellsCoveringRect(
     }
   }
 }
+
+/**
+ * Expand a core rect (centered) so its aspect matches `targetAspect` (width/height).
+ * Keeps isometric tile proportions while the stage fills arbitrary viewports.
+ */
+export function expandRectToAspect(
+  core: ScreenRect,
+  targetAspect: number,
+): ScreenRect {
+  if (!(targetAspect > 0) || !(core.width > 0) || !(core.height > 0)) {
+    return core
+  }
+
+  const coreAspect = core.width / core.height
+  const cx = core.minX + core.width / 2
+  const cy = core.minY + core.height / 2
+
+  if (targetAspect > coreAspect) {
+    const width = core.height * targetAspect
+    return {
+      minX: cx - width / 2,
+      minY: core.minY,
+      width,
+      height: core.height,
+    }
+  }
+
+  const height = core.width / targetAspect
+  return {
+    minX: core.minX,
+    minY: cy - height / 2,
+    width: core.width,
+    height,
+  }
+}

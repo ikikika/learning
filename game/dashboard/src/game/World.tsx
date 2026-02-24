@@ -1,8 +1,9 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Avatar } from './avatar/Avatar'
 import {
   DEFAULT_GRID,
   depthFromGrid,
+  expandRectToAspect,
   gridBounds,
   gridToScreen,
   iterateCellsCoveringRect,
@@ -33,6 +34,7 @@ export function World({
 }: WorldProps) {
   const stageRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<SVGSVGElement>(null)
+  const [stageSize, setStageSize] = useState({ width: 0, height: 0 })
 
   const config = useMemo(
     () => ({
@@ -42,9 +44,28 @@ export function World({
     [configProp],
   )
 
+  useEffect(() => {
+    const stage = stageRef.current
+    if (!stage) return
+
+    const update = () => {
+      const { width, height } = stage.getBoundingClientRect()
+      setStageSize((prev) =>
+        prev.width === width && prev.height === height
+          ? prev
+          : { width, height },
+      )
+    }
+
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(stage)
+    return () => observer.disconnect()
+  }, [])
+
   const bounds = useMemo(() => gridBounds(config), [config])
   const padding = 24
-  const stageRect = useMemo(
+  const coreRect = useMemo(
     () => ({
       minX: bounds.minX - padding,
       minY: bounds.minY - padding,
@@ -53,6 +74,17 @@ export function World({
     }),
     [bounds],
   )
+
+  const stageAspect =
+    stageSize.width > 0 && stageSize.height > 0
+      ? stageSize.width / stageSize.height
+      : coreRect.width / coreRect.height
+
+  const stageRect = useMemo(
+    () => expandRectToAspect(coreRect, stageAspect),
+    [coreRect, stageAspect],
+  )
+
   const cells = useMemo(
     () => [...iterateCellsCoveringRect(stageRect, config)],
     [stageRect, config],
@@ -168,7 +200,7 @@ export function World({
           ref={svgRef}
           className="world__svg"
           viewBox={viewBox}
-          preserveAspectRatio="xMidYMid slice"
+          preserveAspectRatio="xMidYMid meet"
           role="img"
           aria-label="Isometric room grid"
           onPointerLeave={() => setHover(null)}
