@@ -144,6 +144,24 @@ export function* iterateCells(
   }
 }
 
+/** Center of the walkable diamond (matches DEFAULT_GRID mid-cell). */
+export const WALKABLE_CENTER: GridPoint = { gridX: 5, gridY: 5 }
+
+/**
+ * Manhattan radius of the walkable diamond whose corners are
+ * (-1,5), (5,-1), (11,5), (5,11).
+ */
+export const WALKABLE_RADIUS = 6
+
+/** Avatar may only move on cells inside the walkable diamond (inclusive). */
+export function isWalkableCell(point: GridPoint): boolean {
+  return (
+    Math.abs(point.gridX - WALKABLE_CENTER.gridX) +
+      Math.abs(point.gridY - WALKABLE_CENTER.gridY) <=
+    WALKABLE_RADIUS
+  )
+}
+
 export type ScreenRect = {
   minX: number
   minY: number

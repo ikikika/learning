@@ -14,5 +14,8 @@ export {
   tileBounds,
   iterateCellsCoveringRect,
   expandRectToAspect,
+  WALKABLE_CENTER,
+  WALKABLE_RADIUS,
+  isWalkableCell,
 } from './isometric'
 export type { ScreenRect } from './isometric'

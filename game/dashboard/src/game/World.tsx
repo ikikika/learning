@@ -6,6 +6,7 @@ import {
   expandRectToAspect,
   gridBounds,
   gridToScreen,
+  isWalkableCell,
   iterateCellsCoveringRect,
   scaleFromDepth,
   screenToGrid,
@@ -23,7 +24,11 @@ type WorldProps = {
   showGrid?: boolean
 }
 
-function cellFill(point: GridPoint): string {
+function cellFill(point: GridPoint, walkable: boolean): string {
+  if (!walkable) {
+    const parity = (point.gridX + point.gridY) % 2
+    return parity === 0 ? 'var(--tile-blocked-a)' : 'var(--tile-blocked-b)'
+  }
   const parity = (point.gridX + point.gridY) % 2
   return parity === 0 ? 'var(--tile-a)' : 'var(--tile-b)'
 }
@@ -130,7 +135,12 @@ export function World({
     return floorCells.has(`${cell.gridX},${cell.gridY}`)
   }
 
-  function hitTest(clientX: number, clientY: number, svg: SVGSVGElement) {
+  function hitTest(
+    clientX: number,
+    clientY: number,
+    svg: SVGSVGElement,
+    opts?: { walkableOnly?: boolean },
+  ) {
     const point = svg.createSVGPoint()
     point.x = clientX
     point.y = clientY
@@ -139,7 +149,9 @@ export function World({
     const local = point.matrixTransform(ctm.inverse())
     const fractional = screenToGrid({ x: local.x, y: local.y }, config)
     const cell = snapToCell(fractional)
-    return isFloorCell(cell) ? cell : null
+    if (!isFloorCell(cell)) return null
+    if (opts?.walkableOnly && !isWalkableCell(cell)) return null
+    return cell
   }
 
   const active = hover ?? destination
@@ -218,6 +230,7 @@ export function World({
               event.clientX,
               event.clientY,
               event.currentTarget,
+              { walkableOnly: true },
             )
             if (!cell) return
             setDestination(cell)
@@ -243,21 +256,28 @@ export function World({
           {[...cells]
             .sort((a, b) => depthFromGrid(a) - depthFromGrid(b))
             .map((cell) => {
+              const walkable = isWalkableCell(cell)
               const isHover =
-                hover?.gridX === cell.gridX && hover?.gridY === cell.gridY
+                walkable &&
+                hover?.gridX === cell.gridX &&
+                hover?.gridY === cell.gridY
               const isDestination =
+                walkable &&
                 destination?.gridX === cell.gridX &&
                 destination?.gridY === cell.gridY
               const isOccupied =
-                occupied.gridX === cell.gridX && occupied.gridY === cell.gridY
+                walkable &&
+                occupied.gridX === cell.gridX &&
+                occupied.gridY === cell.gridY
 
               return (
                 <g key={`${cell.gridX}-${cell.gridY}`}>
                   <path
                     d={tilePath(cell, config)}
-                    fill={cellFill(cell)}
+                    fill={cellFill(cell, walkable)}
                     className={[
                       'world__tile',
+                      walkable ? '' : 'world__tile--blocked',
                       isHover ? 'world__tile--hover' : '',
                       isDestination ? 'world__tile--selected' : '',
                       isOccupied ? 'world__tile--occupied' : '',

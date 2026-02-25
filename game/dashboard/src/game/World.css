@@ -3,6 +3,8 @@
   --room-front: #e8e0d4;
   --tile-a: #d7c4a8;
   --tile-b: #cbb892;
+  --tile-blocked-a: #d98989;
+  --tile-blocked-b: #c96f6f;
   --tile-stroke: rgba(74, 58, 36, 0.22);
   --tile-hover: rgba(255, 248, 230, 0.55);
   --tile-selected-stroke: #3d5c45;
@@ -67,6 +69,10 @@
 
 .world__tile {
   transition: fill 120ms ease, stroke 120ms ease;
+}
+
+.world__tile--blocked {
+  pointer-events: none;
 }
 
 .world__tile--hover {

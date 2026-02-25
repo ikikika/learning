@@ -44,6 +44,7 @@ dashboard/
 ## World (isometric room)
 
 - **Grid:** 10×10 core, tile 96×48, origin (0,0). Stage fills the viewport; viewBox aspect tracks the stage via `ResizeObserver` + `expandRectToAspect` so diamonds stay undistorted while extra lattice cells fill the visible area.
+- **Walkable area:** Manhattan diamond centered at (5,5) with radius 6 — corners `(-1,5)`, `(5,-1)`, `(11,5)`, `(5,11)`. Other tiles are blocked (red) and not clickable.
 - **Projection:** `x = (gx-gy)*halfW`, `y = (gx+gy)*halfH`.
 - **Depth:** `gx+gy`. **Scale:** ~0.6 (back) → 1.0 (front).
 - **Input:** click tile → `walkTo` (emotes block clicks).
