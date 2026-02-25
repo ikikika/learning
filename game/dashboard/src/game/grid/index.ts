@@ -14,6 +14,8 @@ export {
   tileBounds,
   iterateCellsCoveringRect,
   expandRectToAspect,
+  clampRectToMinTileWidth,
+  MIN_TILE_WIDTH_PX,
   WALKABLE_CENTER,
   WALKABLE_RADIUS,
   isWalkableCell,

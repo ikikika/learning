@@ -2,12 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Avatar } from './avatar/Avatar'
 import {
   DEFAULT_GRID,
+  clampRectToMinTileWidth,
   depthFromGrid,
   expandRectToAspect,
   gridBounds,
   gridToScreen,
   isWalkableCell,
   iterateCellsCoveringRect,
+  MIN_TILE_WIDTH_PX,
   scaleFromDepth,
   screenToGrid,
   snapToCell,
@@ -85,10 +87,16 @@ export function World({
       ? stageSize.width / stageSize.height
       : coreRect.width / coreRect.height
 
-  const stageRect = useMemo(
-    () => expandRectToAspect(coreRect, stageAspect),
-    [coreRect, stageAspect],
-  )
+  const stageRect = useMemo(() => {
+    const fitted = expandRectToAspect(coreRect, stageAspect)
+    if (!(stageSize.width > 0)) return fitted
+    return clampRectToMinTileWidth(
+      fitted,
+      stageSize.width,
+      config.tileWidth,
+      MIN_TILE_WIDTH_PX,
+    )
+  }, [coreRect, stageAspect, stageSize.width, config.tileWidth])
 
   const cells = useMemo(
     () => [...iterateCellsCoveringRect(stageRect, config)],

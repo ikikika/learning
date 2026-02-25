@@ -9,6 +9,9 @@ export const DEFAULT_GRID: IsometricGridConfig = {
   originY: 0,
 }
 
+/** Minimum on-screen diamond width (CSS px). */
+export const MIN_TILE_WIDTH_PX = 96
+
 /** Convert logical grid coords → screen pixels (diamond / isometric projection). */
 export function gridToScreen(
   point: GridPoint,
@@ -258,6 +261,38 @@ export function expandRectToAspect(
     minX: core.minX,
     minY: cy - height / 2,
     width: core.width,
+    height,
+  }
+}
+
+/**
+ * Shrink a view rect (zoom in, centered) so tiles render at least `minTileWidthPx`
+ * wide when mapped onto a stage of `stageWidthPx`.
+ */
+export function clampRectToMinTileWidth(
+  rect: ScreenRect,
+  stageWidthPx: number,
+  tileWidth: number,
+  minTileWidthPx: number = MIN_TILE_WIDTH_PX,
+): ScreenRect {
+  if (!(stageWidthPx > 0) || !(tileWidth > 0) || !(minTileWidthPx > 0)) {
+    return rect
+  }
+
+  const screenTileWidth = tileWidth * (stageWidthPx / rect.width)
+  if (screenTileWidth >= minTileWidthPx) return rect
+
+  const maxViewWidth = stageWidthPx * (tileWidth / minTileWidthPx)
+  const scale = maxViewWidth / rect.width
+  const width = rect.width * scale
+  const height = rect.height * scale
+  const cx = rect.minX + rect.width / 2
+  const cy = rect.minY + rect.height / 2
+
+  return {
+    minX: cx - width / 2,
+    minY: cy - height / 2,
+    width,
     height,
   }
 }
