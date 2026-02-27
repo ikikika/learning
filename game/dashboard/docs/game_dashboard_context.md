@@ -1,6 +1,6 @@
 # Game Dashboard — Current Context
 
-Living snapshot of what is implemented in `/Users/user1/projects/learning/game/dashboard`.  
+Living snapshot of what is implemented in `/Users/user2/projects/learning/game/dashboard`.  
 Design north-star (goals, phases, principles): [`avatar_gamification_dashboard_decisions.md`](./avatar_gamification_dashboard_decisions.md).
 
 ---
@@ -34,25 +34,35 @@ dashboard/
 │       ├── avatar/
 │       │   ├── Avatar.tsx                           # canvas paper-doll + emotes
 │       │   └── spritesheet.ts                       # chroma, frames, anchors, hair overhang
-│       ├── grid/isometric.ts                        # project / hit-test / depth scale
+│       ├── grid/
+│       │   ├── isometric.ts                         # project / hit-test / depth / walkable
+│       │   └── types.ts
 │       └── movement/path.ts                         # 8-connected grid path
 └── .tmp-venv/                                       # local Pillow tooling (not app runtime)
 ```
+
+`.gitignore` ignores `**/.DS_Store` in every directory.
 
 ---
 
 ## World (isometric room)
 
-- **Grid:** 10×10 core, tile 96×48 (min on-screen width 96px), origin (0,0). Stage fills the viewport; viewBox aspect tracks the stage via `ResizeObserver` + `expandRectToAspect`, then `clampRectToMinTileWidth` so diamonds stay ≥114px wide.
-- **Walkable area:** Manhattan diamond centered at (5,5) with radius 6 — corners `(-1,5)`, `(5,-1)`, `(11,5)`, `(5,11)`. Other tiles are blocked (red) and not clickable.
+The app is **full-viewport**: `#root` is `100svh` / `100%` wide (no 960px cap). `.world__stage` flexes to the remaining height after chrome.
+
+- **Logical tile:** 96×48, origin (0,0). Core room is 10×10.
+- **Min on-screen tile width:** `MIN_TILE_WIDTH_PX = 96`. If the stage would shrink tiles below that, `clampRectToMinTileWidth` zooms the viewBox in (centered).
+- **Stage fill:** `ResizeObserver` measures the stage; `expandRectToAspect` matches the viewBox aspect to the stage so diamonds are **not stretched**. SVG uses `preserveAspectRatio="xMidYMid meet"`.
+- **Extra tiles:** `iterateCellsCoveringRect` draws every lattice cell whose diamond intersects the stage rect, so AABB corner voids are filled (walkable or blocked).
+- **Walkable area:** Manhattan diamond centered at `(5,5)` with radius 6 — corners `(-1,5)`, `(5,-1)`, `(11,5)`, `(5,11)`. `isWalkableCell`: `|gx-5| + |gy-5| ≤ 6`.
+- **Blocked tiles:** all other floor cells are red (`--tile-blocked-a/b`), not hover-selectable as destinations, and clicks ignore them.
 - **Projection:** `x = (gx-gy)*halfW`, `y = (gx+gy)*halfH`.
-- **Depth:** `gx+gy`. **Scale:** ~0.6 (back) → 1.0 (front).
-- **Input:** click tile → `walkTo` (emotes block clicks).
-- **Avatar:** HTML `<canvas>` overlay (not SVG), feet-anchored, depth-scaled; `displayWidth` 192 (2× tile width).
+- **Depth:** `gx+gy`. **Scale:** ~0.6 (back) → 1.0 (front), applied to avatar draw size.
+- **Input:** click a **walkable** tile → `walkTo` (emotes block clicks).
+- **Avatar:** HTML `<canvas>` overlay (not SVG), feet-anchored, depth-scaled. Base `displayWidth` **192** (2× logical tile width).
 - **Grid visibility:** currently **on** (`showGrid`); decisions doc prefers invisible grid later.
 - **No furniture / interaction points yet.** Soft room gradient only.
 
-**Movement:** 8-connected path (diagonal when both axes change); segment time from screen distance; facing from screen-dominant axis → `walk_n|s|e|w`. Idle is always `idle_s`.
+**Movement:** 8-connected path (diagonal when both axes change); segment time from screen distance; facing from screen-dominant axis → `walk_n|s|e|w`. Idle is always `idle_s`. Path does not currently re-route around blocked cells; destinations outside the walkable diamond are rejected at click.
 
 ---
 
@@ -74,6 +84,8 @@ dashboard/
   - celebrate off → `avatar_celebrate_head_spritesheet`
   - celebrate on → `avatar_celebrate_head_white_helmet_spritesheet`
 
+Celebrate helmet stamp is 122×133, face-center / chin-aligned to the celebrate head layer (ignore baked side hands). Wave helmet uses the same stamp size, chin/face-aligned.
+
 ### Animation rows (body layers, 8×5, 1536×1024, chroma `#FF00FF`)
 
 | Name | Row | Frames | ms |
@@ -86,12 +98,12 @@ dashboard/
 
 ### Emotes (layered sheets, 8×1, 1536×512 each)
 
-| Name | Source row (combined) | Frames | ms | Layer prefix |
-|------|----------------------|--------|-----|--------------|
-| `wave_s` | 0 | 8 | 100 | `avatar_wave_{feet,body,hands,head}` |
-| `celebrate_s` | 1 | 8 | 90 | `avatar_celebrate_{feet,body,hands,head}` |
+| Name | Frames | ms | Layer prefix |
+|------|--------|-----|--------------|
+| `wave_s` | 8 | 100 | `avatar_wave_{feet,body,hands,head}` |
+| `celebrate_s` | 8 | 90 | `avatar_celebrate_{feet,body,hands,head}` |
 
-Split from `avatar_wave_celebrate_spritesheet` via `scripts/split_emote_layers.py`.
+Emote draw size is normalized against walk standing-pose content height (`drawScale`). Combined source `avatar_wave_celebrate_spritesheet` is **not** in the tree; `scripts/split_emote_layers.py` still expects it if regenerating layers.
 
 ### Spritesheet prep (`spritesheet.ts`)
 
@@ -121,20 +133,18 @@ Split from `avatar_wave_celebrate_spritesheet` via `scripts/split_emote_layers.p
 | `avatar_wave_head_white_helmet_spritesheet.{png,json}` | Helmet-equipped wave head |
 | `avatar_celebrate_{feet,body,hands,head}_spritesheet.{png,json}` | Celebrate emote layers (Celebrate button → `celebrate_s`) |
 | `avatar_celebrate_head_white_helmet_spritesheet.{png,json}` | Helmet-equipped celebrate head |
-| `avatar_wave_assembled_spritesheet.{png,json}` | Preview composite of wave layers (not imported at runtime) |
-| `avatar_celebrate_assembled_spritesheet.{png,json}` | Preview composite of celebrate layers (not imported at runtime) |
 
 ### Source / unused at runtime
 
 | Asset | Role |
 |-------|------|
 | `avatar_basic_spritesheet.{png,json}` | Source sheet for walk layer split; keep as reference |
-| `avatar_wave_celebrate_spritesheet.{png,json}` | Source for emote split (`scripts/split_emote_layers.py`) |
 | `avatar_wave_spritesheet.{png,json}` | Full-body wave slice (reference) |
 | `avatar_celebrate_spritesheet.{png,json}` | Full-body celebrate slice (reference) |
+| `avatar_celebrate_assembled_spritesheet.{png,json}` | Preview composite of celebrate layers (not imported) |
 | `helmet_red_spritesheet.png` | Orphaned helmet-only overlay experiment (safe to delete unless regenerating overlays) |
 
-Deleted / not used: `helmet_white_*`, `helmet_red_spritesheet.json` — white helmet was baked into the head sheet for MVP.
+Not in tree: `avatar_wave_celebrate_spritesheet`, `avatar_wave_assembled_spritesheet`, `helmet_white_*`, `helmet_red_spritesheet.json`.
 
 ---
 
@@ -159,17 +169,19 @@ Deleted / not used: `helmet_white_*`, `helmet_red_spritesheet.json` — white he
 | Sit / inspect / full emote set | Wave + celebrate only |
 | 8-direction walks | 4 walk dirs + front idle |
 | EquipmentManager / AnimationController modules | Inlined in World + Avatar |
+| Clean room (no debug fill) | Extra tiles fill the stage; blocked cells are **red** |
 
-Rough progress: early MVP phases (grid, walk, layered avatar, depth scale, two emotes, helmet prototype).
+Rough progress: early MVP phases (grid, walk, layered avatar, depth scale, two emotes, helmet prototype, viewport-filling stage, walkable diamond).
 
 ---
 
 ## Conventions for agents
 
-1. Prefer composing **layer sheets**, not editing `avatar_basic` / `avatar_wave_celebrate` for runtime.
+1. Prefer composing **layer sheets**, not editing `avatar_basic` for runtime.
 2. After changing prep logic or PNG/JSON sheets, bump **`SHEET_REVISION`**.
 3. Only enable `packedWalkHair` on sheets that actually pack walk_e hair into walk_w.
 4. Do not reintroduce helmet overlay unless intentionally replacing the head-swap MVP.
 5. Keep movement/avatar state in World + hooks; avoid adding engines unless asked.
 6. Decisions doc = product intent; **this file** = implementation truth when they disagree.
-7. Regenerate emote layers with `.tmp-venv/bin/python scripts/split_emote_layers.py`.
+7. Regenerating emote layers needs `avatar_wave_celebrate_spritesheet.png` plus `.tmp-venv/bin/python scripts/split_emote_layers.py` — that combined source is currently missing.
+8. Keep tile aspect 2:1 (`tileHeight = tileWidth / 2`). Walkable diamond and min tile width live in `grid/isometric.ts`.
