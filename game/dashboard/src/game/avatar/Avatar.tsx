@@ -221,7 +221,7 @@ export function Avatar({
   x,
   y,
   scale = 1,
-  displayWidth = 96,
+  displayWidth = 192,
   animation = 'idle_s',
   playing = false,
   loop = true,

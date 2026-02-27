@@ -48,7 +48,7 @@ dashboard/
 - **Projection:** `x = (gx-gy)*halfW`, `y = (gx+gy)*halfH`.
 - **Depth:** `gx+gy`. **Scale:** ~0.6 (back) → 1.0 (front).
 - **Input:** click tile → `walkTo` (emotes block clicks).
-- **Avatar:** HTML `<canvas>` overlay (not SVG), feet-anchored, depth-scaled.
+- **Avatar:** HTML `<canvas>` overlay (not SVG), feet-anchored, depth-scaled; `displayWidth` 192 (2× tile width).
 - **Grid visibility:** currently **on** (`showGrid`); decisions doc prefers invisible grid later.
 - **No furniture / interaction points yet.** Soft room gradient only.
 
