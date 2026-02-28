@@ -47,10 +47,14 @@ Stop the sandbox with `Ctrl+C` (or `npx ampx sandbox delete` to tear down cloud 
 
 ## Deploy on AWS Amplify
 
+This git repo (`learning`) is treated as a **monorepo**: the app lives in `notesapp/`. The build spec is [`amplify.yml`](../amplify.yml) at the **repository root**, with `applications[].appRoot: notesapp`.
+
 1. Push this repo to GitHub/GitLab/Bitbucket (or Amplify’s git host).
 2. In [Amplify Console](https://console.aws.amazon.com/amplify/) → **Create new app** → connect the repository.
-3. Choose the branch that contains this project. Amplify Gen 2 should pick up `amplify.yml` and the `amplify/` backend.
-4. If the app root is a subdirectory (e.g. `notesapp/`), set the Amplify app’s monorepo / app root to that folder.
+3. When asked for the app root / monorepo path, use `notesapp`.
+4. In **Hosting → Environment variables**, set:
+   - `AMPLIFY_MONOREPO_APP_ROOT` = `notesapp`  
+   (must match `appRoot` in `amplify.yml`)
 5. Deploy. After a successful build:
    - Hosting serves `index.html`, `app.js`, `styles.css`, and generated `amplify_outputs.json`.
    - Backend creates the bucket, function, and API; `custom.notesApiUrl` points at API Gateway.
