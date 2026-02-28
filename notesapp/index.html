@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <h1>Notes</h1>
+      <p class="lede">Paste text below and save it as a new .txt file on the server.</p>
+      <label class="sr-only" for="note">Note content</label>
+      <textarea
+        id="note"
+        name="note"
+        rows="14"
+        placeholder="Paste your content here…"
+        spellcheck="true"
+      ></textarea>
+      <div class="actions">
+        <button type="button" id="save" disabled>Save</button>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </div>
+    </main>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

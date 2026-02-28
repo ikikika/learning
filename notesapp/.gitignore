@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Amplify
+.amplify/
+amplify_outputs.json
+amplifyconfiguration.json
+
+# Build / tooling
+dist/
+.npm/
+*.log
+.DS_Store
+
+# IDE
+.idea/
+.vscode/

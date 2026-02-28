@@ -1,0 +1,22 @@
+version: 1
+backend:
+  phases:
+    build:
+      commands:
+        - npm ci --cache .npm --prefer-offline
+        - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+frontend:
+  phases:
+    build:
+      commands:
+        - echo "Static site — no frontend build step"
+  artifacts:
+    baseDirectory: .
+    files:
+      - index.html
+      - app.js
+      - styles.css
+      - amplify_outputs.json
+  cache:
+    paths:
+      - .npm/**/*
