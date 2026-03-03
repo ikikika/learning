@@ -1,4 +1,5 @@
 import { defineBackend } from "@aws-amplify/backend";
+import { Stack } from "aws-cdk-lib";
 import {
   AuthorizationType,
   Cors,
@@ -18,7 +19,9 @@ backend.saveNote.addEnvironment(
   backend.storage.resources.bucket.bucketName
 );
 
-const apiStack = backend.createStack("api-stack");
+// Define the REST API in the same stack as the Lambda (storage group) so
+// API Gateway invoke permissions do not create a nested-stack cycle.
+const apiStack = Stack.of(backend.saveNote.resources.lambda);
 
 const notesApi = new RestApi(apiStack, "NotesApi", {
   restApiName: "notesApi",
