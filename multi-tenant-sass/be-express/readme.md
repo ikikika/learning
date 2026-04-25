@@ -187,3 +187,47 @@ api.volumes:
 api.command: overrides the container CMD to run npm run dev (development mode with live reload).
 
 volumes: mysql_data: — named volume declaration that Compose will create and manage for persistent DB data.
+
+## Run the app and seed the database
+
+1. Copy `.env.sample` to `.env` and adjust values if needed:
+
+```bash
+cp .env.sample .env
+# edit .env to confirm DB credentials if necessary
+```
+
+2. Start services (MySQL, API, Adminer):
+
+```bash
+docker compose up --build -d
+```
+
+3. Install dependencies locally (needed to run the migration script from host):
+
+```bash
+npm ci
+```
+
+4. Run migrations and seed data:
+
+```bash
+npm run migrate
+```
+
+Alternative: run the migration script from inside the `api` container (uses the container's Node):
+
+```bash
+docker compose exec api npm run migrate
+```
+
+5. Open Adminer to inspect the DB: http://localhost:8080 (Server: `mysql`, Database: value from `.env`, Username/Password from `.env`)
+
+6. Run the app in development mode (host):
+
+```bash
+npm run dev
+```
+
+Or access the containerized API at http://localhost:3000
+
