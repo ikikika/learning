@@ -4,11 +4,8 @@ const path = require('path');
 const mysql = require('mysql2/promise');
 
 async function run() {
-  const host = process.env.DB_HOST || 'localhost';
-  const port = process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306;
-  const user = process.env.DB_USER || 'root';
-  const password = process.env.DB_PASSWORD || process.env.MYSQL_ROOT_PASSWORD || '';
-  const database = process.env.DB_NAME || process.env.MYSQL_DATABASE || '';
+  const { getDbConfig } = require('../src/config/db.cjs');
+  const { host, port, username: user, password, database } = getDbConfig();
 
   if (!database) {
     console.error('DB_NAME or MYSQL_DATABASE must be set in environment');

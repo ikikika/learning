@@ -30,14 +30,16 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV:-development}
       - PORT=${PORT:-3000}
-      - DB_HOST=${DB_HOST:-mysql}
+      - DB_HOST=mysql
       - DB_PORT=${DB_PORT:-3306}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
     volumes:
       - ./:/usr/src/app:cached
-      - /usr/src/app/node_modules
+      # Do not mount over container-installed node_modules; rely on image's
+      # installation. For developer convenience, use docker-compose.override.yml
+      # to mount source only.
     command: ["npm", "run", "dev"]
 
   adminer:

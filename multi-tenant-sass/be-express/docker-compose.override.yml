@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    # Development-only: mount source so edits on the host are visible inside container
+    volumes:
+      - ./:/usr/src/app:cached
+      # Avoid mounting over the image-built node_modules. If you need a persisted
+      # node_modules volume for Windows host performance, enable it manually.
+    # Run in dev mode so ts-node-dev restarts the server on file changes
+    command: ["npm", "run", "dev"]
+    environment:
+      # Enable polling for file watchers (helpful on Docker for Windows / macOS)
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=100
+
+volumes:
+  dev_node_modules:

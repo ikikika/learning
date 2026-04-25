@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "migrate": "node scripts/migrate_and_seed.js",
+    "migrate": "node scripts/run_sequelize_migrations.js && node scripts/sequelize_seed.js",
+    "db:migrate": "node scripts/run_sequelize_migrations.js",
+    "db:seed": "node scripts/sequelize_seed.js",
     "build": "tsc",
     "start": "node dist/index.js",
     "lint": "eslint . --ext .ts",
@@ -19,6 +21,7 @@
   "dependencies": {
     "dotenv": "^17.4.2",
     "mysql2": "^3.6.0",
+    "sequelize": "^6.33.0",
     "express": "^5.2.1"
   },
   "devDependencies": {
