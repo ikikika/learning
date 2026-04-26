@@ -3,6 +3,7 @@ dotenv.config();
 
 import express from "express";
 import tenantRoutes from "./routes/tenants";
+import authRoutes from "./routes/auth";
 import { requireTenant, attachTenantIfPresent } from "./middleware/tenant";
 import sequelize from "./db/sequelize";
 
@@ -17,6 +18,9 @@ app.get("/", (_req, res) => {
 
 // Tenant management (create/list tenants) — no tenant header required
 app.use("/tenants", tenantRoutes);
+
+// Auth routes
+app.use('/auth', authRoutes);
 
 // Example protected route that requires a tenant id
 app.get("/projects", requireTenant, (req, res) => {
