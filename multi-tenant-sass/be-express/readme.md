@@ -152,41 +152,88 @@ cp .env.sample .env
 The service exposes port `3306` on the host. Use `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME` from `.env` to connect.
 
 ## Docker notes
-version: 3.8 — selects the Compose file format / feature set the file uses.
 
-services: top-level section that defines containerized services (here mysql and api).
-
-mysql.image: mysql:8.0 — base image used for the DB.
-
-mysql.container_name: mts_mysql — friendly container name (optional).
-
-mysql.restart: unless-stopped — restart policy if container exits.
-
-mysql.environment: environment variables passed to MySQL (e.g. MYSQL_ROOT_PASSWORD, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD) — uses shell-style interpolation like ${MYSQL_ROOT_PASSWORD:-rootpass} to provide defaults when .env vars are missing.
-
-mysql.ports: 3306:3306 — maps container MySQL port to host for local access.
-
-mysql.volumes: mysql_data:/var/lib/mysql — named volume to persist database files across restarts.
-
-mysql.healthcheck: a small mysqladmin ping check so Docker can report service health (used by orchestration/monitoring).
-
-api.build: . — build an image from the Dockerfile in the project root.
-
-api.container_name: mts_api — friendly name for the API container.
-
-api.depends_on: - mysql — start order hint: Compose starts mysql before api (note: this does NOT wait for DB readiness, only start order).
-
-api.ports: 3000:3000 — exposes the Express app on host port 3000.
-
-api.environment: forwards app and DB config (e.g. NODE_ENV, PORT, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME). Important: DB_HOST is set to mysql (service name) so the app connects via Docker internal DNS.
-
-api.volumes:
-
+- version: 3.8 — selects the Compose file format / feature set the file uses.
+- services: top-level section that defines containerized services (here mysql and api).
+- mysql.image: mysql:8.0 — base image used for the DB.
+- mysql.container_name: mts_mysql — friendly container name (optional).
+- mysql.restart: unless-stopped — restart policy if container exits.
+- mysql.environment: environment variables passed to MySQL (e.g. MYSQL_ROOT_PASSWORD, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD) — uses shell-style interpolation like ${MYSQL_ROOT_PASSWORD:-rootpass} to provide defaults when .env vars are missing.
+- mysql.ports: 3306:3306 — maps container MySQL port to host for local access.
+- mysql.volumes: mysql_data:/var/lib/mysql — named volume to persist database files across restarts.
+- mysql.healthcheck: a small mysqladmin ping check so Docker can report service health (used by orchestration/monitoring).
+- api.build: . — build an image from the Dockerfile in the project root.
+- api.container_name: mts_api — friendly name for the API container.
+- api.depends_on: - mysql — start order hint: Compose starts mysql before api (note: this does NOT wait for DB readiness, only start order).
+- api.ports: 3000:3000 — exposes the Express app on host port 3000.
+- api.environment: forwards app and DB config (e.g. NODE_ENV, PORT, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME). Important: DB_HOST is set to mysql (service name) so the app connects via Docker internal DNS.
+- api.volumes:
 ./:/usr/src/app:cached — mounts source for live development inside container (so ts-node-dev restarts on changes).
 /usr/src/app/node_modules — anonymous volume to avoid host/node_modules conflicts.
 api.command: overrides the container CMD to run npm run dev (development mode with live reload).
+- volumes: mysql_data: — named volume declaration that Compose will create and manage for persistent DB data.
 
-volumes: mysql_data: — named volume declaration that Compose will create and manage for persistent DB data.
+This project uses a single multi-stage `Dockerfile` that contains named stages for `dev`, `builder` and a minimal `runtime` stage. The development `docker-compose.override.yml` builds the `dev` stage for fast local development; production images are built from the final stage (distroless runtime).
+
+Key points:
+
+- Compose file format: `version: '3.8'` is used in the repository.
+- The `mysql` service still uses the official `mysql:8.0` image and a named `mysql_data` volume for persistence.
+- The API is built from the single `Dockerfile`. The dev compose override sets `build.target: dev` so it uses the `dev` stage (installs dev deps and runs `ts-node-dev`).
+- The dev compose override mounts the project source into the container and mounts a named `dev_node_modules` volume at `/usr/src/app/node_modules` so container-installed packages (like `sequelize`) aren't hidden by a host-mounted `node_modules` directory.
+- For production we build the final stage which contains only the built `dist` and production `node_modules` (the runtime stage is distroless to reduce OS attack surface).
+
+Why two behaviors (dev vs prod)?
+
+- Development (`dev` stage): installs devDependencies, runs hot-reload (`ts-node-dev`), and mounts the source for immediate feedback.
+- Production (final stage): uses a compiled `dist/`, includes only production dependencies, and uses a minimal runtime image for security and smaller size.
+
+Commands
+
+- Start development environment (compose uses the dev target):
+
+```bash
+docker compose up --build
+```
+
+- Build dev image without compose (optional):
+
+```bash
+docker build --target dev -t be-express:dev .
+```
+
+- Build production image (final runtime stage):
+
+```bash
+docker build -t be-express:prod .
+```
+
+- Rebuild and start services detached:
+
+```bash
+docker compose up --build -d
+```
+
+- View API logs:
+
+```bash
+docker compose logs -f api
+```
+
+Security / vulnerabilities
+
+- After building a production image, scan it with `docker scan` or `trivy`:
+
+```bash
+docker scan be-express:prod
+trivy image be-express:prod
+```
+
+- If high/critical findings remain, run `npm audit` and `npm audit fix` locally, upgrade direct dependencies, or pin patched versions in `package.json`.
+
+Notes about removed files
+
+- `Dockerfile.dev` has been removed — the `dev` stage is now part of the single `Dockerfile` and is selected with `--target dev` or via the compose override.
 
 ## Run the app and seed the database
 
