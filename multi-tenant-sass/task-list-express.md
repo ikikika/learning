@@ -12,6 +12,22 @@ You can copy‑paste this directly.
 
 ***
 
+**Recommended Implementation Order (practical)**
+
+- 1) Finalize tenant data model and DB constraints (`tenant_id` columns, FKs, indexes).
+- 2) Implement tenant isolation middleware (resolve tenant by host/header/token and enforce scope).
+- 3) Add a minimal auth layer (superadmin account, local username/password, JWT issuance/validation) to enable safe admin flows.
+- 4) Design user types and RBAC scoped to tenants (roles, permissions, assignment APIs).
+- 5) Integrate auth with tenant mapping (user → tenant memberships; allow multi‑tenant users later).
+- 6) Implement SSO/JIT provisioning and per‑tenant SSO config (phase 2).
+- 7) Harden, test, and iterate (audit logs, permission caching, automated security checks).
+
+Why this order:
+- Tenant isolation is the foundational data/behavior contract — building auth and RBAC on top avoids rework.
+- A minimal auth is needed early so you can create tenants and admin users to exercise isolation and admin APIs.
+
+***
+
 ## 1. Platform & Tenant Foundation
 
 ### 1.1 Tenant Model & Isolation
@@ -20,8 +36,17 @@ You can copy‑paste this directly.
 1.1.2 Implement tenant creation (Superadmin)  
 1.1.3 Implement tenant soft‑delete and suspension  
 1.1.4 Enforce tenant isolation middleware for REST APIs  
-1.1.5 Enforce tenant isolation in WebSocket connections  
-1.1.6 Enforce tenant scoping in Elasticsearch queries
+
+Early auth primitives (bootstrap)
+
+1.1.7 Seed superadmin account / bootstrap CLI  
+1.1.8 Implement minimal local username/password authentication  
+1.1.9 Implement JWT access token issuance  
+1.1.10 Implement JWT validation middleware  
+1.1.11 Implement refresh token strategy (optional at bootstrap)  
+
+1.1.12 Enforce tenant isolation in WebSocket connections  
+1.1.13 Enforce tenant scoping in Elasticsearch queries
 
 ### 1.2 Tenant Configuration
 
@@ -35,11 +60,7 @@ You can copy‑paste this directly.
 
 ### 2.1 Core Authentication
 
-2.1.1 Implement local username/password authentication  
-2.1.2 Implement JWT access token issuance  
-2.1.3 Implement JWT validation middleware  
-2.1.4 Implement refresh token strategy  
-2.1.5 Define secure token storage strategy
+2.1.1 Define secure token storage strategy
 
 ### 2.2 User Accounts
 
