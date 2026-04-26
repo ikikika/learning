@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "migrate": "node scripts/run_sequelize_migrations.js && node scripts/sequelize_seed.js",
+    "bootstrap:superadmin": "node scripts/bootstrap_superadmin.js",
     "db:migrate": "node scripts/run_sequelize_migrations.js",
     "db:seed": "node scripts/sequelize_seed.js",
     "build": "tsc",
@@ -22,7 +23,8 @@
     "dotenv": "^17.4.2",
     "mysql2": "^3.6.0",
     "sequelize": "^6.33.0",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "bcryptjs": "^2.4.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

@@ -3,15 +3,16 @@ module.exports = {
     const { STRING, TEXT, BOOLEAN, INTEGER, BIGINT, JSON, DATE, TINYINT } = Sequelize;
 
     await queryInterface.createTable('tenants', {
-      id: { type: STRING(50), primaryKey: true },
+      id: { type: STRING(36), primaryKey: true },
       name: { type: STRING(255), allowNull: false },
       created_at: { type: DATE, allowNull: false, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') },
       settings: { type: JSON, allowNull: true },
     }, { charset: 'utf8mb4' });
 
     await queryInterface.createTable('users', {
-      id: { type: STRING(50), primaryKey: true },
-      tenant_id: { type: STRING(50), allowNull: false },
+      id: { type: STRING(36), primaryKey: true },
+      tenant_id: { type: STRING(36), allowNull: true },
+      username: { type: STRING(100), allowNull: false },
       email: { type: STRING(255), allowNull: false },
       name: { type: STRING(255), allowNull: true },
       password_hash: { type: STRING(255), allowNull: true },
@@ -20,6 +21,7 @@ module.exports = {
     }, { charset: 'utf8mb4' });
 
     await queryInterface.addIndex('users', ['tenant_id'], { name: 'idx_users_tenant' });
+    await queryInterface.addIndex('users', ['username'], { name: 'idx_users_username' });
     await queryInterface.addConstraint('users', {
       fields: ['tenant_id'],
       type: 'foreign key',
@@ -35,8 +37,8 @@ module.exports = {
     });
 
     await queryInterface.createTable('roles', {
-      id: { type: STRING(50), primaryKey: true },
-      tenant_id: { type: STRING(50), allowNull: false },
+      id: { type: STRING(36), primaryKey: true },
+      tenant_id: { type: STRING(36), allowNull: true },
       name: { type: STRING(100), allowNull: false },
       description: { type: TEXT, allowNull: true },
       created_at: { type: DATE, allowNull: false, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') },
@@ -52,8 +54,8 @@ module.exports = {
     });
 
     await queryInterface.createTable('user_roles', {
-      user_id: { type: STRING(50), allowNull: false },
-      role_id: { type: STRING(50), allowNull: false },
+      user_id: { type: STRING(36), allowNull: false },
+      role_id: { type: STRING(36), allowNull: false },
       assigned_at: { type: DATE, allowNull: false, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') },
     }, { charset: 'utf8mb4' });
 
@@ -80,11 +82,11 @@ module.exports = {
     });
 
     await queryInterface.createTable('projects', {
-      id: { type: STRING(50), primaryKey: true },
-      tenant_id: { type: STRING(50), allowNull: false },
+      id: { type: STRING(36), primaryKey: true },
+      tenant_id: { type: STRING(36), allowNull: false },
       name: { type: STRING(255), allowNull: false },
       description: { type: TEXT, allowNull: true },
-      owner_id: { type: STRING(50), allowNull: true },
+      owner_id: { type: STRING(36), allowNull: true },
       created_at: { type: DATE, allowNull: false, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') },
       updated_at: { type: DATE, allowNull: true },
     }, { charset: 'utf8mb4' });
@@ -107,15 +109,15 @@ module.exports = {
     });
 
     await queryInterface.createTable('items', {
-      id: { type: STRING(50), primaryKey: true },
-      tenant_id: { type: STRING(50), allowNull: false },
-      project_id: { type: STRING(50), allowNull: false },
-      parent_id: { type: STRING(50), allowNull: true },
+      id: { type: STRING(36), primaryKey: true },
+      tenant_id: { type: STRING(36), allowNull: false },
+      project_id: { type: STRING(36), allowNull: false },
+      parent_id: { type: STRING(36), allowNull: true },
       title: { type: STRING(255), allowNull: false },
       description: { type: TEXT, allowNull: true },
       status: { type: STRING(50), allowNull: false, defaultValue: 'open' },
       priority: { type: INTEGER, allowNull: false, defaultValue: 0 },
-      assignee_id: { type: STRING(50), allowNull: true },
+      assignee_id: { type: STRING(36), allowNull: true },
       created_at: { type: DATE, allowNull: false, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') },
       updated_at: { type: DATE, allowNull: true },
     }, { charset: 'utf8mb4' });
@@ -157,7 +159,7 @@ module.exports = {
 
     await queryInterface.createTable('files', {
       id: { type: STRING(50), primaryKey: true },
-      tenant_id: { type: STRING(50), allowNull: false },
+      tenant_id: { type: STRING(36), allowNull: false },
       item_id: { type: STRING(50), allowNull: true },
       filename: { type: STRING(1024), allowNull: false },
       content_type: { type: STRING(255), allowNull: true },
@@ -185,8 +187,8 @@ module.exports = {
 
     await queryInterface.createTable('notifications', {
       id: { type: STRING(50), primaryKey: true },
-      tenant_id: { type: STRING(50), allowNull: false },
-      user_id: { type: STRING(50), allowNull: false },
+      tenant_id: { type: STRING(36), allowNull: false },
+      user_id: { type: STRING(36), allowNull: false },
       type: { type: STRING(100), allowNull: false },
       payload: { type: JSON, allowNull: true },
       is_read: { type: TINYINT, allowNull: false, defaultValue: 0 },
@@ -213,7 +215,7 @@ module.exports = {
     await queryInterface.createTable('audit_logs', {
       id: { type: BIGINT, allowNull: false, autoIncrement: true, primaryKey: true },
       tenant_id: { type: STRING(50), allowNull: true },
-      user_id: { type: STRING(50), allowNull: true },
+      user_id: { type: STRING(36), allowNull: true },
       action: { type: STRING(255), allowNull: false },
       object_type: { type: STRING(100), allowNull: true },
       object_id: { type: STRING(255), allowNull: true },

@@ -33,20 +33,21 @@ Why this order:
 ### 1.1 Tenant Model & Isolation
 
 1.1.1 Design tenant data model (`tenant_id` enforced everywhere)  
-1.1.2 Implement tenant creation (Superadmin)  
-1.1.3 Implement tenant soft‑delete and suspension  
-1.1.4 Enforce tenant isolation middleware for REST APIs  
 
 Early auth primitives (bootstrap)
 
-1.1.7 Seed superadmin account / bootstrap CLI  
-1.1.8 Implement minimal local username/password authentication  
-1.1.9 Implement JWT access token issuance  
-1.1.10 Implement JWT validation middleware  
-1.1.11 Implement refresh token strategy (optional at bootstrap)  
+1.1.2 Seed superadmin account / bootstrap CLI  
+1.1.3 Implement minimal local username/password authentication  
+1.1.4 Implement JWT access token issuance  
+1.1.5 Implement JWT validation middleware  
+1.1.6 Implement refresh token strategy (optional at bootstrap)
 
-1.1.12 Enforce tenant isolation in WebSocket connections  
-1.1.13 Enforce tenant scoping in Elasticsearch queries
+1.1.7 Implement tenant creation (Superadmin)  
+1.1.8 Implement tenant soft‑delete and suspension  
+1.1.9 Enforce tenant isolation middleware for REST APIs  
+
+1.1.10 Enforce tenant isolation in WebSocket connections  
+1.1.11 Enforce tenant scoping in Elasticsearch queries
 
 ### 1.2 Tenant Configuration
 
