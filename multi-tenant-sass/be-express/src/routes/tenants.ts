@@ -1,12 +1,12 @@
 import { Router, Request, Response } from 'express';
 import { randomUUID } from 'crypto';
 import TenantModel from '../models/tenantModel';
-import { requireAuth } from '../middleware/auth';
+import { requireAuth, requireRole } from '../middleware/auth';
 
 const router = Router();
 
 // Create tenant (persisted via Sequelize) - protected to superadmin
-router.post('/', requireAuth, async (req: Request, res: Response) => {
+router.post('/', requireAuth, requireRole('superadmin'), async (req: Request, res: Response) => {
   const { id: suppliedId, name } = req.body;
   if (!name) return res.status(400).json({ error: "'name' is required" });
   const id = suppliedId || randomUUID();
@@ -25,7 +25,7 @@ router.post('/', requireAuth, async (req: Request, res: Response) => {
 });
 
 // List tenants (from DB via Sequelize)
-router.get('/', requireAuth, async (_req: Request, res: Response) => {
+router.get('/', requireAuth, requireRole('superadmin'), async (_req: Request, res: Response) => {
   try {
     const tenants = await TenantModel.findAll({ order: [['created_at', 'DESC']] });
     res.json(tenants.map(t => ({ 
