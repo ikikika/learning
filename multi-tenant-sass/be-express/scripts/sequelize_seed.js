@@ -1,4 +1,5 @@
 const { Sequelize } = require('sequelize');
+const bcrypt = require('bcryptjs');
 
 const { makeSequelizeFromEnv } = require('../src/config/db.cjs');
 
@@ -21,8 +22,8 @@ async function seed() {
 
     await qi.bulkInsert('users', [
       { id: '22222222-2222-2222-2222-222222222222', tenant_id: TENANT_A, username: 'admin', email: 'admin@tenant.local', name: 'Admin User', password_hash: 'password', is_active: 1, created_at: new Date() },
-      // Platform superadmin placeholder (no password set) - useful for manual bootstrap
-      { id: '11111111-1111-1111-1111-111111111111', tenant_id: null, username: 'superadmin', email: 'superadmin@platform.local', name: 'Platform Superadmin', password_hash: '', is_active: 0, created_at: new Date() }
+      // Platform superadmin seed user (password hash for: superadmin123)
+      { id: '11111111-1111-1111-1111-111111111111', tenant_id: null, username: 'superadmin', email: 'superadmin@platform.local', name: 'Platform Superadmin', password_hash: await bcrypt.hash('superadmin123', 10), is_active: 1, created_at: new Date() }
     ], { ignoreDuplicates: true });
 
     await qi.bulkInsert('roles', [

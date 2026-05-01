@@ -5,7 +5,17 @@
 FROM node:20-bullseye-slim AS deps
 WORKDIR /usr/src/app
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		python3 \
+		build-essential \
+		make \
+		g++ \
+		pkg-config \
+		ca-certificates \
+	&& ln -sf /usr/bin/python3 /usr/bin/python \
+	&& rm -rf /var/lib/apt/lists/* \
+	&& npm ci
 
 FROM deps AS dev
 ENV NODE_ENV=development
