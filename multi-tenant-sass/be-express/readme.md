@@ -278,3 +278,48 @@ npm run dev
 
 Or access the containerized API at http://localhost:3000
 
+## Bootstrap Superadmin
+
+Usage:
+
+1. Ensure your database env vars are set (see existing project README).
+2. Run the migration + seed (optional):
+
+```bash
+npm run db:migrate
+npm run db:seed
+```
+
+3. Bootstrap (create or update) the platform superadmin:
+
+```bash
+npm run bootstrap:superadmin -- --email admin@platform.local --password "YourP@ssw0rd" --name "Admin Name"
+```
+
+Notes:
+- The script creates a user with `tenant_id = NULL` and a `superadmin` role at platform scope.
+- Passwords are hashed using bcrypt.
+- If a user with the provided email exists at platform scope, the script updates the password and name.
+
+## Class based models
+
+As of Sequelize v6 (the current stable version), **class-based models are the officially recommended approach** when using TypeScript. Here's why:
+
+**Class-based (`extends Model`) — recommended for TypeScript projects:**
+- Full static typing on instances (e.g., `user.id` is `number`, not `any`)
+- Works naturally with `instanceof` checks
+- Clean separation of attribute interfaces and the model class
+- Official Sequelize TypeScript docs use this pattern
+
+**`sequelize.define()` — fine for plain JavaScript:**
+- Less boilerplate, but no proper TypeScript typing
+- Attributes are typed as `any` unless you do extra work
+- Still works in v6 but is the "JS-first" API
+
+**Sequelize v7 (alpha) changes this again:**
+- v7 drops the class-based model entirely and moves to a decorator-based approach (`@Table`, `@Column`, like TypeORM)
+- But v7 is still in alpha and not production-ready
+
+**Bottom line for your project:** You're on v6 with TypeScript, so class-based `extends Model` with `Model.init()` — exactly what you have now — is correct and matches what the official docs recommend. The refactor you just did is the right call.
+
+If you ever migrate to v7, the pattern will change to decorators, but that's a future concern.
