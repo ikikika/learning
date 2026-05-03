@@ -1,10 +1,9 @@
-require('dotenv').config();
-const fs = require('fs');
-const path = require('path');
-const mysql = require('mysql2/promise');
+import fs from 'fs';
+import path from 'path';
+import mysql from 'mysql2/promise';
+import { getDbConfig } from '../src/config/db';
 
 async function run() {
-  const { getDbConfig } = require('../src/config/db.cjs');
   const { host, port, username: user, password, database } = getDbConfig();
 
   if (!database) {
@@ -23,12 +22,10 @@ async function run() {
     const seedsPath = path.join(__dirname, '..', 'db', 'seeds', '001_seed.sql');
 
     console.log('Running migration:', migrationsPath);
-    const migSql = fs.readFileSync(migrationsPath, 'utf8');
-    await conn.query(migSql);
+    await conn.query(fs.readFileSync(migrationsPath, 'utf8'));
 
     console.log('Running seed:', seedsPath);
-    const seedSql = fs.readFileSync(seedsPath, 'utf8');
-    await conn.query(seedSql);
+    await conn.query(fs.readFileSync(seedsPath, 'utf8'));
 
     console.log('Migration and seed completed successfully.');
   } catch (err) {

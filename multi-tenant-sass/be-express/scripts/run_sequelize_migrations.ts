@@ -1,12 +1,11 @@
-const fs = require('fs');
-const path = require('path');
-const { makeSequelizeFromEnv } = require('../src/config/db.cjs');
-const { Sequelize } = require('sequelize');
+import fs from 'fs';
+import path from 'path';
+import { Sequelize } from 'sequelize';
+import { makeSequelizeFromEnv } from '../src/config/db';
 
 async function run() {
   const migrationsDir = path.join(__dirname, '..', 'db', 'sequelize-migrations');
   const files = fs.readdirSync(migrationsDir).filter(f => f.endsWith('.js')).sort();
-  const { makeSequelizeFromEnv } = require('../src/config/db.cjs');
   const sequelize = makeSequelizeFromEnv();
   const qi = sequelize.getQueryInterface();
 
