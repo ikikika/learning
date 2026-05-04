@@ -19,8 +19,8 @@ async function seed() {
     console.log('Seeding tenants completed');
 
     await qi.bulkInsert('users', [
-      { id: '22222222-2222-2222-2222-222222222222', tenant_id: TENANT_A, username: 'admin', email: 'admin@tenant.local', name: 'Admin User', password_hash: 'password', is_active: 1, created_at: new Date() },
-      { id: '11111111-1111-1111-1111-111111111111', tenant_id: null, username: 'superadmin', email: 'superadmin@platform.local', name: 'Platform Superadmin', password_hash: await bcrypt.hash('superadmin123', 10), is_active: 1, created_at: new Date() },
+      { id: '22222222-2222-2222-2222-222222222222', tenant_id: TENANT_A, username: 'admin', email: 'admin@tenant.local', name: 'Admin User', password_hash: await bcrypt.hash('password', 10), is_active: 1, created_at: new Date() },
+      { id: '11111111-1111-1111-1111-111111111111', tenant_id: null, username: 'superadmin', email: 'superadmin@platform.local', name: 'Platform Superadmin', password_hash: await bcrypt.hash('password', 10), is_active: 1, created_at: new Date() },
     ], { ignoreDuplicates: true } as any);
     console.log('Seeding users completed');
 
@@ -37,7 +37,7 @@ async function seed() {
     console.log('Seeding user_roles completed');
 
     await qi.bulkInsert('projects', [
-      { id: '55555555-5555-5555-5555-555555555555', tenant_id: TENANT_A, name: 'Demo Project', description: 'A demo project for local development', owner_id: '22222222-2222-2222-2222-222222222222', created_at: new Date() },
+      { id: '55555555-5555-5555-5555-555555555555', tenant_id: TENANT_A, name: 'Demo Project 1', description: 'A demo project for local development', owner_id: '22222222-2222-2222-2222-222222222222', created_at: new Date() },
     ], { ignoreDuplicates: true } as any);
     console.log('Seeding projects completed');
 

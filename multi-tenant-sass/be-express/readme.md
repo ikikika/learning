@@ -196,6 +196,12 @@ Commands
 docker compose up --build
 ```
 
+- Avoid stale node_modules after any future npm install, run this instead of just restarting
+
+```bash
+docker-compose up --build --force-recreate
+```
+
 - Build dev image without compose (optional):
 
 ```bash
@@ -323,3 +329,99 @@ As of Sequelize v6 (the current stable version), **class-based models are the of
 **Bottom line for your project:** You're on v6 with TypeScript, so class-based `extends Model` with `Model.init()` — exactly what you have now — is correct and matches what the official docs recommend. The refactor you just did is the right call.
 
 If you ever migrate to v7, the pattern will change to decorators, but that's a future concern.
+
+## Folder structure
+
+Here's the full breakdown of the current structure:
+
+```
+src/
+  api/          ← HTTP layer
+  config/       ← Environment & app settings
+  loaders/      ← Startup modules
+  middleware/   ← Express middleware
+  models/       ← Database schema
+  services/     ← Business logic
+  subscribers/  ← Async event handlers
+  types/        ← TypeScript declarations
+  utils/        ← Pure helper functions
+```
+
+---
+
+### `api/`
+**Purpose:** Receive HTTP requests, validate input, call a service, return a response. Nothing more.
+
+**Create a file here when:** You're adding a new route group (e.g. `api/users.ts`, `api/invoices.ts`).
+
+**Rule:** No database calls. No business logic. If you find yourself writing `await Model.findOne(...)` here, it belongs in `services/` instead.
+
+---
+
+### `services/`
+**Purpose:** All business logic lives here. Orchestrates models, applies rules, makes decisions.
+
+**Create a file here when:** You need logic that doesn't belong on a route — e.g. `authService.ts` knows how to validate passwords and issue tokens, `tenantService.ts` knows how to create/find tenants.
+
+**Rule:** No `req` or `res` objects. No HTTP status codes. Just plain functions that take data in and return data out.
+
+---
+
+### `models/`
+**Purpose:** Defines your database tables/collections and their shape (Sequelize models in your case).
+
+**Create a file here when:** You're adding a new database table — e.g. `invoiceModel.ts`, `planModel.ts`.
+
+**Rule:** Only schema definition and associations here. No business logic.
+
+---
+
+### `loaders/`
+**Purpose:** Initializes external connections and services at startup (DB, Redis, queues, etc.).
+
+**Create a file here when:** You're connecting to a new external system — e.g. `redis.ts`, `agenda.ts` (job scheduler). Each one is a self-contained startup module.
+
+**Rule:** These run once at boot. server.ts calls them in order.
+
+---
+
+### `middleware/`
+**Purpose:** Express functions that run between the request and the route handler — auth guards, tenant resolution, request logging.
+
+**Create a file here when:** You need logic that applies across multiple routes — e.g. `rateLimiter.ts`, `requestLogger.ts`.
+
+**Rule:** Should only inspect/modify `req`/`res` or call `next()`. Not for business logic.
+
+---
+
+### `config/`
+**Purpose:** Reads environment variables and exports them as typed, named values.
+
+**Create a file here when:** You're adding a new group of config values — e.g. `email.ts` for SMTP settings, `stripe.ts` for payment keys.
+
+**Rule:** Never scatter `process.env.SOME_VAR` throughout the codebase. Always go through `config/`.
+
+---
+
+### `subscribers/`
+**Purpose:** Event listeners that react to things that happened — decouples side effects from your services.
+
+**Create a file here when:** A service emits an event and you want to react to it elsewhere — e.g. when a user signs up, send a welcome email, notify analytics, create a default workspace. Each subscriber handles one concern.
+
+**Rule:** A service should emit an event like `user_signup`. It should NOT directly call `EmailService` and `AnalyticsService` itself.
+
+---
+
+### `types/`
+**Purpose:** TypeScript type augmentations and shared interface/type declarations.
+
+**Create a file here when:** You need to extend a third-party type (like `express.d.ts` adding `req.tenant`) or define shared interfaces used across multiple layers.
+
+---
+
+### `utils/`
+**Purpose:** Pure, stateless helper functions with no side effects.
+
+**Create a file here when:** You have a reusable function that doesn't belong to any specific domain — e.g. `jwt.ts`, `pagination.ts`, `slugify.ts`.
+
+**Rule:** No database access, no business logic, no `req`/`res`.

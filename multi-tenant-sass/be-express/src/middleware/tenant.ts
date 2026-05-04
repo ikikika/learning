@@ -1,14 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import TenantModel from "../models/tenantModel";
 
-declare global {
-  namespace Express {
-    interface Request {
-      tenant?: InstanceType<typeof TenantModel> | null;
-    }
-  }
-}
-
 // Middleware that enforces a tenant id and loads the tenant into `req.tenant`.
 export async function requireTenant(req: Request, res: Response, next: NextFunction) {
   const tenantId = (req.header("x-tenant-id") || req.query.tenant_id || req.header("tenant-id")) as string | undefined;
