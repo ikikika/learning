@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
+import helmet from "helmet";
 import tenantRoutes from "./routes/tenants";
 import authRoutes from "./routes/auth";
 import { requireTenant, attachTenantIfPresent } from "./middleware/tenant";
@@ -10,6 +11,7 @@ import sequelize from "./db/sequelize";
 const app = express();
 const PORT = process.env.PORT;
 
+app.use(helmet());
 app.use(express.json());
 
 app.get("/", (_req, res) => {
