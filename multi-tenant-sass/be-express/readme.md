@@ -253,7 +253,14 @@ cp .env.sample .env
 2. Start services (MySQL, API, Adminer):
 
 ```bash
-docker compose up --build -d
+docker compose up --build --force-recreate -d
+```
+
+If you added or changed npm packages and still see module resolution errors, reset the dev dependency volume once:
+
+```bash
+docker compose down -v
+docker compose up --build --force-recreate -d
 ```
 
 3. Install dependencies locally (needed to run the migration script from host):
@@ -331,6 +338,8 @@ As of Sequelize v6 (the current stable version), **class-based models are the of
 If you ever migrate to v7, the pattern will change to decorators, but that's a future concern.
 
 ## Folder structure
+
+From https://softwareontheroad.com/ideal-nodejs-project-structure/
 
 Here's the full breakdown of the current structure:
 
