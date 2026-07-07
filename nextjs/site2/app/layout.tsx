@@ -32,7 +32,7 @@ export default function RootLayout({
               <Link href="/about" style={{ color: "#fff", marginRight: "2rem", textDecoration: "none", fontWeight: 500 }}>
                 About
               </Link>
-              <Link href="/events" style={{ color: "#fff", textDecoration: "none", fontWeight: 500 }}>
+              <Link href="/happenings" style={{ color: "#fff", textDecoration: "none", fontWeight: 500 }}>
                 Events
               </Link>
             </nav>
