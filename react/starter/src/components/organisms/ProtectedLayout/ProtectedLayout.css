@@ -1,0 +1,17 @@
+.protected-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+.protected-layout__main {
+  flex: 1;
+  overflow-y: auto;
+  background-color: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  .protected-layout__main {
+    background-color: #111827;
+  }
+}
