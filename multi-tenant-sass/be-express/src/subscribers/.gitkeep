@@ -1,0 +1,3 @@
+# Subscribers
+# Event handlers for async tasks go here (pub/sub pattern).
+# See: https://softwareontheroad.com/ideal-nodejs-project-structure/

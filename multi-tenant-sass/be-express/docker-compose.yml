@@ -1,0 +1,58 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mts_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-mts_dev}
+      MYSQL_USER: ${MYSQL_USER:-mts_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-mts_pass}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: mts_api
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=${PORT:-3000}
+      - DB_HOST=mysql
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+    volumes:
+      - ./:/usr/src/app:cached
+      # Do not mount over container-installed node_modules; rely on image's
+      # installation. For developer convenience, use docker-compose.override.yml
+      # to mount source only.
+    command: ["npm", "run", "dev"]
+
+  adminer:
+    image: adminer:latest
+    container_name: mts_adminer
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    environment:
+      # Optional: set a default server name accessible in the UI
+      - ADMINER_DEFAULT_SERVER=mysql
+
+volumes:
+  mysql_data:
