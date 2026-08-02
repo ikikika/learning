@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://starter-mfe.local/schemas/starter.role.json",
+  "title": "StarterRoleMetadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["role", "version"],
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": ["standalone", "host", "remote", "hybrid"],
+      "description": "Exactly one repository role after init"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "App / package name set via init --name (defaults by role when omitted)"
+    },
+    "federationName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Module Federation container name derived from name"
+    },
+    "expose": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Remote or hybrid: MF expose key (PascalCase of name, e.g. ./Checkout)"
+    },
+    "remotes": {
+      "type": "array",
+      "description": "Host or hybrid: federated remotes loaded by this composer",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["alias", "name", "federationName", "expose", "urlEnv"],
+        "properties": {
+          "alias": {
+            "type": "string",
+            "description": "Webpack remotes map key / import alias (e.g. demoRemote)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Remote app / package name"
+          },
+          "federationName": {
+            "type": "string",
+            "description": "Remote Module Federation container name"
+          },
+          "expose": {
+            "type": "string",
+            "description": "Exposed module path (PascalCase of remote name, e.g. ./Checkout)"
+          },
+          "urlEnv": {
+            "type": "string",
+            "description": "Env var holding remoteEntry.js URL (e.g. DEMO_REMOTE_URL)"
+          }
+        }
+      }
+    },
+    "remoteProps": {
+      "type": "object",
+      "description": "Optional per-alias props bags (host or hybrid). Keys are remote aliases; values are JSON objects. Additive on schema version 1; keys not in remotes[].alias are ignored at runtime.",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "remoteName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Deprecated: use remotes[]. Still read for backward compatibility"
+    },
+    "remoteFederationName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Deprecated: use remotes[]. Still read for backward compatibility"
+    },
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Metadata schema version"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Optional ISO-8601 timestamp of last successful init"
+    },
+    "samplesPruned": {
+      "type": "boolean",
+      "description": "True when other-role sample assets were removed via init --prune-other-roles, the post-init TTY prompt, or npm run prune-other-roles"
+    }
+  }
+}

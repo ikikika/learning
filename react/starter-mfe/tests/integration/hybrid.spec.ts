@@ -1,0 +1,57 @@
+import { test, expect } from '@playwright/test';
+
+const THEME_STORAGE_KEY = 'starter-mfe-theme';
+
+test.describe('hybrid smoke', () => {
+  test('fallback for unreachable remote + empty/invalid URL; theme persistence', async ({
+    page,
+    context,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+
+    // Default `/` shows Hybrid welcome — no remote load
+    await page.goto('/');
+    await expect(page.getByTestId('demo-hybrid-home-page')).toBeVisible();
+    await expect(page.getByTestId('demo-hybrid-header-band')).toBeVisible();
+    await expect(page.getByTestId('hybrid-welcome')).toBeVisible();
+    await expect(page.getByTestId('remote-fallback')).toHaveCount(0);
+
+    // Empty remote URL → fallback (must be on leaf panel route; hybrid own-app uses bare `:alias`)
+    await page.goto('/demoRemote?remoteUrl=');
+    await expect(page.getByTestId('demo-hybrid-home-page')).toBeVisible();
+    await expect(page.getByTestId('remote-fallback')).toBeVisible();
+    await expect(page.getByTestId('remote-fallback')).toContainText(
+      /empty or invalid/i,
+    );
+
+    // Invalid URL
+    await page.goto('/demoRemote?remoteUrl=not-a-url');
+    await expect(page.getByTestId('remote-fallback')).toContainText(
+      /empty or invalid/i,
+    );
+
+    // Unreachable remote (nothing listening on configured remoteEntry)
+    await page.goto('/demoRemote');
+    await expect(page.getByTestId('remote-fallback')).toBeVisible({
+      timeout: 15_000,
+    });
+
+    // Theme: first visit + toggle + reload + use-system (on Hybrid welcome;
+    // MainLayout owns document theme/PWA for own-app entries — same as host)
+    await page.goto('/');
+    await page.evaluate((key) => localStorage.removeItem(key), THEME_STORAGE_KEY);
+    await page.reload();
+    const theme = await page.locator('html').getAttribute('data-theme');
+    expect(theme === 'light' || theme === 'dark').toBeTruthy();
+    await page.getByLabel('Use dark theme').click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await page.reload();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await page.getByLabel('Use system theme').click();
+
+    await context.setOffline(true);
+    await expect(page.getByTestId('connection-required')).toContainText(
+      /internet connection required/i,
+    );
+  });
+});
