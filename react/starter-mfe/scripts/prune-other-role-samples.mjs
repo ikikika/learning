@@ -67,7 +67,11 @@ function parseFlagValue(argv, longName) {
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg.startsWith(eq)) return arg.slice(eq.length);
-    if (arg === `--${longName}` && argv[i + 1] && !argv[i + 1].startsWith('--')) {
+    if (
+      arg === `--${longName}` &&
+      argv[i + 1] &&
+      !argv[i + 1].startsWith('--')
+    ) {
       return argv[i + 1];
     }
   }

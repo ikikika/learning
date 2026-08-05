@@ -14,15 +14,15 @@ npm equivalent (e.g. `npm run init -- --role=host --port=3001 --remote=demoRemot
 
 ## Flags
 
-| Flag | Values | Required |
-|------|--------|----------|
-| `--role` | `standalone`, `host`, `remote`, `hybrid` | Yes in non-TTY; prompted when stdin is a TTY |
-| `--port` | Integer `1`–`65535` | Yes in non-TTY; prompted when stdin is a TTY — writes role `PORT_*` in `.env` |
-| `--name` | camelCase identifier or lowercase npm-style name | No — prompted on TTY (Enter = role default); flag/default otherwise |
-| `--remote` | `alias:name[:expose[:urlEnv]]` (repeatable) | No — **host or hybrid**. Default expose is PascalCase of `name`. When omitted (and no `--remote-name`), `remotes[]` is **empty** |
-| `--remote-name` | same rules as `--name` | No — **host or hybrid**; shorthand for a single `demoRemote:<name>` entry. Mutually exclusive with `--remote` |
-| `--force` | presence | When `starter.role.json` already exists |
-| `--prune-other-roles` | presence | Opt-in: delete sample assets + related tests for roles other than the selected one, and remove starter Speckit feature folders under `specs/` (no TTY prompt). Non-TTY never prunes unless this flag is set |
+| Flag                  | Values                                           | Required                                                                                                                                                                                                    |
+| --------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--role`              | `standalone`, `host`, `remote`, `hybrid`         | Yes in non-TTY; prompted when stdin is a TTY                                                                                                                                                                |
+| `--port`              | Integer `1`–`65535`                              | Yes in non-TTY; prompted when stdin is a TTY — writes role `PORT_*` in `.env`                                                                                                                               |
+| `--name`              | camelCase identifier or lowercase npm-style name | No — prompted on TTY (Enter = role default); flag/default otherwise                                                                                                                                         |
+| `--remote`            | `alias:name[:expose[:urlEnv]]` (repeatable)      | No — **host or hybrid**. Default expose is PascalCase of `name`. When omitted (and no `--remote-name`), `remotes[]` is **empty**                                                                            |
+| `--remote-name`       | same rules as `--name`                           | No — **host or hybrid**; shorthand for a single `demoRemote:<name>` entry. Mutually exclusive with `--remote`                                                                                               |
+| `--force`             | presence                                         | When `starter.role.json` already exists                                                                                                                                                                     |
+| `--prune-other-roles` | presence                                         | Opt-in: delete sample assets + related tests for roles other than the selected one, and remove starter Speckit feature folders under `specs/` (no TTY prompt). Non-TTY never prunes unless this flag is set |
 
 ## Interactive prompts
 
@@ -34,8 +34,8 @@ When **stdin and stdout are TTYs** and a value is missing:
 
 After a successful init (whether values came from flags or prompts), when **stdin and stdout are TTYs** and `--prune-other-roles` was **not** passed:
 
-4. **Prune other-role samples?** — `Remove sample files for other roles? [y/N]:`  
-   - Empty / `n` / `no` → keep all role samples (default)  
+4. **Prune other-role samples?** — `Remove sample files for other roles? [y/N]:`
+   - Empty / `n` / `no` → keep all role samples (default)
    - `y` / `yes` → run the same prune as `--prune-other-roles` / `npm run prune-other-roles`
 
 Partial flags still work (e.g. `--role=host` prompts only for name + port).  
@@ -45,17 +45,17 @@ Standalone re-run (after init): `npm run prune-other-roles` (reads `starter.role
 
 ## Exit behavior
 
-| Condition | Exit | Message must convey |
-|-----------|------|---------------------|
-| Missing `--role` (non-TTY) | non-zero | `--role=standalone\|host\|remote\|hybrid` required |
-| Invalid `--role` | non-zero | Lists allowed values |
-| Missing / invalid `--port` (non-TTY / invalid flag) | non-zero | `--port` required; integer 1–65535 |
-| Invalid `--name` / `--remote` / `--remote-name` | non-zero | Valid format required |
-| `--remote` / `--remote-name` without `--role=host` or `hybrid` | non-zero | Only valid with host or hybrid |
-| Both `--remote` and `--remote-name` | non-zero | Use one or the other |
-| Duplicate remote alias | non-zero | Duplicate alias |
-| Metadata exists, no `--force` | non-zero | Re-init requires `--force` |
-| Success | 0 | Writes metadata; updates README + `.env` port; host/hybrid regenerates loaders; optional other-role sample prune |
+| Condition                                                      | Exit     | Message must convey                                                                                              |
+| -------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------- |
+| Missing `--role` (non-TTY)                                     | non-zero | `--role=standalone\|host\|remote\|hybrid` required                                                               |
+| Invalid `--role`                                               | non-zero | Lists allowed values                                                                                             |
+| Missing / invalid `--port` (non-TTY / invalid flag)            | non-zero | `--port` required; integer 1–65535                                                                               |
+| Invalid `--name` / `--remote` / `--remote-name`                | non-zero | Valid format required                                                                                            |
+| `--remote` / `--remote-name` without `--role=host` or `hybrid` | non-zero | Only valid with host or hybrid                                                                                   |
+| Both `--remote` and `--remote-name`                            | non-zero | Use one or the other                                                                                             |
+| Duplicate remote alias                                         | non-zero | Duplicate alias                                                                                                  |
+| Metadata exists, no `--force`                                  | non-zero | Re-init requires `--force`                                                                                       |
+| Success                                                        | 0        | Writes metadata; updates README + `.env` port; host/hybrid regenerates loaders; optional other-role sample prune |
 
 ## Side effects on success
 
@@ -70,9 +70,9 @@ Standalone re-run (after init): `npm run prune-other-roles` (reads `starter.role
 
 ## Role behavior (runtime)
 
-| Role | Effect |
-|------|--------|
-| `standalone` | Webpack: no remotes/exposes; routes → standalone |
-| `host` | Webpack remotes from `remotes[]` (may be empty); routes → host; loaders generated |
-| `remote` | Webpack exposes PascalCase name → `FederatedRemoteApp.tsx`; prints host `add-remote` snippet |
-| `hybrid` | Webpack remotes + expose → `FederatedHybridApp.tsx`; routes → hybrid; loaders generated; prints host `add-remote` snippet |
+| Role         | Effect                                                                                                                    |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `standalone` | Webpack: no remotes/exposes; routes → standalone                                                                          |
+| `host`       | Webpack remotes from `remotes[]` (may be empty); routes → host; loaders generated                                         |
+| `remote`     | Webpack exposes PascalCase name → `FederatedRemoteApp.tsx`; prints host `add-remote` snippet                              |
+| `hybrid`     | Webpack remotes + expose → `FederatedHybridApp.tsx`; routes → hybrid; loaders generated; prints host `add-remote` snippet |

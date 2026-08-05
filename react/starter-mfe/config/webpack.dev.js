@@ -20,8 +20,7 @@ module.exports = () => {
       // still resolve chunks from the origin root after refresh. Remotes also
       // need this because remoteEntry is injected via a dynamic <script>
       // where document.currentScript is null.
-      publicPath:
-        process.env.PUBLIC_PATH || `http://${getDevHost()}:${port}/`,
+      publicPath: process.env.PUBLIC_PATH || `http://${getDevHost()}:${port}/`,
     },
     devServer: {
       port,

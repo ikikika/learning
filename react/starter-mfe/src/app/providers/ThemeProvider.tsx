@@ -47,8 +47,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return readStoredPreference() ?? 'system';
   });
 
-  const theme: ThemeMode =
-    preference === 'system' ? systemTheme() : preference;
+  const theme: ThemeMode = preference === 'system' ? systemTheme() : preference;
 
   useEffect(() => {
     applyDocumentTheme(theme);

@@ -23,8 +23,7 @@ export const routePaths = {
 } as const;
 
 export type RemoteRouteSegment =
-  | typeof routePaths.remote.route1
-  | typeof routePaths.remote.route2;
+  typeof routePaths.remote.route1 | typeof routePaths.remote.route2;
 
 /** Absolute path to open a composed child on the shell. */
 export function composeChildPath(alias: string): string {

@@ -48,14 +48,14 @@ flowchart LR
 
 Create [`test-host/src/features/demoHost/`](test-host/src/features/demoHost/):
 
-| File | Role |
-|------|------|
-| `DemoHost.tsx` | Two-pane chrome: left nav + `<Outlet />` for the right panel; `data-testid="demo-host-home-page"` on the outer root |
-| `HostWelcome.tsx` | Sample host content for the “Host” item (title + short copy; no remote load) |
-| `RemotePanel.tsx` | Reads `:alias` from `useParams`, renders `<LoadRemote alias={alias} />` |
-| `DemoHost.module.scss` | Left rail + content area; stack vertically on narrow (~375px) viewports |
-| `index.ts` | Public exports |
-| `DemoHost.test.tsx` | Unit: always shows “Host”; with mocked `REMOTE_SLOTS` shows remote name link |
+| File                   | Role                                                                                                                |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `DemoHost.tsx`         | Two-pane chrome: left nav + `<Outlet />` for the right panel; `data-testid="demo-host-home-page"` on the outer root |
+| `HostWelcome.tsx`      | Sample host content for the “Host” item (title + short copy; no remote load)                                        |
+| `RemotePanel.tsx`      | Reads `:alias` from `useParams`, renders `<LoadRemote alias={alias} />`                                             |
+| `DemoHost.module.scss` | Left rail + content area; stack vertically on narrow (~375px) viewports                                             |
+| `index.ts`             | Public exports                                                                                                      |
+| `DemoHost.test.tsx`    | Unit: always shows “Host”; with mocked `REMOTE_SLOTS` shows remote name link                                        |
 
 Nav items:
 

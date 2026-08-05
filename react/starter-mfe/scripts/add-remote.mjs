@@ -2,7 +2,7 @@
 /**
  * DO NOT PRUNE THIS FILE.
  * Normal way to append remotes after init (npm run add-remote)
- * 
+ *
  * Host or hybrid CLI: append one remote to starter.role.json remotes[],
  * write .env[urlEnv], regenerate loaders, optional remoteProps[alias].
  * Flags preferred for CI; missing required values prompt when stdin is a TTY.
@@ -15,9 +15,11 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
-const { isValidPackageName, toExposePath, toFederationName } = require(
-  './app-name.cjs',
-);
+const {
+  isValidPackageName,
+  toExposePath,
+  toFederationName,
+} = require('./app-name.cjs');
 const {
   aliasToUrlEnv,
   isValidAlias,
@@ -40,7 +42,11 @@ function parseFlagValue(argv, longName) {
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg.startsWith(eq)) return arg.slice(eq.length);
-    if (arg === `--${longName}` && argv[i + 1] && !argv[i + 1].startsWith('--')) {
+    if (
+      arg === `--${longName}` &&
+      argv[i + 1] &&
+      !argv[i + 1].startsWith('--')
+    ) {
       return argv[i + 1];
     }
   }
@@ -207,16 +213,7 @@ async function promptProps(rl) {
  * use flag values or defaults with no prompts.
  */
 async function resolveInteractive(args) {
-  let {
-    alias,
-    url,
-    port,
-    name,
-    expose,
-    federationName,
-    urlEnv,
-    props,
-  } = args;
+  let { alias, url, port, name, expose, federationName, urlEnv, props } = args;
 
   const hasUrl = url != null && url !== '';
   const hasPort = port != null && port !== '';
@@ -280,11 +277,7 @@ async function resolveInteractive(args) {
     }
 
     if (federationName == null) {
-      federationName = await promptOptional(
-        rl,
-        'Federation name',
-        defaultFed,
-      );
+      federationName = await promptOptional(rl, 'Federation name', defaultFed);
       if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(federationName)) {
         fail(`Invalid federation name: ${federationName}`);
       }
@@ -341,16 +334,8 @@ async function main() {
   }
 
   const resolved = await resolveInteractive(args);
-  const {
-    alias,
-    url,
-    port,
-    name,
-    expose,
-    federationName,
-    urlEnv,
-    propsBag,
-  } = resolved;
+  const { alias, url, port, name, expose, federationName, urlEnv, propsBag } =
+    resolved;
 
   const hasUrl = url != null && url !== '';
   const hasPort = port != null && port !== '';

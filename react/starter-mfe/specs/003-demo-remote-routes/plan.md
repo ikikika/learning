@@ -23,13 +23,13 @@ isProject: false
 
 **Do not change how the `standalone` or `host` roles work.** No edits to their route tables, chrome, bootstrap, or shared App mount path.
 
-| Allowed | Forbidden |
-|---------|-----------|
-| [`remoteRoutes.tsx`](../../src/app/routes/remoteRoutes.tsx) | [`standaloneRoutes.tsx`](../../src/app/routes/standaloneRoutes.tsx), [`hostRoutes.tsx`](../../src/app/routes/hostRoutes.tsx) |
-| New `features/demoRemote/`, `pages/DemoRemote*` | [`features/demo/`](../../src/features/demo/), [`features/demoHost/`](../../src/features/demoHost/), [`HomePage`](../../src/pages/HomePage/) |
-| New remote-only federated entry (see below) | Changing [`App.tsx`](../../src/app/App.tsx) behavior for non-embedded mounts |
-| Remote-role webpack `exposes` target | [`AppProviders`](../../src/app/providers/AppProviders.tsx), host nav / `REMOTE_SLOTS`, `LoadRemote` contract beyond what compose already does |
-| Tests that target remote / compose remote panel | Changing standalone or host e2e expectations except compose’s remote-panel assertion |
+| Allowed                                                     | Forbidden                                                                                                                                     |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`remoteRoutes.tsx`](../../src/app/routes/remoteRoutes.tsx) | [`standaloneRoutes.tsx`](../../src/app/routes/standaloneRoutes.tsx), [`hostRoutes.tsx`](../../src/app/routes/hostRoutes.tsx)                  |
+| New `features/demoRemote/`, `pages/DemoRemote*`             | [`features/demo/`](../../src/features/demo/), [`features/demoHost/`](../../src/features/demoHost/), [`HomePage`](../../src/pages/HomePage/)   |
+| New remote-only federated entry (see below)                 | Changing [`App.tsx`](../../src/app/App.tsx) behavior for non-embedded mounts                                                                  |
+| Remote-role webpack `exposes` target                        | [`AppProviders`](../../src/app/providers/AppProviders.tsx), host nav / `REMOTE_SLOTS`, `LoadRemote` contract beyond what compose already does |
+| Tests that target remote / compose remote panel             | Changing standalone or host e2e expectations except compose’s remote-panel assertion                                                          |
 
 ## Approach
 

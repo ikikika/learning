@@ -8,13 +8,13 @@
 
 Host-side record for one federated remote (existing `remotes[]` item).
 
-| Field | Type | Rules |
-|-------|------|--------|
-| alias | string | Required; JS identifier; unique in `remotes[]` |
-| name | string | Required; package-like name; default = alias |
-| federationName | string | Required; MF container name; default from name |
-| expose | string | Required; `./PascalCase…` |
-| urlEnv | string | Required; `UPPER_SNAKE` env key for remoteEntry URL |
+| Field          | Type   | Rules                                               |
+| -------------- | ------ | --------------------------------------------------- |
+| alias          | string | Required; JS identifier; unique in `remotes[]`      |
+| name           | string | Required; package-like name; default = alias        |
+| federationName | string | Required; MF container name; default from name      |
+| expose         | string | Required; `./PascalCase…`                           |
+| urlEnv         | string | Required; `UPPER_SNAKE` env key for remoteEntry URL |
 
 **Relationships**: Zero-or-one `PerRemoteHostProps` keyed by the same `alias`.
 
@@ -24,10 +24,10 @@ Host-side record for one federated remote (existing `remotes[]` item).
 
 Developer-supplied location for an already-running entry.
 
-| Field | Type | Rules |
-|-------|------|--------|
-| url | string (URL) | Optional input; http(s) absolute; typically ends with `/remoteEntry.js` |
-| port | integer | Optional input; 1–65535; mutually exclusive with url at CLI |
+| Field | Type         | Rules                                                                   |
+| ----- | ------------ | ----------------------------------------------------------------------- |
+| url   | string (URL) | Optional input; http(s) absolute; typically ends with `/remoteEntry.js` |
+| port  | integer      | Optional input; 1–65535; mutually exclusive with url at CLI             |
 
 **Derived**: Stored value is always the resolved URL written to `.env[urlEnv]`.
 
@@ -35,11 +35,11 @@ Developer-supplied location for an already-running entry.
 
 Serializable props bag for one alias.
 
-| Field | Type | Rules |
-|-------|------|--------|
+| Field | Type             | Rules                                                                     |
+| ----- | ---------------- | ------------------------------------------------------------------------- |
 | alias | string (map key) | Must match a registration to take effect; unknown keys ignored at runtime |
-| props | object | JSON object; no functions; may be `{}` |
-| title | string (sample) | Optional conventional key consumed by demoRemote when embedded |
+| props | object           | JSON object; no functions; may be `{}`                                    |
+| title | string (sample)  | Optional conventional key consumed by demoRemote when embedded            |
 
 **Storage**: `starter.role.json` → `remoteProps: { [alias]: props }`
 
@@ -49,11 +49,11 @@ Serializable props bag for one alias.
 
 Runtime mount in the host panel (not persisted).
 
-| Field | Type | Rules |
-|-------|------|--------|
-| alias | string | From route `/app/:alias` |
-| embedded | boolean | Always `true` from host |
-| props | object | From `remoteProps[alias]` or `{}`; `embedded` key stripped if present |
+| Field    | Type    | Rules                                                                 |
+| -------- | ------- | --------------------------------------------------------------------- |
+| alias    | string  | From route `/app/:alias`                                              |
+| embedded | boolean | Always `true` from host                                               |
+| props    | object  | From `remoteProps[alias]` or `{}`; `embedded` key stripped if present |
 
 ## Validation summary
 

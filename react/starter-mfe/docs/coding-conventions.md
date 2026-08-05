@@ -12,15 +12,15 @@ already in this codebase over alternatives from external guides.
 
 ## Layer boundaries
 
-| Layer | Role |
-|-------|------|
-| `src/app/` | Wiring: providers, role routes, federated entries, remote loaders |
-| `src/features/<name>/` | Domain UI + `api/` / `hooks/` / `types/` |
-| `src/pages/` | Thin route containers that compose features |
-| `src/components/` | Shared UI primitives (not feature domain logic) |
-| `src/core/` | Shared constants, role/remotes helpers |
-| `src/services/` | Shared HTTP client (`httpClient`, `apiUrl`) |
-| `src/layouts/` | Shell chrome (e.g. `MainLayout`) |
+| Layer                  | Role                                                              |
+| ---------------------- | ----------------------------------------------------------------- |
+| `src/app/`             | Wiring: providers, role routes, federated entries, remote loaders |
+| `src/features/<name>/` | Domain UI + `api/` / `hooks/` / `types/`                          |
+| `src/pages/`           | Thin route containers that compose features                       |
+| `src/components/`      | Shared UI primitives (not feature domain logic)                   |
+| `src/core/`            | Shared constants, role/remotes helpers                            |
+| `src/services/`        | Shared HTTP client (`httpClient`, `apiUrl`)                       |
+| `src/layouts/`         | Shell chrome (e.g. `MainLayout`)                                  |
 
 Keep new work inside the matching layer; do not grow pages into feature logic
 or put API calls in presentational components.
@@ -75,10 +75,10 @@ src/features/<name>/
 
 Preferred order: **types → api → hooks → presentational UI → page/route wiring**.
 
-1. `types/` — request/response and view contracts  
-2. `api/` — pure functions using `apiRoutes` / path helpers + `apiUrl()`  
-3. `hooks/` — loading / success / error (+ abort) around api  
-4. Feature UI — render from hooks/props only  
+1. `types/` — request/response and view contracts
+2. `api/` — pure functions using `apiRoutes` / path helpers + `apiUrl()`
+3. `hooks/` — loading / success / error (+ abort) around api
+4. Feature UI — render from hooks/props only
 5. `pages/` + role `*Routes.tsx` — thin container and path from `routePaths`
 
 Keep components focused; extract a hook or child when UI and data logic grow
@@ -91,14 +91,14 @@ together. Prefer feature-local logic over cross-feature coupling.
 - Use barrel `index.ts` exports for public module surfaces (especially
   federated feature entrypoints).
 
-| Kind | Convention | Example |
-|------|------------|---------|
-| Component | PascalCase | `DemoHost.tsx` |
-| Styles | Same base + `.module.scss` | `DemoHost.module.scss` |
-| Hook | `use` + camelCase | `usePost.ts` |
-| API function | camelCase verb | `getPost.ts` |
-| Types | under `types/` | `types/post.ts`, `types/index.ts` |
-| Unit test | co-located | `DemoHost.test.tsx` |
+| Kind         | Convention                 | Example                           |
+| ------------ | -------------------------- | --------------------------------- |
+| Component    | PascalCase                 | `DemoHost.tsx`                    |
+| Styles       | Same base + `.module.scss` | `DemoHost.module.scss`            |
+| Hook         | `use` + camelCase          | `usePost.ts`                      |
+| API function | camelCase verb             | `getPost.ts`                      |
+| Types        | under `types/`             | `types/post.ts`, `types/index.ts` |
+| Unit test    | co-located                 | `DemoHost.test.tsx`               |
 
 ## Environment & ports
 
@@ -134,6 +134,17 @@ together. Prefer feature-local logic over cross-feature coupling.
 - Co-locate component styles (`*.module.scss`) and unit tests next to sources.
 - Avoid new inline style objects for themeable surfaces; use CSS modules +
   tokens. See [ui-context.md](./ui-context.md).
+
+## Lint & format
+
+- ESLint flat config: `eslint.config.mjs` (TypeScript + React Hooks +
+  Prettier via `eslint-plugin-prettier`).
+- Prettier: `.prettierrc.json` / `.prettierignore`.
+- Scripts: `npm run lint`, `npm run lint:fix`, `npm run format`,
+  `npm run format:check`.
+- Editor format-on-save: Cursor/VS Code via committed
+  `.vscode/settings.json` + recommended Prettier/ESLint extensions
+  (see README “Format on save”).
 
 ## Testing
 

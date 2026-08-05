@@ -6,12 +6,12 @@ hybrid → leaf remotes. Multi-repo: one role per clone.
 
 **Docs**
 
-| Doc | Role |
-|-----|------|
-| [docs/project-overview.md](./docs/project-overview.md) | Product what / who / flows / out of scope |
+| Doc                                                        | Role                                       |
+| ---------------------------------------------------------- | ------------------------------------------ |
+| [docs/project-overview.md](./docs/project-overview.md)     | Product what / who / flows / out of scope  |
 | [docs/coding-conventions.md](./docs/coding-conventions.md) | Code structure & data-fetching conventions |
-| [docs/ui-context.md](./docs/ui-context.md) | Tokens, theming, component & UI guidance |
-| [AGENTS.md](./AGENTS.md) | Short checklist for AI agents |
+| [docs/ui-context.md](./docs/ui-context.md)                 | Tokens, theming, component & UI guidance   |
+| [AGENTS.md](./AGENTS.md)                                   | Short checklist for AI agents              |
 
 After a design or coding session that locks new decisions, update the matching docs (e.g. ask the agent: “Update `docs/coding-conventions.md`, `docs/ui-context.md`, `docs/project-overview.md`, and/or `AGENTS.md` with the decisions from this session.”).
 
@@ -44,6 +44,7 @@ Then use Speckit’s slash commands / skills in that agent (names vary by integr
 Full reference: [github/spec-kit](https://github.com/github/spec-kit).
 
 <!-- ROLE:START -->
+
 **Active role:** `remote`
 
 Start: `npm start` (after `npm install`)
@@ -63,14 +64,14 @@ Ports are empty in `.env` until init. Required port (flag or prompt) writes the 
 
 Init flags (optional on a TTY — missing values are prompted):
 
-| Flag | Purpose |
-|------|---------|
-| `--role` | `standalone` \| `host` \| `remote` \| `hybrid` (required in CI / non-TTY) |
-| `--port` | Dev-server port `1`–`65535` (required in CI / non-TTY; writes role `PORT_*` in `.env`) |
-| `--name` | App name → metadata, MF container name, and (when set) `package.json` `"name"` |
-| `--remote` | Host or hybrid, repeatable: `alias:name[:expose[:urlEnv]]`. Builds `remotes[]` in `starter.role.json`. Omit for an empty composer |
-| `--remote-name` | Host or hybrid shorthand for one `demoRemote:<name>` entry (not with `--remote`) |
-| `--force` | Required to re-init when `starter.role.json` exists |
+| Flag                  | Purpose                                                                                                                                                   |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--role`              | `standalone` \| `host` \| `remote` \| `hybrid` (required in CI / non-TTY)                                                                                 |
+| `--port`              | Dev-server port `1`–`65535` (required in CI / non-TTY; writes role `PORT_*` in `.env`)                                                                    |
+| `--name`              | App name → metadata, MF container name, and (when set) `package.json` `"name"`                                                                            |
+| `--remote`            | Host or hybrid, repeatable: `alias:name[:expose[:urlEnv]]`. Builds `remotes[]` in `starter.role.json`. Omit for an empty composer                         |
+| `--remote-name`       | Host or hybrid shorthand for one `demoRemote:<name>` entry (not with `--remote`)                                                                          |
+| `--force`             | Required to re-init when `starter.role.json` exists                                                                                                       |
 | `--prune-other-roles` | Opt-in: delete other-role sample assets + related tests and starter Speckit folders under `specs/` (CI / non-TTY). On a TTY, init also asks after success |
 
 Example multi-repo naming:
@@ -98,15 +99,15 @@ npm run add-remote -- --alias=demoRemote --name=demoRemote --port=3002 \
 # or: --url=http://127.0.0.1:3002/remoteEntry.js
 ```
 
-| Flag | Purpose |
-|------|---------|
-| `--alias` | Required. Webpack remotes map key / nav slot id |
-| `--url` / `--port` | Exactly one. Absolute remoteEntry URL, or local port → `http://$DEV_HOST:$port/remoteEntry.js` |
-| `--name` | Optional (default alias). Remote app name |
-| `--expose` | Optional (default PascalCase of name) |
-| `--federation-name` | Optional (default from name) |
-| `--url-env` | Optional (default from alias, e.g. `DEMO_REMOTE_URL`) |
-| `--props` | Optional JSON object → `starter.role.json` `remoteProps[alias]` |
+| Flag                | Purpose                                                                                        |
+| ------------------- | ---------------------------------------------------------------------------------------------- |
+| `--alias`           | Required. Webpack remotes map key / nav slot id                                                |
+| `--url` / `--port`  | Exactly one. Absolute remoteEntry URL, or local port → `http://$DEV_HOST:$port/remoteEntry.js` |
+| `--name`            | Optional (default alias). Remote app name                                                      |
+| `--expose`          | Optional (default PascalCase of name)                                                          |
+| `--federation-name` | Optional (default from name)                                                                   |
+| `--url-env`         | Optional (default from alias, e.g. `DEMO_REMOTE_URL`)                                          |
+| `--props`           | Optional JSON object → `starter.role.json` `remoteProps[alias]`                                |
 
 `add-remote` is **host or hybrid only** (other roles exit non-zero, no writes). Duplicate aliases are rejected. On a TTY, `npm run add-remote` with missing required flags prompts one-by-one (alias → port/url → name → expose → federation name → url env → optional props). Restart the composer after add so the webpack remotes map and baked `__STARTER_REMOTE_PROPS__` refresh. Later prop changes in v1: hand-edit `remoteProps` in `starter.role.json`, then restart.
 
@@ -116,12 +117,12 @@ Re-init: `npm run init -- --role=host --port=3001 --name=host --force` (requires
 
 ## Roles
 
-| Role | Behavior |
-|------|----------|
-| `standalone` | Single app; demo home; no MF remotes/exposes |
-| `host` | Shell; optional remote/hybrid slot(s) with `embedded={true}`; remotes map + generated loaders (empty until `--remote` or `add-remote`) |
-| `remote` | Dual-mode leaf: `demoRemote` routes (`/route-1`, `/route-2`) + federated PascalCase expose → `FederatedRemoteApp.tsx` |
-| `hybrid` | Intermediate shell: `demoHybrid` chrome (`demo-hybrid-header-band`) + remotes map + federated expose → `FederatedHybridApp.tsx`; prints host `add-remote` snippet; `add-remote` for child modules |
+| Role         | Behavior                                                                                                                                                                                          |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `standalone` | Single app; demo home; no MF remotes/exposes                                                                                                                                                      |
+| `host`       | Shell; optional remote/hybrid slot(s) with `embedded={true}`; remotes map + generated loaders (empty until `--remote` or `add-remote`)                                                            |
+| `remote`     | Dual-mode leaf: `demoRemote` routes (`/route-1`, `/route-2`) + federated PascalCase expose → `FederatedRemoteApp.tsx`                                                                             |
+| `hybrid`     | Intermediate shell: `demoHybrid` chrome (`demo-hybrid-header-band`) + remotes map + federated expose → `FederatedHybridApp.tsx`; prints host `add-remote` snippet; `add-remote` for child modules |
 
 Init only writes `starter.role.json`, README, `.env` port, optional `package.json` name, and (host/hybrid) `loaders.generated.ts`. It does **not** prune `src/` **by default** — sample assets for all roles coexist. Opt-in prune (TTY question after init, `--prune-other-roles`, or `npm run prune-other-roles`) removes other-role samples + related tests, deletes starter Speckit feature folders under `specs/` (leaves `specs/` empty for your features), and sets `samplesPruned: true`. There is no restore (re-clone the starter). Prefer one role per clone; avoid switching.
 
@@ -151,16 +152,38 @@ Re-init remote/hybrid with a new `--name` (and `--force`); update composer `remo
 
 ## Scripts
 
-| Script | Purpose |
-|--------|---------|
-| `npm run init` | Role init (prompts on TTY; use `--role` / `--port` in CI; optional prune prompt / `--prune-other-roles`) |
-| `npm run prune-other-roles` | After init: remove other-role sample assets + related tests + `specs/*` feature folders |
-| `npm run add-remote` | Host or hybrid: append one remote (+ optional `--props`); prompts on TTY when flags omitted; restart composer after |
-| `npm start` / `npm run build` | Dev / production |
-| `npm test` | Jest unit tests + contract tests |
-| `npm run test:e2e` | Per-role Playwright (incl. hybrid) |
-| `npm run test:compose` | Compose harness: host+remote, shell+hybrid, hybrid+leaf |
-| `npm run test:a11y` | WCAG 2.2 AA (axe) for standalone/host/remote/hybrid; fails on violations |
+| Script                            | Purpose                                                                                                             |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `npm run init`                    | Role init (prompts on TTY; use `--role` / `--port` in CI; optional prune prompt / `--prune-other-roles`)            |
+| `npm run prune-other-roles`       | After init: remove other-role sample assets + related tests + `specs/*` feature folders                             |
+| `npm run add-remote`              | Host or hybrid: append one remote (+ optional `--props`); prompts on TTY when flags omitted; restart composer after |
+| `npm start` / `npm run build`     | Dev / production                                                                                                    |
+| `npm run lint` / `lint:fix`       | ESLint (flat config; Prettier via plugin)                                                                           |
+| `npm run format` / `format:check` | Prettier write / check                                                                                              |
+| `npm test`                        | Jest unit tests + contract tests                                                                                    |
+| `npm run test:e2e`                | Per-role Playwright (incl. hybrid)                                                                                  |
+| `npm run test:compose`            | Compose harness: host+remote, shell+hybrid, hybrid+leaf                                                             |
+| `npm run test:a11y`               | WCAG 2.2 AA (axe) for standalone/host/remote/hybrid; fails on violations                                            |
+
+### Format on save (Cursor / VS Code)
+
+This repo ships workspace settings that format with Prettier when you save:
+
+1. Open the project folder in Cursor or VS Code (so `.vscode/settings.json` applies).
+2. Install the recommended extensions when prompted — or install manually:
+   - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) (`esbenp.prettier-vscode`)
+   - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) (`dbaeumer.vscode-eslint`)
+3. Confirm **Format On Save** is on for the workspace (`editor.formatOnSave`) and the default formatter is Prettier.
+
+Config lives in `.vscode/settings.json` and `.vscode/extensions.json` (committed; other `.vscode/*` stays gitignored).
+
+CLI fallback (CI / other editors):
+
+```bash
+npm run format        # write
+npm run format:check  # check only
+npm run lint          # ESLint + Prettier rule
+```
 
 If Playwright fails with “Executable doesn't exist” / “Looks like Playwright was just installed”, download browsers once:
 

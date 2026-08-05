@@ -44,7 +44,7 @@
 - Q: Empty/invalid host remote-location config verification → A: Host automated smoke MUST also cover empty/invalid remote URL (or missing remotes map entry) and still show `RemoteFallback` (unreachable remote alone is not sufficient)
 - Q: Where `embedded={true}` suppresses PWA/theme takeover → A: Suppression lives on the `./Demo` module when `embedded={true}`; remote bootstrap ThemeProvider/`registerPwa` only run for standalone entry (federated path does not rely on remote bootstrap)
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Scaffold a standalone app (Priority: P1)
 
@@ -63,6 +63,7 @@ A developer needs a ready-to-run single application repository for a product tha
 5. **Given** a completed standalone scaffold, **When** the developer uses the demo theme toggle, **Then** the document root reflects `data-theme="dark"` or `data-theme="light"` and primary demo surfaces update via CSS-variable tokens (no third-party component library).
 6. **Given** a completed standalone scaffold, **When** the developer chooses “Use system theme” (or equivalent), **Then** the persisted choice is cleared and the app re-applies `prefers-color-scheme` (fallback `light`).
 7. **Given** CI for a completed scaffold, **When** WCAG 2.2 AA audit tooling runs against the primary demo route, **Then** the job fails if AA violations are reported.
+
 ---
 
 ### User Story 2 - Scaffold a host app (Priority: P2)
@@ -127,7 +128,7 @@ A developer needs a remote repository that can be developed and tested alone and
 - Host init leaves `src/pages/HomePage` on disk → scaffold violation; host MUST use only `HostHomePage` (HomePage restored from templates when forcing standalone/remote).
 - Init to `standalone` or `remote` leaves live host-only sample assets (`HostHomePage`, host routes, remote loader adapters) on disk → scaffold violation; those paths MUST be pruned from live `src/` and restored from `templates/role-assets/host/` only when initializing as host.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -171,7 +172,7 @@ A developer needs a remote repository that can be developed and tested alone and
 - **Remote Fallback**: User-visible substitute when the sample remote cannot be loaded (host role only).
 - **Theme**: `light` or `dark`; applied via `data-theme` on the document root; driven by ThemeProvider and CSS-variable tokens; first visit uses `prefers-color-scheme` (fallback `light`); after toggle, choice is persisted and preferred over system until cleared via an explicit “Use system theme” (or equivalent) demo control; demo light/dark toggle required; when federated, host owns document theme; remote theme machinery is for standalone; third-party UI kits out of scope for v1.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

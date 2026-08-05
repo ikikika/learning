@@ -20,8 +20,8 @@
 
 **Purpose**: Env/schema/docs surfaces that all hybrid work depends on
 
-- [X] T001 Add blank `PORT_HYBRID=` to `.env.example` and document hybrid port alongside other `PORT_*` keys
-- [X] T002 [P] Extend `role` enum with `hybrid` in `specs/001-react-role-scaffold/contracts/role-metadata.schema.json` (hybrid shape: `expose` + `remotes[]` per `specs/005-hybrid-role-scaffold/data-model.md`)
+- [x] T001 Add blank `PORT_HYBRID=` to `.env.example` and document hybrid port alongside other `PORT_*` keys
+- [x] T002 [P] Extend `role` enum with `hybrid` in `specs/001-react-role-scaffold/contracts/role-metadata.schema.json` (hybrid shape: `expose` + `remotes[]` per `specs/005-hybrid-role-scaffold/data-model.md`)
 
 ---
 
@@ -31,11 +31,11 @@
 
 **⚠️ CRITICAL**: Blocks all user stories
 
-- [X] T003 Extend `AppRole` / role helpers to include `hybrid` in `src/core/constants/role.ts` and `src/types/shims.d.ts` (and any `__STARTER_ROLE__` typings)
-- [X] T004 [P] Add `PORT_HYBRID` to `portEnvKeyForRole` / `getPortForRole` in `scripts/load-env.cjs` and the matching helper in `scripts/init.mjs` (default e2e port **3003**)
-- [X] T005 Extend `federationOptions` and `@active-routes` in `config/webpack.common.js` so `hybrid` gets **both** remotes map (like host) and expose → `./src/app/FederatedHybridApp.tsx` (like remote); bake `remoteEntries` + `__STARTER_REMOTE_PROPS__` when role is `host` **or** `hybrid`
-- [X] T006 [P] Add hybrid to `ROLE_PORTS` / role runners in `scripts/run-e2e.mjs` (port 3003) without breaking existing three-role runs
-- [X] T007 [P] Touch composer wording only if needed in `src/app/remotes/loadRemote.tsx` and `src/core/constants/remotes.ts` so host|hybrid messaging stays accurate; keep `embedded: true` authoritative
+- [x] T003 Extend `AppRole` / role helpers to include `hybrid` in `src/core/constants/role.ts` and `src/types/shims.d.ts` (and any `__STARTER_ROLE__` typings)
+- [x] T004 [P] Add `PORT_HYBRID` to `portEnvKeyForRole` / `getPortForRole` in `scripts/load-env.cjs` and the matching helper in `scripts/init.mjs` (default e2e port **3003**)
+- [x] T005 Extend `federationOptions` and `@active-routes` in `config/webpack.common.js` so `hybrid` gets **both** remotes map (like host) and expose → `./src/app/FederatedHybridApp.tsx` (like remote); bake `remoteEntries` + `__STARTER_REMOTE_PROPS__` when role is `host` **or** `hybrid`
+- [x] T006 [P] Add hybrid to `ROLE_PORTS` / role runners in `scripts/run-e2e.mjs` (port 3003) without breaking existing three-role runs
+- [x] T007 [P] Touch composer wording only if needed in `src/app/remotes/loadRemote.tsx` and `src/core/constants/remotes.ts` so host|hybrid messaging stays accurate; keep `embedded: true` authoritative
 
 **Checkpoint**: Foundation ready — hybrid role recognized by webpack/env/types
 
@@ -49,16 +49,16 @@
 
 ### Tests for User Story 1
 
-- [X] T008 [P] [US1] Extend `tests/contract/init-cli.test.mjs` for hybrid: allowed role, `PORT_HYBRID`, metadata `expose` + `remotes: []`, and stdout host `add-remote` snippet shape (per `specs/005-hybrid-role-scaffold/contracts/hybrid-init-cli.md`)
-- [X] T009 [P] [US1] Add Playwright smoke `tests/integration/hybrid.spec.ts`: phone-width; theme first-visit/toggle/reload (same as other own-app roles); **same** PWA/offline banner assertions as other own-app roles; empty hybrid chrome; assert `data-testid="demo-hybrid-header-band"` present (and absent on host sample expectations where compared)
+- [x] T008 [P] [US1] Extend `tests/contract/init-cli.test.mjs` for hybrid: allowed role, `PORT_HYBRID`, metadata `expose` + `remotes: []`, and stdout host `add-remote` snippet shape (per `specs/005-hybrid-role-scaffold/contracts/hybrid-init-cli.md`)
+- [x] T009 [P] [US1] Add Playwright smoke `tests/integration/hybrid.spec.ts`: phone-width; theme first-visit/toggle/reload (same as other own-app roles); **same** PWA/offline banner assertions as other own-app roles; empty hybrid chrome; assert `data-testid="demo-hybrid-header-band"` present (and absent on host sample expectations where compared)
 
 ### Implementation for User Story 1
 
-- [X] T010 [US1] Extend `scripts/init.mjs`: `ALLOWED_ROLES` += `hybrid`; interactive prompt includes hybrid; `--remote`/`--remote-name` allowed for host|hybrid; write hybrid metadata (`expose` + `remotes`); regenerate loaders; print host `add-remote` snippet via existing `hostRemoteSnippetForApp` (or equivalent)
-- [X] T011 [P] [US1] Create `src/features/demoHybrid/` (public `index.ts`, home/nav/panel from `REMOTE_SLOTS`, empty state, fallback slot UI) with distinct tokens/branding vs `src/features/demoHost/` and header band `data-testid="demo-hybrid-header-band"`
-- [X] T012 [P] [US1] Add `src/app/routes/hybridRoutes.tsx` wiring own-app layout + `demoHybrid` (nav+panel composition like host; include theme toggle on own-app)
-- [X] T013 [US1] Add `src/app/FederatedHybridApp.tsx` expose stub (typed `embedded?`, optional display props, `CONTRACT_VERSION = '1.0.0'`) that renders hybrid chrome for MF; own-app path remains `App.tsx` + `hybridRoutes` (full embed toggle suppression finalized in US3 T024)
-- [X] T014 [US1] Ensure hybrid own-app providers/PWA path works for role `hybrid` (bootstrap / `AppProviders` / layout) without changing standalone/host/remote route tables’ behavior
+- [x] T010 [US1] Extend `scripts/init.mjs`: `ALLOWED_ROLES` += `hybrid`; interactive prompt includes hybrid; `--remote`/`--remote-name` allowed for host|hybrid; write hybrid metadata (`expose` + `remotes`); regenerate loaders; print host `add-remote` snippet via existing `hostRemoteSnippetForApp` (or equivalent)
+- [x] T011 [P] [US1] Create `src/features/demoHybrid/` (public `index.ts`, home/nav/panel from `REMOTE_SLOTS`, empty state, fallback slot UI) with distinct tokens/branding vs `src/features/demoHost/` and header band `data-testid="demo-hybrid-header-band"`
+- [x] T012 [P] [US1] Add `src/app/routes/hybridRoutes.tsx` wiring own-app layout + `demoHybrid` (nav+panel composition like host; include theme toggle on own-app)
+- [x] T013 [US1] Add `src/app/FederatedHybridApp.tsx` expose stub (typed `embedded?`, optional display props, `CONTRACT_VERSION = '1.0.0'`) that renders hybrid chrome for MF; own-app path remains `App.tsx` + `hybridRoutes` (full embed toggle suppression finalized in US3 T024)
+- [x] T014 [US1] Ensure hybrid own-app providers/PWA path works for role `hybrid` (bootstrap / `AppProviders` / layout) without changing standalone/host/remote route tables’ behavior
 
 **Checkpoint**: US1 complete — MVP hybrid init + standalone chrome
 
@@ -72,15 +72,15 @@
 
 ### Tests for User Story 2
 
-- [X] T015 [P] [US2] Extend `tests/contract/add-remote-cli.test.mjs`: allow `hybrid`; refuse `standalone`|`remote` with clear non-“host-only-only” error; host success path still passes (per `specs/005-hybrid-role-scaffold/contracts/add-remote-host-hybrid.md`)
-- [X] T016 [P] [US2] Extend `tests/contract/add-remote-writes.test.mjs`: successful add on hybrid updates `remotes[]`, `.env`, and `src/app/remotes/loaders.generated.ts`
-- [X] T017 [P] [US2] Add hybrid+leaf pair compose coverage in `tests/integration/compose-hybrid-leaf.spec.ts` **and wire it into** `scripts/compose-harness.mjs` / `npm run test:compose` (or a sibling script invoked by that entry): mount child with hybrid chrome; stop leaf → fallback within ~3s; hybrid interactive
+- [x] T015 [P] [US2] Extend `tests/contract/add-remote-cli.test.mjs`: allow `hybrid`; refuse `standalone`|`remote` with clear non-“host-only-only” error; host success path still passes (per `specs/005-hybrid-role-scaffold/contracts/add-remote-host-hybrid.md`)
+- [x] T016 [P] [US2] Extend `tests/contract/add-remote-writes.test.mjs`: successful add on hybrid updates `remotes[]`, `.env`, and `src/app/remotes/loaders.generated.ts`
+- [x] T017 [P] [US2] Add hybrid+leaf pair compose coverage in `tests/integration/compose-hybrid-leaf.spec.ts` **and wire it into** `scripts/compose-harness.mjs` / `npm run test:compose` (or a sibling script invoked by that entry): mount child with hybrid chrome; stop leaf → fallback within ~3s; hybrid interactive
 
 ### Implementation for User Story 2
 
-- [X] T018 [US2] Update `scripts/add-remote.mjs` role gate to `host || hybrid`; keep validation/writes identical; no leaf-vs-hybrid role sniffing
-- [X] T019 [US2] Wire `demoHybrid` / hybrid panel to reuse `LoadRemote` so children get `embedded={true}` and defined `RemoteFallback` (or hybrid-equivalent fallback) on failure
-- [X] T020 [US2] Confirm init `--remote` on hybrid regenerates loaders consistently with add-remote (`scripts/init.mjs` / `scripts/remotes-config.cjs`)
+- [x] T018 [US2] Update `scripts/add-remote.mjs` role gate to `host || hybrid`; keep validation/writes identical; no leaf-vs-hybrid role sniffing
+- [x] T019 [US2] Wire `demoHybrid` / hybrid panel to reuse `LoadRemote` so children get `embedded={true}` and defined `RemoteFallback` (or hybrid-equivalent fallback) on failure
+- [x] T020 [US2] Confirm init `--remote` on hybrid regenerates loaders consistently with add-remote (`scripts/init.mjs` / `scripts/remotes-config.cjs`)
 
 **Checkpoint**: US2 complete — hybrid as composer
 
@@ -94,14 +94,14 @@
 
 ### Tests for User Story 3
 
-- [X] T021 [P] [US3] Add contract test `tests/contract/hybrid-expose.test.mjs`: webpack/metadata expose points at `FederatedHybridApp`; public types include `embedded?: boolean` + `CONTRACT_VERSION` (per `specs/005-hybrid-role-scaffold/contracts/hybrid-public-entry.md`)
-- [X] T022 [P] [US3] Add shell+hybrid pair compose coverage in `tests/integration/compose-shell-hybrid.spec.ts` **and wire it into** `scripts/compose-harness.mjs` / `npm run test:compose` (or sibling invoked by that entry): `embedded={true}`, shell document theme ownership, hybrid theme toggle absent, `demo-hybrid-header-band` present in panel; stop hybrid → host fallback
-- [X] T023 [P] [US3] Unit/component test for embed toggle gating in `src/app/FederatedHybridApp.tsx` or `src/features/demoHybrid/` (toggle absent when `embedded`)
+- [x] T021 [P] [US3] Add contract test `tests/contract/hybrid-expose.test.mjs`: webpack/metadata expose points at `FederatedHybridApp`; public types include `embedded?: boolean` + `CONTRACT_VERSION` (per `specs/005-hybrid-role-scaffold/contracts/hybrid-public-entry.md`)
+- [x] T022 [P] [US3] Add shell+hybrid pair compose coverage in `tests/integration/compose-shell-hybrid.spec.ts` **and wire it into** `scripts/compose-harness.mjs` / `npm run test:compose` (or sibling invoked by that entry): `embedded={true}`, shell document theme ownership, hybrid theme toggle absent, `demo-hybrid-header-band` present in panel; stop hybrid → host fallback
+- [x] T023 [P] [US3] Unit/component test for embed toggle gating in `src/app/FederatedHybridApp.tsx` or `src/features/demoHybrid/` (toggle absent when `embedded`)
 
 ### Implementation for User Story 3
 
-- [X] T024 [US3] Finalize `src/app/FederatedHybridApp.tsx` embed behavior (suppress ThemeToggle when `embedded={true}`; keep in-boundary tokens/layout/nav/header band; no document PWA/theme registration on federated path)—completes US1 stub from T013
-- [X] T025 [US3] Verify host `LoadRemote` + existing host chrome can register/load hybrid expose without host-only code changes beyond docs/tests (fix only if expose path or props merge needs a hybrid-safe tweak in `src/app/remotes/loadRemote.tsx`)
+- [x] T024 [US3] Finalize `src/app/FederatedHybridApp.tsx` embed behavior (suppress ThemeToggle when `embedded={true}`; keep in-boundary tokens/layout/nav/header band; no document PWA/theme registration on federated path)—completes US1 stub from T013
+- [x] T025 [US3] Verify host `LoadRemote` + existing host chrome can register/load hybrid expose without host-only code changes beyond docs/tests (fix only if expose path or props merge needs a hybrid-safe tweak in `src/app/remotes/loadRemote.tsx`)
 
 **Checkpoint**: US3 complete — hybrid as composee under shell
 
@@ -115,13 +115,13 @@
 
 ### Tests for User Story 4
 
-- [X] T026 [P] [US4] Confirm existing `tests/integration/standalone.spec.ts`, `tests/integration/host.spec.ts`, `tests/integration/remote-standalone.spec.ts`, and host compose/`add-remote` contracts still pass (fix only regressions caused by hybrid shared helpers)
-- [X] T027 [P] [US4] Extend `tests/contract/init-no-prune.test.mjs` (or equivalent) if needed so hybrid init still does not prune/restore `src/`
+- [x] T026 [P] [US4] Confirm existing `tests/integration/standalone.spec.ts`, `tests/integration/host.spec.ts`, `tests/integration/remote-standalone.spec.ts`, and host compose/`add-remote` contracts still pass (fix only regressions caused by hybrid shared helpers)
+- [x] T027 [P] [US4] Extend `tests/contract/init-no-prune.test.mjs` (or equivalent) if needed so hybrid init still does not prune/restore `src/`
 
 ### Implementation for User Story 4
 
-- [X] T028 [US4] Audit shared webpack/init/add-remote changes so standalone|host|remote branches remain behaviorally identical aside from intentional host|hybrid gate widening in `scripts/add-remote.mjs` and `config/webpack.common.js`
-- [X] T029 [US4] Ensure leaf remote sample (`src/app/FederatedRemoteApp.tsx`, `src/features/demoRemote/`) changes only if required for embed-contract compatibility—no dual-mode UX redesign
+- [x] T028 [US4] Audit shared webpack/init/add-remote changes so standalone|host|remote branches remain behaviorally identical aside from intentional host|hybrid gate widening in `scripts/add-remote.mjs` and `config/webpack.common.js`
+- [x] T029 [US4] Ensure leaf remote sample (`src/app/FederatedRemoteApp.tsx`, `src/features/demoRemote/`) changes only if required for embed-contract compatibility—no dual-mode UX redesign
 
 **Checkpoint**: US4 complete — non-regression
 
@@ -131,14 +131,14 @@
 
 **Purpose**: Docs, a11y, init-cli sync, deferred three-tier tracking
 
-- [X] T030 [P] Update `README.md` roles table + init/add-remote docs for hybrid topology (shell → hybrid → leaf), printed host snippet, `PORT_HYBRID`, embed rules, `demo-hybrid-header-band`
-- [X] T031 [P] Update `AGENTS.md` for hybrid role, add-remote on host|hybrid, and `features/demoHybrid` pointer
-- [X] T032 Verify primary hybrid flows at phone-width in `tests/integration/hybrid.spec.ts` (no primary horizontal scroll)
-- [X] T033 [P] Record deferred full shell→hybrid→leaf CI follow-up in `specs/005-hybrid-role-scaffold/plan.md` Complexity Tracking / README note (not a v1 hard gate)
-- [X] T034 [P] Extend `tests/integration/a11y.spec.ts` and/or `scripts/run-a11y.mjs` so hybrid primary own-app route is covered by `npm run test:a11y` (WCAG 2.2 AA fail-on-violations)
-- [X] T035 [P] Update `specs/001-react-role-scaffold/contracts/init-cli.md` additively for `--role=hybrid`, `PORT_HYBRID`, host|hybrid `--remote`, and printed add-remote snippet (companion remains `specs/005-hybrid-role-scaffold/contracts/hybrid-init-cli.md`)
-- [X] T036 Confirm `npm run test:compose` runs both pair suites (hybrid+leaf and shell+hybrid) after T017/T022 wiring
-- [X] T037 Run `specs/005-hybrid-role-scaffold/quickstart.md` validation scenarios V1–V5 (manual or automated equivalents)
+- [x] T030 [P] Update `README.md` roles table + init/add-remote docs for hybrid topology (shell → hybrid → leaf), printed host snippet, `PORT_HYBRID`, embed rules, `demo-hybrid-header-band`
+- [x] T031 [P] Update `AGENTS.md` for hybrid role, add-remote on host|hybrid, and `features/demoHybrid` pointer
+- [x] T032 Verify primary hybrid flows at phone-width in `tests/integration/hybrid.spec.ts` (no primary horizontal scroll)
+- [x] T033 [P] Record deferred full shell→hybrid→leaf CI follow-up in `specs/005-hybrid-role-scaffold/plan.md` Complexity Tracking / README note (not a v1 hard gate)
+- [x] T034 [P] Extend `tests/integration/a11y.spec.ts` and/or `scripts/run-a11y.mjs` so hybrid primary own-app route is covered by `npm run test:a11y` (WCAG 2.2 AA fail-on-violations)
+- [x] T035 [P] Update `specs/001-react-role-scaffold/contracts/init-cli.md` additively for `--role=hybrid`, `PORT_HYBRID`, host|hybrid `--remote`, and printed add-remote snippet (companion remains `specs/005-hybrid-role-scaffold/contracts/hybrid-init-cli.md`)
+- [x] T036 Confirm `npm run test:compose` runs both pair suites (hybrid+leaf and shell+hybrid) after T017/T022 wiring
+- [x] T037 Run `specs/005-hybrid-role-scaffold/quickstart.md` validation scenarios V1–V5 (manual or automated equivalents)
 
 ---
 

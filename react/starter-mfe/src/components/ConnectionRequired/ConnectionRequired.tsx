@@ -4,7 +4,9 @@ export type ConnectionRequiredProps = {
   visible?: boolean;
 };
 
-export function ConnectionRequired({ visible = true }: ConnectionRequiredProps) {
+export function ConnectionRequired({
+  visible = true,
+}: ConnectionRequiredProps) {
   if (!visible) return null;
   return (
     <div

@@ -2,20 +2,20 @@
 
 ## PWA baseline (all roles after init)
 
-| Artifact | Requirement |
-|----------|-------------|
-| Web app manifest | Present (name, icons, display mode) |
-| Icons | Present under `public/icons/` (or equivalent) |
-| Service worker | Workbox (or equivalent) registered for installability / app-shell assets |
+| Artifact         | Requirement                                                              |
+| ---------------- | ------------------------------------------------------------------------ |
+| Web app manifest | Present (name, icons, display mode)                                      |
+| Icons            | Present under `public/icons/` (or equivalent)                            |
+| Service worker   | Workbox (or equivalent) registered for installability / app-shell assets |
 
 ## Ownership when federated
 
-| Role | Install / offline UX |
-|------|----------------------|
-| host | Owns install/offline PWA UX for composed experience |
-| remote (standalone) | Full installable PWA baseline |
-| remote (embedded) | MUST NOT take over host install/offline; `./Demo` with `embedded={true}` suppresses document SW takeover ([remote-demo.md](./remote-demo.md)); remote bootstrap `registerPwa` is standalone-entry only |
-| standalone | Owns its own PWA baseline |
+| Role                | Install / offline UX                                                                                                                                                                                   |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| host                | Owns install/offline PWA UX for composed experience                                                                                                                                                    |
+| remote (standalone) | Full installable PWA baseline                                                                                                                                                                          |
+| remote (embedded)   | MUST NOT take over host install/offline; `./Demo` with `embedded={true}` suppresses document SW takeover ([remote-demo.md](./remote-demo.md)); remote bootstrap `registerPwa` is standalone-entry only |
+| standalone          | Owns its own PWA baseline                                                                                                                                                                              |
 
 ## Connectivity message
 

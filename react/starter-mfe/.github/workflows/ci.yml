@@ -16,6 +16,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run init -- --role=standalone --port=3000
+      - run: npm run lint
+      - run: npm run format:check
       - run: npm test
 
   e2e:

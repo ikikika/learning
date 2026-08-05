@@ -4,11 +4,7 @@ declare module '@active-routes' {
 }
 
 declare const __STARTER_ROLE__:
-  | 'standalone'
-  | 'host'
-  | 'remote'
-  | 'hybrid'
-  | undefined;
+  'standalone' | 'host' | 'remote' | 'hybrid' | undefined;
 declare const __STARTER_DEMO_REMOTE_URL_DEFAULT__: string | undefined;
 declare const __STARTER_REMOTES_CONFIG__:
   | Array<{

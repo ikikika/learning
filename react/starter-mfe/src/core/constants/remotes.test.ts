@@ -1,7 +1,4 @@
-import {
-  getRemotePropsFromMap,
-  mergeRemoteMountProps,
-} from './remotes';
+import { getRemotePropsFromMap, mergeRemoteMountProps } from './remotes';
 
 describe('getRemotePropsFromMap', () => {
   it('returns bag for known alias', () => {
@@ -24,9 +21,10 @@ describe('getRemotePropsFromMap', () => {
 
 describe('mergeRemoteMountProps', () => {
   it('strips bag embedded and forces embedded true', () => {
-    expect(
-      mergeRemoteMountProps({ title: 'Hello', embedded: false }),
-    ).toEqual({ title: 'Hello', embedded: true });
+    expect(mergeRemoteMountProps({ title: 'Hello', embedded: false })).toEqual({
+      title: 'Hello',
+      embedded: true,
+    });
   });
 
   it('works with empty bag', () => {

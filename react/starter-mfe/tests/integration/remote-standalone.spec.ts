@@ -9,7 +9,10 @@ test.describe('remote-standalone smoke', () => {
   }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto('/');
-    await page.evaluate((key) => localStorage.removeItem(key), THEME_STORAGE_KEY);
+    await page.evaluate(
+      (key) => localStorage.removeItem(key),
+      THEME_STORAGE_KEY,
+    );
     await page.reload();
 
     // Remote has no MainLayout (no theme toggle / connection banner UI)

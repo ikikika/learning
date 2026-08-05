@@ -6,8 +6,8 @@ Applies when role is `remote` (and when a host consumes this remote).
 
 ## Expose
 
-| Expose name | Module | Notes |
-|-------------|--------|-------|
+| Expose name          | Module            | Notes                                                            |
+| -------------------- | ----------------- | ---------------------------------------------------------------- |
 | `./{PascalCaseName}` | `src/app/App.tsx` | Derived from init `--name` (e.g. `my-checkout` → `./MyCheckout`) |
 
 Init writes `expose` on `starter.role.json` for remote role. Webpack MF
@@ -15,13 +15,13 @@ Init writes `expose` on `starter.role.json` for remote role. Webpack MF
 
 ## Typed public API + version (FR-024 / SC-016)
 
-| Field | Requirement |
-|-------|-------------|
-| Public entry | `App` (`embedded?: boolean` optional) from `src/app/App.tsx` |
-| Sample feature | `features/demo` remains the standalone home demo; contract version `1.0.0` |
+| Field                | Requirement                                                                  |
+| -------------------- | ---------------------------------------------------------------------------- |
+| Public entry         | `App` (`embedded?: boolean` optional) from `src/app/App.tsx`                 |
+| Sample feature       | `features/demo` remains the standalone home demo; contract version `1.0.0`   |
 | `embedded?: boolean` | Host MUST pass `embedded={true}` when mounting; omit or `false` = standalone |
-| Contract version | **`1.0.0`** in README + this artifact |
-| Package | Published npm contract package **not** required in v1 (Complexity Tracking) |
+| Contract version     | **`1.0.0`** in README + this artifact                                        |
+| Package              | Published npm contract package **not** required in v1 (Complexity Tracking)  |
 
 ## Dual-mode rules
 
@@ -33,12 +33,12 @@ Init writes `expose` on `starter.role.json` for remote role. Webpack MF
 
 ## Host sample slot
 
-| Field | Contract |
-|-------|----------|
-| Count | Zero or more via `remotes[]` (host init defaults to none; add with `--remote`) |
-| Target | PascalCase expose matching the remote’s `--name` |
-| URL | Config placeholder / `urlEnv` |
-| Mount | Pass `embedded={true}` |
+| Field   | Contract                                                                                                    |
+| ------- | ----------------------------------------------------------------------------------------------------------- |
+| Count   | Zero or more via `remotes[]` (host init defaults to none; add with `--remote`)                              |
+| Target  | PascalCase expose matching the remote’s `--name`                                                            |
+| URL     | Config placeholder / `urlEnv`                                                                               |
+| Mount   | Pass `embedded={true}`                                                                                      |
 | Failure | User-visible `RemoteFallback` for missing, unreachable, **empty/invalid URL**, or missing remotes map entry |
 
 ## Source layout

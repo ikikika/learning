@@ -2,7 +2,11 @@ import { RouteObject } from 'react-router';
 import { routePaths } from '@/core/constants/routePaths';
 import { MainLayout } from '@/layouts/MainLayout/MainLayout';
 import { DemoHybridHomePage } from '@/pages/DemoHybridHomePage/DemoHybridHomePage';
-import { DemoHybridHome, HybridWelcome, HybridRemotePanel } from '@/features/demoHybrid';
+import {
+  DemoHybridHome,
+  HybridWelcome,
+  HybridRemotePanel,
+} from '@/features/demoHybrid';
 
 const hybridPageChildren: RouteObject[] = [
   { index: true, element: <HybridWelcome /> },

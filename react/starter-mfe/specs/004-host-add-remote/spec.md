@@ -24,7 +24,7 @@
 - Q: (/speckit-analyze U1) How does sample Route 1 receive host `title`? → A: Federated entry provides a React context (or equivalent in-remote provider) from mount props; Route 1 reads `title` from that context — not host router coupling
 - Q: (/speckit-analyze U2/I1) CLI flags and props reader location? → A: add-remote MUST honor full CLI contract flags (`--alias`, `--url`|`--port`, `--name`, `--expose`, `--federation-name`, `--url-env`, `--props`); bake reader lives in `remotes.ts` (`getRemoteProps`) — no separate `remoteProps.ts` module required
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Register one running remote on a host (Priority: P1)
 
@@ -118,7 +118,7 @@ Developers using standalone or remote clones (or the same repo initialized as th
 - Props configured for an unknown/unregistered alias: MUST be ignored; registered remotes MUST continue to load normally (stale props entries MUST NOT take down the host).
 - Prop keys that overlap host-required composition flags: host-required composition behavior (e.g. embedded/host-owned chrome) MUST remain authoritative and MUST NOT be overridden by per-remote custom props.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -150,7 +150,7 @@ Developers using standalone or remote clones (or the same repo initialized as th
 - **Host composition surface**: Host chrome that lists registered remotes and loads one at a time into the panel with existing fallback behavior.
 - **Per-remote host props**: A props set keyed to a single remote alias; different aliases may have different props; used only when that remote is mounted in the host.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

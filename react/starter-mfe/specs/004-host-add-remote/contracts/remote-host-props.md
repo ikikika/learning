@@ -6,11 +6,11 @@
 
 ## Mount props
 
-| Prop | Source | Rules |
-|------|--------|--------|
-| `embedded` | Host always | Always `true` when composed; cannot be overridden by `remoteProps` |
-| `…rest` | `remoteProps[alias]` | JSON-serializable; unknown aliases → treat as `{}` (ignore stale map keys) |
-| `title` | Optional in bag | Sample convention; demoRemote MUST display when non-empty string while embedded |
+| Prop       | Source               | Rules                                                                           |
+| ---------- | -------------------- | ------------------------------------------------------------------------------- |
+| `embedded` | Host always          | Always `true` when composed; cannot be overridden by `remoteProps`              |
+| `…rest`    | `remoteProps[alias]` | JSON-serializable; unknown aliases → treat as `{}` (ignore stale map keys)      |
+| `title`    | Optional in bag      | Sample convention; demoRemote MUST display when non-empty string while embedded |
 
 ## Bake
 

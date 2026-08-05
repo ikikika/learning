@@ -48,8 +48,8 @@ _TODO: Token naming rules, how to add a token, light vs dark overrides._
 -->
 
 | Token / group | Purpose | Notes |
-|---------------|---------|-------|
-| _TODO_ | | |
+| ------------- | ------- | ----- |
+| _TODO_        |         |       |
 
 ## Theming
 
@@ -94,12 +94,12 @@ _TODO: Rules such as:_
 
 ### Shared primitives inventory (optional)
 
-| Component | Path | Role |
-|-----------|------|------|
-| Button | `src/components/Button/` | _TODO_ |
-| ThemeToggle | `src/components/ThemeToggle/` | _TODO_ |
-| ConnectionRequired | `src/components/ConnectionRequired/` | Offline banner |
-| RemoteFallback | `src/components/RemoteFallback/` | Host remote failure |
+| Component          | Path                                 | Role                |
+| ------------------ | ------------------------------------ | ------------------- |
+| Button             | `src/components/Button/`             | _TODO_              |
+| ThemeToggle        | `src/components/ThemeToggle/`        | _TODO_              |
+| ConnectionRequired | `src/components/ConnectionRequired/` | Offline banner      |
+| RemoteFallback     | `src/components/RemoteFallback/`     | Host remote failure |
 
 ## Layout & composition
 
@@ -162,11 +162,11 @@ _TODO: Microcopy guidelines (optional)._
 
 ## Links
 
-| Doc | Role |
-|-----|------|
-| [coding-conventions.md](./coding-conventions.md) | Code structure & data fetching |
-| [project-overview.md](./project-overview.md) | Product framing |
-| [theming contract](./contracts/theming.md) | Normative theme/token rules |
-| [a11y contract](./contracts/a11y-wcag.md) | WCAG AA CI |
-| [tokens.css](../src/styles/tokens.css) | Live token values |
-| [ThemeProvider](../src/app/providers/ThemeProvider.tsx) | Theme implementation |
+| Doc                                                     | Role                           |
+| ------------------------------------------------------- | ------------------------------ |
+| [coding-conventions.md](./coding-conventions.md)        | Code structure & data fetching |
+| [project-overview.md](./project-overview.md)            | Product framing                |
+| [theming contract](./contracts/theming.md)              | Normative theme/token rules    |
+| [a11y contract](./contracts/a11y-wcag.md)               | WCAG AA CI                     |
+| [tokens.css](../src/styles/tokens.css)                  | Live token values              |
+| [ThemeProvider](../src/app/providers/ThemeProvider.tsx) | Theme implementation           |

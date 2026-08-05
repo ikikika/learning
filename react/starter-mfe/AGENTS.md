@@ -48,18 +48,19 @@ the repo docs.
 
 ## Quick pointers
 
-| Concern | Location |
-|---------|----------|
-| Product overview | `docs/project-overview.md` |
-| Coding conventions | `docs/coding-conventions.md` |
-| UI / tokens / components | `docs/ui-context.md` |
-| Constitution | `.specify/memory/constitution.md` |
-| Init / prune | `scripts/init.mjs`, `scripts/prune-other-role-samples.mjs` |
-| API routes | `src/core/constants/apiRoutes.ts` |
-| App URL paths | `src/core/constants/routePaths.ts` |
-| HTTP client | `src/services/httpClient.ts` |
-| Env injection | `scripts/load-env.cjs`, `config/webpack.*.js` |
-| Sample feature (standalone) | `src/features/demo/` |
-| Sample feature (host) | `src/features/demoHost/` |
-| Sample feature (remote) | `src/features/demoRemote/` |
-| Sample feature (hybrid) | `src/features/demoHybrid/` |
+| Concern                     | Location                                                         |
+| --------------------------- | ---------------------------------------------------------------- |
+| Product overview            | `docs/project-overview.md`                                       |
+| Coding conventions          | `docs/coding-conventions.md`                                     |
+| UI / tokens / components    | `docs/ui-context.md`                                             |
+| Constitution                | `.specify/memory/constitution.md`                                |
+| Init / prune                | `scripts/init.mjs`, `scripts/prune-other-role-samples.mjs`       |
+| API routes                  | `src/core/constants/apiRoutes.ts`                                |
+| App URL paths               | `src/core/constants/routePaths.ts`                               |
+| HTTP client                 | `src/services/httpClient.ts`                                     |
+| Env injection               | `scripts/load-env.cjs`, `config/webpack.*.js`                    |
+| Lint / format               | `eslint.config.mjs`, `.prettierrc.json`, `.vscode/settings.json` |
+| Sample feature (standalone) | `src/features/demo/`                                             |
+| Sample feature (host)       | `src/features/demoHost/`                                         |
+| Sample feature (remote)     | `src/features/demoRemote/`                                       |
+| Sample feature (hybrid)     | `src/features/demoHybrid/`                                       |

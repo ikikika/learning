@@ -5,8 +5,7 @@ export type RemoteModule = {
   default?: ComponentType<Record<string, unknown> & { embedded?: boolean }>;
   App?: ComponentType<Record<string, unknown> & { embedded?: boolean }>;
   [exportName: string]:
-    | ComponentType<Record<string, unknown> & { embedded?: boolean }>
-    | undefined;
+    ComponentType<Record<string, unknown> & { embedded?: boolean }> | undefined;
 };
 
 export type RemoteLoader = () => Promise<RemoteModule>;

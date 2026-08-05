@@ -30,7 +30,7 @@ Add a fourth repository role **`hybrid`**: one clone that both **exposes** a sta
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 Derived from `.specify/memory/constitution.md` (Starter MFE Constitution v2.2+).
 
@@ -111,7 +111,7 @@ specs/001-react-role-scaffold/contracts/init-cli.md  # EXTEND additively for hyb
 
 ## Complexity Tracking
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| Published npm contract package deferred (Principle III packaging) | Same v1 posture as prior role features; in-repo typed hybrid entry + version is enough | Publishing packages now expands scope beyond hybrid scaffold |
-| Full shell→hybrid→leaf CI compose deferred (Principle V multi-mode) | Spec FR-016 / clarify: pair covers required; three-tier optional | Mandating 3-process CI in v1 triples harness cost without unique contract coverage beyond pairs |
+| Violation                                                           | Why Needed                                                                             | Simpler Alternative Rejected Because                                                            |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Published npm contract package deferred (Principle III packaging)   | Same v1 posture as prior role features; in-repo typed hybrid entry + version is enough | Publishing packages now expands scope beyond hybrid scaffold                                    |
+| Full shell→hybrid→leaf CI compose deferred (Principle V multi-mode) | Spec FR-016 / clarify: pair covers required; three-tier optional                       | Mandating 3-process CI in v1 triples harness cost without unique contract coverage beyond pairs |

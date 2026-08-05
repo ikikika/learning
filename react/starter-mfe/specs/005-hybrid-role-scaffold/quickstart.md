@@ -22,6 +22,7 @@ npm start
 ```
 
 **Expect**:
+
 - Hybrid chrome loads (`demo-hybrid-home-page`, `demo-hybrid-header-band`); empty child state usable
 - Distinct from host sample (tokens/branding + header band)
 - Theme toggle works; `data-theme` behaves like other own-app roles

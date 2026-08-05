@@ -24,11 +24,7 @@ const ROLE_PORTS = {
 
 function init(role) {
   const port = ROLE_PORTS[role];
-  const args = [
-    'scripts/init.mjs',
-    `--role=${role}`,
-    `--port=${port}`,
-  ];
+  const args = ['scripts/init.mjs', `--role=${role}`, `--port=${port}`];
   // Host/hybrid e2e exercises LoadRemote fallbacks — add a slot explicitly (init defaults to none).
   if (role === 'host' || role === 'hybrid') {
     args.push('--remote=demoRemote:demoRemote');
@@ -41,19 +37,15 @@ function init(role) {
 }
 
 function runPlaywright(project, port) {
-  const r = spawnSync(
-    'npx',
-    ['playwright', 'test', `--project=${project}`],
-    {
-      cwd: ROOT,
-      stdio: 'inherit',
-      env: {
-        ...process.env,
-        PLAYWRIGHT_PORT: String(port),
-        PLAYWRIGHT_BASE_URL: `http://${host}:${port}`,
-      },
+  const r = spawnSync('npx', ['playwright', 'test', `--project=${project}`], {
+    cwd: ROOT,
+    stdio: 'inherit',
+    env: {
+      ...process.env,
+      PLAYWRIGHT_PORT: String(port),
+      PLAYWRIGHT_BASE_URL: `http://${host}:${port}`,
     },
-  );
+  });
   if (r.status !== 0) process.exit(r.status ?? 1);
 }
 

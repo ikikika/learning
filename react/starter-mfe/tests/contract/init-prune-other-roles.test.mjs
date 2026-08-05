@@ -6,7 +6,10 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../..',
+);
 
 const SKIP = new Set([
   'node_modules',
@@ -123,7 +126,10 @@ test('init --prune-other-roles as standalone removes host/remote/hybrid bundles'
     assert.equal(exists(tmp, 'src/features/demoHybrid'), false);
     assert.equal(exists(tmp, 'src/app/FederatedHybridApp.tsx'), false);
     assert.equal(exists(tmp, 'tests/integration/host.spec.ts'), false);
-    assert.equal(exists(tmp, 'tests/integration/compose-shell-hybrid.spec.ts'), false);
+    assert.equal(
+      exists(tmp, 'tests/integration/compose-shell-hybrid.spec.ts'),
+      false,
+    );
     assert.equal(exists(tmp, 'specs/001-react-role-scaffold'), false);
     assert.equal(exists(tmp, 'specs/005-hybrid-role-scaffold'), false);
 

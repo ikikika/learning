@@ -39,7 +39,11 @@ function parseFlagValue(argv, longName) {
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg.startsWith(eq)) return arg.slice(eq.length);
-    if (arg === `--${longName}` && argv[i + 1] && !argv[i + 1].startsWith('--')) {
+    if (
+      arg === `--${longName}` &&
+      argv[i + 1] &&
+      !argv[i + 1].startsWith('--')
+    ) {
       return argv[i + 1];
     }
   }
@@ -152,7 +156,8 @@ async function promptName(rl, role) {
   for (;;) {
     const answer = await promptLine(rl, `App name [${fallback}]: `);
     const value = answer || fallback;
-    if (isValidPackageName(value)) return { name: value, provided: Boolean(answer) };
+    if (isValidPackageName(value))
+      return { name: value, provided: Boolean(answer) };
     console.log(
       'Invalid name. Use camelCase or lowercase npm-style (e.g. myApp, my-app, @scope/my-app)',
     );
@@ -353,7 +358,9 @@ async function main() {
   if (role === 'host' || role === 'hybrid') {
     remotes = buildHostRemotes({ remoteNameArg, remoteFlags });
   } else if (remoteNameArg || remoteFlags.length) {
-    fail('--remote / --remote-name are only valid with --role=host or --role=hybrid');
+    fail(
+      '--remote / --remote-name are only valid with --role=host or --role=hybrid',
+    );
   }
 
   const metaPath = path.join(ROOT, 'starter.role.json');

@@ -39,7 +39,10 @@ test.describe('hybrid smoke', () => {
     // Theme: first visit + toggle + reload + use-system (on Hybrid welcome;
     // MainLayout owns document theme/PWA for own-app entries — same as host)
     await page.goto('/');
-    await page.evaluate((key) => localStorage.removeItem(key), THEME_STORAGE_KEY);
+    await page.evaluate(
+      (key) => localStorage.removeItem(key),
+      THEME_STORAGE_KEY,
+    );
     await page.reload();
     const theme = await page.locator('html').getAttribute('data-theme');
     expect(theme === 'light' || theme === 'dark').toBeTruthy();

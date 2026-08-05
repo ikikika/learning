@@ -17,13 +17,10 @@ export function HybridWelcome() {
           federated leaf remote into this panel.
         </p>
       ) : (
-        <p
-          className={styles.copy}
-          data-testid="demo-hybrid-empty-state"
-        >
+        <p className={styles.copy} data-testid="demo-hybrid-empty-state">
           No module remotes are registered yet. Run{' '}
-          <code className={styles.code}>npm run add-remote</code> to register
-          a leaf module, then restart to see it in the nav above.
+          <code className={styles.code}>npm run add-remote</code> to register a
+          leaf module, then restart to see it in the nav above.
         </p>
       )}
     </div>

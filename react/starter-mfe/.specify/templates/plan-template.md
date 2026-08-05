@@ -50,19 +50,20 @@ worker / equivalent) with outermost-shell-owned install/offline UX when
 federated; nested composition MUST degrade safely
 
 **Scale/Scope**: Pick one role and replace with concrete paths for this plan:
+
 - Standalone — e.g. `Role: standalone. In: features/auth, pages/LoginPage +
-  ProfilePage. Out: federation, other remotes.`
+ProfilePage. Out: federation, other remotes.`
 - Remote — e.g. `Role: remote (checkout). In: features/checkout, expose
-  ./Checkout. Out: host chrome; other remotes.`
+./Checkout. Out: host chrome; other remotes.`
 - Host — e.g. `Role: host. In: /checkout route + remote load/fallback config.
-  Out: checkout domain logic (owned by checkout remote).`
+Out: checkout domain logic (owned by checkout remote).`
 - Hybrid — e.g. `Role: hybrid (team shell). In: team layout/tokens/nav,
-  federated entry for parent, child remotes via add-remote. Out: parent
-  document PWA/theme when embedded; child remote domain logic.`
+federated entry for parent, child remotes via add-remote. Out: parent
+document PWA/theme when embedded; child remote domain logic.`
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 Derived from `.specify/memory/constitution.md` (Starter MFE Constitution v2.2+).
 
@@ -115,6 +116,7 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
+
 <!--
   ACTION REQUIRED:
   - Keep the canonical root layout below and replace placeholders with concrete
@@ -184,7 +186,7 @@ names and compatible versions, or N/A.]
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
+| -------------------------- | ------------------ | ------------------------------------ |
+| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |

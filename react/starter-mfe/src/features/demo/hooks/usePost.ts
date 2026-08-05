@@ -27,7 +27,9 @@ export function usePost(id: number | string): UsePostResult {
       .catch((err: unknown) => {
         if (controller.signal.aborted) return;
         setPost(null);
-        setError(err instanceof Error ? err.message : `Failed to load post ${id}`);
+        setError(
+          err instanceof Error ? err.message : `Failed to load post ${id}`,
+        );
         setLoading(false);
       });
 
