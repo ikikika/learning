@@ -1,0 +1,22 @@
+{
+  "image": "avatar_celebrate_head_white_helmet_spritesheet.png",
+  "imageWidth": 1536,
+  "imageHeight": 512,
+  "columns": 8,
+  "rows": 1,
+  "frameWidth": 192,
+  "frameHeight": 512,
+  "chromaKey": "#FF00FF",
+  "animations": {
+    "celebrate_s": {
+      "row": 0,
+      "frames": 8,
+      "frameDurationMs": 90
+    }
+  },
+  "directions": {
+    "s": "front / toward camera"
+  },
+  "slot": "head",
+  "notes": "Celebrate head with white helmet (gold trim). Fixed-scale stamp from walk helmet, chin-aligned to avatar_celebrate_head per frame. No hands (use celebrate hands layer). Used when helmetEquipped during celebrate_s."
+}
